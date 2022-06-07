@@ -9,11 +9,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 	return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 function AutoHideAlert(props: IAutoHideAlert) {
-	const { isOpen, onCloseHandler = () => {}, alertMsg, severity } = props;
+	const { isOpen, onCloseHandler = () => {}, alertMsg, severity,autoHideDuration } = props;
 	return (
 		<Snackbar
 			open={isOpen ? true : false}
-			autoHideDuration={6000}
+			autoHideDuration={autoHideDuration}
 			onClose={onCloseHandler}
 		>
 			<Alert
@@ -34,4 +34,5 @@ interface IAutoHideAlert {
 	onCloseHandler?: any;
 	alertMsg: string;
 	severity: 'error' | 'warning' | 'success';
+	autoHideDuration: number;
 }

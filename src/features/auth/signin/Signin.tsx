@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as R from 'ramda';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -17,12 +18,23 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import { useSigninUserMutation } from '../../../app/apis/apiSlice';
-import { authorizeUser, selectIsAuthorize } from '../authSlice';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { useNavigate } from 'react-router-dom';
 import LoadingButton from '@mui/lab/LoadingButton';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import AutoHideAlert from '../../../shared/components/AutoHideAlert';
+import { useSigninUserMutation } from '../../../app/apis/apiSlice';
+import {
+	authorizeUser,
+	selectIsAuthorize,
+	selectAuthAlertMsg,
+	selectAuthAlertState,
+	setAuthAlertMsg,
+	setAuthAlertState,
+	IAuthAlertState,
+} from '../authSlice';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { formatAuthErrorMsg } from '../../../shared/functions/utility';
+
 const validationSchema = yup.object({
 	email: yup
 		.string()
@@ -33,14 +45,17 @@ const validationSchema = yup.object({
 		.min(6, 'Password should be of minimum 6 characters length')
 		.required('Password is required'),
 });
-
+const authAlertStatePayload: IAuthAlertState = {
+	flag: true,
+	severity: 'error',
+	autoHideDuration: 6000,
+};
 export default function Signin() {
 	const [signinUser, { isLoading, isError, error }] = useSigninUserMutation();
 	const isLogin: boolean = useAppSelector(selectIsAuthorize);
+	const authAlertMsg = useAppSelector(selectAuthAlertMsg);
+	const authAlertState = useAppSelector(selectAuthAlertState);
 	const [shouldShowPassword, setShowPassword] = React.useState(false);
-	const [shouldShowErrorAlert, setShouldShowErrorAlert] =
-		React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState('Something went wrong.');
 	const dispatch = useAppDispatch();
 	let navigate = useNavigate();
 	React.useEffect(() => {
@@ -51,12 +66,18 @@ export default function Signin() {
 
 	React.useEffect(() => {
 		if (isError) {
-			setShouldShowErrorAlert(true);
-			setErrorMsg(formatErrorMsg(error));
+			R.compose(dispatch, setAuthAlertMsg, formatAuthErrorMsg)(error);
+			R.compose(
+				dispatch,
+				setAuthAlertState,
+			)({ ...authAlertStatePayload, flag: true, severity: 'error' });
 		} else {
-			setShouldShowErrorAlert(false);
+			R.compose(
+				dispatch,
+				setAuthAlertState,
+			)({ ...authAlertStatePayload, flag: false });
 		}
-	}, [isError, setShouldShowErrorAlert, error]);
+	}, [isError, error, dispatch]);
 	const formik = useFormik({
 		initialValues: {
 			email: '',
@@ -66,6 +87,7 @@ export default function Signin() {
 		onSubmit: async values => {
 			try {
 				let data: any = await signinUser(values);
+				if (data?.error) return;
 				if (data?.data?.token) {
 					dispatch(authorizeUser(data.data.token));
 				}
@@ -198,12 +220,12 @@ export default function Signin() {
 							/>
 							<LoadingButton
 								loading={isLoading}
-								// loadingIndicator="Signin..."
 								type='submit'
 								loadingPosition='end'
 								fullWidth
 								variant='contained'
 								sx={{ mt: 3, mb: 2 }}
+								endIcon={<ArrowRightIcon />}
 							>
 								Sign In
 							</LoadingButton>
@@ -225,17 +247,20 @@ export default function Signin() {
 				</Grid>
 			</Grid>
 			<AutoHideAlert
-				isOpen={shouldShowErrorAlert}
-				alertMsg={errorMsg}
-				severity='error'
-				onCloseHandler={() => setShouldShowErrorAlert(false)}
+				isOpen={authAlertState?.flag}
+				alertMsg={authAlertMsg}
+				severity={authAlertState?.severity}
+				onCloseHandler={() =>
+					R.compose(
+						dispatch,
+						setAuthAlertState,
+					)({ ...authAlertStatePayload, flag: false })
+				}
+				autoHideDuration={6000}
 			/>
 		</>
 	);
 }
 
-function formatErrorMsg(error: any) {
-	console.log(error?.data?.error);
-	if (error?.data?.error) return error?.data?.error;
-	return 'Something went wrong. Please try again';
-}
+
+

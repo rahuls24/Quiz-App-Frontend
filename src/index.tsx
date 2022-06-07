@@ -11,7 +11,6 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 import { debounce } from "debounce";
 import { saveReduxState } from './shared/functions/browserStorage';
-
 store.subscribe(
   // we use debounce to save the state once each 800ms
   // for better performances in case multiple changes occur in a short time
