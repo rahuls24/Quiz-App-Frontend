@@ -12,29 +12,27 @@ export const apiSlice = createApi({
 		prepareHeaders: (headers, { getState }) => {
 			const token = (getState() as RootState).auth.token;
 			if (token) {
-				headers.set('authorization', String(token));				
+				headers.set('authorization', String(token));
 			}
 			// console.log("pant",headers)
 			return headers;
 		},
 	}),
-	tagTypes: ['User'],
+	tagTypes: ['User', 'Quiz'],
 	// The "endpoints" represent operations and requests for this server
 	endpoints: builder => ({
 		signupUser: builder.mutation({
-			query: initialPost => ({
-				url: '/auth/register-user-email',
+			query: userDetails => ({
+				url: '/auth/register-user-with-email',
 				method: 'POST',
-				// Include the entire post object as the body of the request
-				body: initialPost,
+				body: userDetails,
 			}),
 		}),
 		signinUser: builder.mutation({
-			query: initialPost => ({
-				url: '/auth/signin-user-email',
+			query: userDetails => ({
+				url: '/auth/signin-user-with-email',
 				method: 'POST',
-				// Include the entire post object as the body of the request
-				body: initialPost,
+				body: userDetails,
 			}),
 			invalidatesTags: ['User'],
 		}),
@@ -44,12 +42,34 @@ export const apiSlice = createApi({
 			}),
 			providesTags: ['User'],
 		}),
+		getAllEnrolledCourses: builder.query({
+			query: () => ({
+				url: '/quiz/get-all-enrolled-quizzes',
+			}),
+			providesTags: ['User', 'Quiz'],
+		}),
+		getAllUnenrolledCourses: builder.query({
+			query: () => ({
+				url: '/quiz/get-all-unenrolled-quizzes',
+			}),
+			providesTags: ['User', 'Quiz'],
+		}),
+		enrollForAQuiz: builder.mutation({
+			query: quizId => ({
+				url: '/quiz/enroll-for-a-quiz',
+				method: 'POST',
+				body: quizId,
+			}),
+			invalidatesTags: ['Quiz'],
+		}),
 	}),
 });
 
-// Export the auto-generated hook for the `getPosts` query endpoint
 export const {
 	useSignupUserMutation,
 	useSigninUserMutation,
 	useGetUserDetailsQuery,
+	useGetAllUnenrolledCoursesQuery,
+	useGetAllEnrolledCoursesQuery,
+	useEnrollForAQuizMutation,
 } = apiSlice;
