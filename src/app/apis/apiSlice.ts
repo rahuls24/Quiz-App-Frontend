@@ -14,7 +14,6 @@ export const apiSlice = createApi({
 			if (token) {
 				headers.set('authorization', String(token));
 			}
-			// console.log("pant",headers)
 			return headers;
 		},
 	}),

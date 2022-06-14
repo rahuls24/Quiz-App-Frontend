@@ -13,7 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import {useAppSelector} from '../../app/hooks';
+import {selectUserDetails} from '../../features/auth/authSlice'
 const settings = ['Profile', 'Settings', 'Logout'];
 
 const Header = () => {
@@ -38,7 +39,8 @@ const Header = () => {
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
 	};
-  const pages = getNavBtnForCurrentUser('examinee');
+  const userDetails = useAppSelector(selectUserDetails);
+  const pages = getNavBtnForCurrentUser(userDetails?.role);
 	let location = useLocation();
 	let navigate = useNavigate();
 	const [currentActiveNavBtn, setCurrentActiveBtn] =
@@ -217,7 +219,7 @@ const Header = () => {
 export default Header;
 
 // Util Function
-function getNavBtnForCurrentUser(role: string) {
+function getNavBtnForCurrentUser(role='examinee') {
 	switch (role.toLowerCase()) {
 		case 'examinee':
 			return [

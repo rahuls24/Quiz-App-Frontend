@@ -23,3 +23,13 @@ code {
   /* background-color:rgba(0, 188, 212, 0.10); */
   border-radius: 5px;
 }
+
+/* Overriding material ui style */
+
+.MuiDataGrid-row{
+  cursor: pointer;
+}
+
+.MuiDataGrid-cell:focus{
+  outline-color: #fff !important;
+}

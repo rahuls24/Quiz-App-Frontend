@@ -13,7 +13,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import { Copyright } from '../../../shared/components/Copyright';
+import Copyright from '../../../shared/components/Copyright';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import * as yup from 'yup';
 import { useFormik } from 'formik';

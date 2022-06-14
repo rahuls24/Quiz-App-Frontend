@@ -1,6 +1,7 @@
 import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { IAutoHideAlert } from '../../interfaces/Components';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 	props,
@@ -29,10 +30,4 @@ function AutoHideAlert(props: IAutoHideAlert) {
 
 export default AutoHideAlert;
 // isOpen, onCloseHandler, alertMsg, severity
-interface IAutoHideAlert {
-	isOpen: boolean;
-	onCloseHandler?: any;
-	alertMsg: string;
-	severity: 'error' | 'warning' | 'success';
-	autoHideDuration: number;
-}
+

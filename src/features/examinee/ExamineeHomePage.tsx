@@ -1,24 +1,30 @@
 import React from 'react';
+// MUI import
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Box from '@mui/material/Box';
+// Components import
+import AutoHideAlert from '../../shared/components/AutoHideAlert';
+import QuizCard from '../../shared/components/QuizCard';
+// interfaces import
+import { IQuiz } from '../../interfaces/Quiz';
+import { IAutoHideAlert } from '../../interfaces/Components';
+// Util function import
+import {
+	enrolledQuizCardViewGenerator,
+	unenrolledQuizCardViewGenerator,
+} from '../../shared/functions/quizRelated';
+//  Redux toolkit related import
 import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 	useEnrollForAQuizMutation,
 } from '../../app/apis/apiSlice';
-import { IQuiz } from '../../interfaces/Quiz';
 
 function ExamineeHomePage() {
 	const {
@@ -61,14 +67,51 @@ function ExamineeHomePage() {
 		}
 	}, [isEnrolledQuizHavingError, errorOfEnrolledQuizApi]);
 
-	const [
-		enrollForAQuizHandler,
-		{
-			isLoading: isEnrollForAQuizReqLoading,
-			isError: isEnrollForAQuizReqHavingError,
-			error: enrollForAQuizReqError,
-		},
-	] = useEnrollForAQuizMutation();
+	const [enrollForAQuizHandler] = useEnrollForAQuizMutation();
+	const [quizAlertMsg, setQuizAlertMsg] = React.useState<IAutoHideAlert>({
+		isOpen: false,
+		alertMsg: '',
+		severity: 'error',
+		autoHideDuration: 6000,
+	});
+	const [currentLoadingEnrollBtns, setCurrentLoadingEnrollBtns] =
+		React.useState([] as string[]);
+
+	const enrollForAQuizHandlerHelper = async (quizPayload: any) => {
+		setCurrentLoadingEnrollBtns(prev => [...prev, quizPayload.quizId]);
+		try {
+			let data = await enrollForAQuizHandler(quizPayload);
+			if ('error' in data) {
+				throw new Error('Something went wrong while enrolling');
+			}
+			setQuizAlertMsg({
+				isOpen: true,
+				alertMsg: 'Enrollment is successful',
+				severity: 'success',
+				autoHideDuration: 3000,
+			});
+			setCurrentLoadingEnrollBtns(prev => {
+				const currentState = [...prev];
+				currentState.shift();
+				return currentState;
+			});
+		} catch (error) {
+			setCurrentLoadingEnrollBtns(prev => {
+				const currentState = [...prev];
+				currentState.shift();
+				return currentState;
+			});
+			setQuizAlertMsg(prev => {
+				const currentState = prev;
+				currentState.isOpen = true;
+				currentState.alertMsg =
+					'Something went wrong. Try to enroll after sometime';
+				currentState.severity = 'error';
+				currentState.autoHideDuration = 4000;
+				return currentState;
+			});
+		}
+	};
 	return (
 		<>
 			<Grid
@@ -120,7 +163,10 @@ function ExamineeHomePage() {
 							{!isEnrolledQuizApiFetching &&
 								enrolledQuizzesList.map((quiz: IQuiz) => {
 									const cardProps =
-										enrolledQuizCardViewGenerator(quiz);
+										enrolledQuizCardViewGenerator(
+											quiz,
+											'examinee',
+										);
 									return (
 										<React.Fragment key={quiz._id}>
 											<Grid item xs={4} md={12}>
@@ -223,7 +269,9 @@ function ExamineeHomePage() {
 									const cardProps =
 										unenrolledQuizCardViewGenerator(
 											quiz,
-											enrollForAQuizHandler,
+											enrollForAQuizHandlerHelper,
+											currentLoadingEnrollBtns,
+											'examinee',
 										);
 									return (
 										<React.Fragment key={quiz._id}>
@@ -283,153 +331,17 @@ function ExamineeHomePage() {
 					</Paper>
 				</Grid>
 			</Grid>
+			<AutoHideAlert
+				isOpen={quizAlertMsg.isOpen}
+				alertMsg={quizAlertMsg.alertMsg}
+				severity={quizAlertMsg.severity}
+				onCloseHandler={() =>
+					setQuizAlertMsg(prev => ({ ...prev, isOpen: false }))
+				}
+				autoHideDuration={quizAlertMsg.autoHideDuration}
+			/>
 		</>
 	);
 }
 
 export default ExamineeHomePage;
-
-function QuizCard(props: any) {
-	const {
-		imageUrl,
-		cardContainerStyle = {},
-		cardContentStyle = {},
-		cardContentContent,
-		cardActionsStyle = {},
-		cardActionsContent,
-	} = props;
-	return (
-		<>
-			<Card sx={cardContainerStyle}>
-				<CardMedia component='img' height='140' image={imageUrl} />
-				<CardContent sx={cardContentStyle}>
-					{cardContentContent}
-				</CardContent>
-				<CardActions sx={cardActionsStyle}>
-					{cardActionsContent}
-				</CardActions>
-			</Card>
-		</>
-	);
-}
-
-function enrolledQuizCardViewGenerator(quiz: IQuiz) {
-	const imageUrl = quiz.imageUrl;
-
-	const cardContainerStyle = {
-		margin: 2,
-	};
-	const cardActionsStyle = { justifyContent: 'space-between' };
-
-	const cardContentContent = (
-		<>
-			<Typography
-				gutterBottom
-				variant='h5'
-				component='div'
-				textAlign={'center'}
-				sx={{ textTransform: 'capitalize' }}
-			>
-				{quiz?.name}
-			</Typography>
-			<Stack
-				direction='row'
-				spacing={2}
-				justifyContent='center'
-				alignItems='center'
-				flexWrap={'wrap'}
-				className='scroll'
-				rowGap={2}
-			>
-				{quiz?.topics?.map((topic: string) => {
-					return (
-						<React.Fragment key={topic}>
-							<Chip
-								label={`${topic?.toLowerCase()}`}
-								sx={{ cursor: 'pointer' }}
-							/>
-						</React.Fragment>
-					);
-				})}
-			</Stack>
-		</>
-	);
-	const cardActionsContent = (
-		<>
-			<Button>View</Button>
-			<Button>Start</Button>
-		</>
-	);
-	return {
-		imageUrl,
-		cardContainerStyle,
-		cardActionsStyle,
-		cardContentContent,
-		cardActionsContent,
-	};
-}
-function unenrolledQuizCardViewGenerator(
-	quiz: IQuiz,
-	enrollForAQuizHandler: Function,
-) {
-	const imageUrl = quiz?.imageUrl;
-
-	const cardContainerStyle = {
-		margin: 2,
-	};
-	const cardActionsStyle = { justifyContent: 'space-between' };
-
-	const enrollForAQuizPayLoad = {
-		quizId: quiz._id,
-	};
-	const cardContentContent = (
-		<>
-			<Typography
-				gutterBottom
-				variant='h5'
-				component='div'
-				textAlign={'center'}
-				sx={{ textTransform: 'capitalize' }}
-			>
-				{quiz?.name}
-			</Typography>
-			<Stack
-				direction='row'
-				spacing={2}
-				justifyContent='center'
-				alignItems='center'
-				flexWrap={'wrap'}
-				className='scroll'
-				rowGap={2}
-			>
-				{quiz?.topics?.map((topic: string) => {
-					return (
-						<React.Fragment key={topic}>
-							<Chip
-								label={`${topic?.toLowerCase()}`}
-								sx={{ cursor: 'pointer' }}
-							/>
-						</React.Fragment>
-					);
-				})}
-			</Stack>
-		</>
-	);
-	const cardActionsContent = (
-		<>
-			<Button>View</Button>
-			<Button
-				onClick={() => enrollForAQuizHandler(enrollForAQuizPayLoad)}
-			>
-				Enroll
-			</Button>
-		</>
-	);
-	return {
-		imageUrl,
-		cardContainerStyle,
-		cardActionsStyle,
-		cardContentContent,
-		cardActionsContent,
-	};
-}
