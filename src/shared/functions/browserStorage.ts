@@ -1,3 +1,4 @@
+import { RootState } from './../../app/store';
 const KEY = 'quiz-app';
 export function loadReduxState() {
 	try {
@@ -9,7 +10,7 @@ export function loadReduxState() {
 	}
 }
 
-export async function saveReduxState(state: any) {
+export async function saveReduxState(state: RootState) {
 	try {
 		const serializedState = JSON.stringify(state);
 		sessionStorage.setItem(KEY, serializedState);

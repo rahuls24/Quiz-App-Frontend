@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import { IQuiz } from '../../interfaces/Quiz';
+import { IQuizzesTableProps } from '../../interfaces/Components';
 const columns: GridColDef[] = [
 	{ field: 'id', headerName: 'NO', width: 90, hideable: false },
 	{
@@ -23,10 +24,9 @@ const columns: GridColDef[] = [
 	},
 ];
 
-export default function QuizzesTable(props: any) {
+export default function QuizzesTable(props: IQuizzesTableProps) {
 	const { quizzesList } = props;
-	let rows = createRows(quizzesList ?? []);
-
+	let rows = createRows(quizzesList);
 	return (
 		<>
 			<Box sx={{ height: '63vh', width: '100%',paddingLeft:'1%' }}>
@@ -44,7 +44,7 @@ export default function QuizzesTable(props: any) {
 	);
 }
 
-function createRows(quizzes: any) {
+function createRows(quizzes: Array<IQuiz>) {
 	let rows: any = [];
 	quizzes.forEach((quiz: IQuiz, index: number) => {
 		let row = {

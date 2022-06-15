@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+export interface IUSerDetails{
+	_id:string,
+		name:string,
+		email:string,
+		role: 'examiner' | 'examinee',
+		isVerified:boolean,
+}
 
 export interface AuthState {
 	isAuthorize: boolean;
@@ -10,7 +17,7 @@ export interface AuthState {
 		severity: 'error' | 'warning' | 'success';
 		autoHideDuration: number;
 	};
-	userDetails: any;
+	userDetails: null | IUSerDetails;
 }
 const initialState: AuthState = {
 	isAuthorize: false,
