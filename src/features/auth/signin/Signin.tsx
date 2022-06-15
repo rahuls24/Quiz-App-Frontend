@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as R from 'ramda';
-// MUI import 
+// MUI import
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -19,13 +19,12 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 // Components import
-import Copyright  from '../../../shared/components/Copyright';
+import Copyright from '../../../shared/components/Copyright';
 import AutoHideAlert from '../../../shared/components/AutoHideAlert';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 
 import { useNavigate } from 'react-router-dom';
-
 
 import { useSigninUserMutation } from '../../../app/apis/apiSlice';
 import {
@@ -91,9 +90,9 @@ export default function Signin() {
 		validationSchema: validationSchema,
 		onSubmit: async values => {
 			try {
-				let data: any = await signinUser(values);
-				if (data?.error) return;
-				if (data?.data?.token) {
+				let data = await signinUser(values);
+				if ('error' in data) return;
+				if ('data' in data && 'token' in data.data) {
 					dispatch(authorizeUser(data.data.token));
 				}
 			} catch (error) {
@@ -266,6 +265,3 @@ export default function Signin() {
 		</>
 	);
 }
-
-
-

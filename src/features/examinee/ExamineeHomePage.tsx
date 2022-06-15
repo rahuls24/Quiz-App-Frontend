@@ -77,7 +77,9 @@ function ExamineeHomePage() {
 	const [currentLoadingEnrollBtns, setCurrentLoadingEnrollBtns] =
 		React.useState([] as string[]);
 
-	const enrollForAQuizHandlerHelper = async (quizPayload: any) => {
+	const enrollForAQuizHandlerHelper = async (quizPayload: {
+		quizId: string;
+	}) => {
 		setCurrentLoadingEnrollBtns(prev => [...prev, quizPayload.quizId]);
 		try {
 			let data = await enrollForAQuizHandler(quizPayload);

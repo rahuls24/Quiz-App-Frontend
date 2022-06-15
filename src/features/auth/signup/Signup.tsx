@@ -69,8 +69,8 @@ export default function Signup() {
 		validationSchema: validationSchema,
 		onSubmit: async values => {
 			try {
-				let user: any = await signupUser(values);
-				if (user?.error) return;
+				let user = await signupUser(values);
+				if ('error' in user) return;
 				R.compose(
 					dispatch,
 					setAuthAlertState,

@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda'
 import {
 	selectIsAuthorize,
 	setUserDetails,
@@ -16,13 +17,12 @@ function HomePage() {
 	const { role: currentUserRole = 'examinee' } =
 		useAppSelector(selectUserDetails) ?? {};
 	const dispatch = useAppDispatch();
-	const { data, isSuccess } = useGetUserDetailsQuery('');
+	const { data:userDetails, isSuccess } = useGetUserDetailsQuery('');
 	React.useEffect(() => {
-		let user: any = data;
 		if (isSuccess) {
-			dispatch(setUserDetails(user?.user));
+			R.compose(dispatch,setUserDetails)(userDetails?.user);
 		}
-	}, [isSuccess, dispatch, data]);
+	}, [isSuccess, dispatch, userDetails]);
 	let navigate = useNavigate();
 	React.useEffect(() => {
 		if (!isLogin) {

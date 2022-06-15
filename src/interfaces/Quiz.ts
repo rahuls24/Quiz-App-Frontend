@@ -10,3 +10,10 @@ export interface IQuiz{
 	imageUrl: string;
 	createOn: Date;
 }
+
+export interface IQuizRow {
+	id: number;
+	quizName: string;
+	topics: string;
+	enrolledBy: number;
+}
