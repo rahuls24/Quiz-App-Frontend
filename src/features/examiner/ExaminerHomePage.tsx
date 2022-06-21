@@ -3,13 +3,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Box from '@mui/material/Box';
@@ -30,14 +24,60 @@ function ExaminerHomePage() {
 		isError: isMyQuizzesHavingError,
 		error: errorOfMyQuizzesApi,
 		refetch: reFetchMyQuizzesList,
-	} = useGetAllEnrolledCoursesQuery('');
+	} = useGetAllEnrolledCoursesQuery(null, {
+		refetchOnFocus: true,
+		refetchOnReconnect: true,
+	});
 	const {
 		data: { quizzes: allQuizListExcludedMyQuizzesList = [] } = {},
 		isFetching: isAllQuizListExcludedMyQuizzesApiFetching,
 		isError: isAllQuizListExcludedMyQuizzesHavingError,
 		error: errorOfAllQuizListExcludedMyQuizzesApi,
 		refetch: reFetchAllQuizListExcludedMyQuizzesList,
-	} = useGetAllUnenrolledCoursesQuery('');
+	} = useGetAllUnenrolledCoursesQuery(null, {
+		refetchOnFocus: true,
+		refetchOnReconnect: true,
+	});
+	const [shouldShowReloadBtns, shouldShowReloadBtnsHandler] = React.useState({
+		forMyQuizzesList: true,
+		forAllQuizListExcludedMyQuizzesList: true,
+	});
+
+	React.useEffect(() => {
+		if (
+			!isMyQuizzesHavingError &&
+			!isAllQuizListExcludedMyQuizzesHavingError
+		)
+			return;
+		let shouldShowReloadBtnsInitialState = {
+			forMyQuizzesList: true,
+			forAllQuizListExcludedMyQuizzesList: true,
+		};
+		if (errorOfMyQuizzesApi && 'status' in errorOfMyQuizzesApi) {
+			if (errorOfMyQuizzesApi.status === 500)
+				shouldShowReloadBtnsInitialState.forMyQuizzesList = false;
+		}
+		if (
+			errorOfAllQuizListExcludedMyQuizzesApi &&
+			'status' in errorOfAllQuizListExcludedMyQuizzesApi
+		) {
+			if (errorOfAllQuizListExcludedMyQuizzesApi.status === 500)
+				shouldShowReloadBtnsInitialState.forAllQuizListExcludedMyQuizzesList =
+					false;
+		}
+		shouldShowReloadBtnsHandler(shouldShowReloadBtnsInitialState);
+	}, [
+		isMyQuizzesHavingError,
+		errorOfMyQuizzesApi,
+		isAllQuizListExcludedMyQuizzesHavingError,
+		errorOfAllQuizListExcludedMyQuizzesApi,
+		shouldShowReloadBtnsHandler,
+	]);
+
+	React.useEffect(() => {
+		reFetchMyQuizzesList();
+		reFetchAllQuizListExcludedMyQuizzesList();
+	}, [reFetchMyQuizzesList, reFetchAllQuizListExcludedMyQuizzesList]);
 	return (
 		<>
 			<Grid
@@ -74,10 +114,26 @@ function ExaminerHomePage() {
 							}}
 							className={'scroll'}
 						>
+							{isMyQuizzesApiFetching && (
+								<Box
+									sx={{
+										width: '100%',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<CircularProgress />
+								</Box>
+							)}
 							{!isMyQuizzesApiFetching &&
+								!isMyQuizzesHavingError &&
 								myQuizzesList.map((quiz: IQuiz) => {
 									const cardProps =
-										enrolledQuizCardViewGenerator(quiz,'examiner');
+										enrolledQuizCardViewGenerator(
+											quiz,
+											'examiner',
+										);
 									return (
 										<React.Fragment key={quiz._id}>
 											<Grid item xs={4} md={12}>
@@ -86,10 +142,54 @@ function ExaminerHomePage() {
 										</React.Fragment>
 									);
 								})}
+							{!isMyQuizzesApiFetching &&
+								isMyQuizzesHavingError && (
+									<Box
+										sx={{
+											width: '100%',
+											display: 'flex',
+											flexDirection: 'column',
+											justifyContent: 'center',
+											alignItems: 'center',
+										}}
+									>
+										<Typography
+											variant='body1'
+											gutterBottom
+											component='div'
+											textAlign={'center'}
+											color={'error'}
+											sx={{ textTransform: 'capitalize' }}
+										>
+											{'Unable to fetch all live Quizzes'}
+										</Typography>
+										{shouldShowReloadBtns.forMyQuizzesList ? (
+											<Button
+												variant='outlined'
+												endIcon={<ReplayIcon />}
+												onClick={reFetchMyQuizzesList}
+											>
+												Reload
+											</Button>
+										) : (
+											<Typography
+												variant='button'
+												gutterBottom
+												component='div'
+												textAlign={'center'}
+												sx={{
+													textTransform: 'capitalize',
+												}}
+											>
+												{'Try After Sometime.....'}
+											</Typography>
+										)}
+									</Box>
+								)}
 						</Grid>
 					</Paper>
 				</Grid>
-				<Grid item xs={4} md={7}>
+				<Grid item xs={4} md={7} >
 					<Paper
 						sx={{
 							minHeight: '85vh',
@@ -107,7 +207,75 @@ function ExaminerHomePage() {
 							Quizzes Live Now
 						</Typography>
 						<Divider variant='middle' />
-						<QuizzesTable quizzesList={allQuizListExcludedMyQuizzesList} />
+						{isAllQuizListExcludedMyQuizzesApiFetching && (
+							<Box
+								sx={{
+									width: '100%',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									height:'75vh'
+								}}
+							>
+								<CircularProgress />
+							</Box>
+						)}
+						{!isAllQuizListExcludedMyQuizzesApiFetching &&
+							!isAllQuizListExcludedMyQuizzesHavingError && (
+								<QuizzesTable
+									quizzesList={
+										allQuizListExcludedMyQuizzesList
+									}
+								/>
+							)}
+
+						{!isAllQuizListExcludedMyQuizzesApiFetching &&
+							isAllQuizListExcludedMyQuizzesHavingError && (
+								<Box
+									sx={{
+										width: '100%',
+										height:'75vh',
+										display: 'flex',
+										flexDirection: 'column',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<Typography
+										variant='body1'
+										gutterBottom
+										component='div'
+										textAlign={'center'}
+										color={'error'}
+										sx={{ textTransform: 'capitalize' }}
+									>
+										{'Unable to fetch all live Quizzes'}
+									</Typography>
+									{shouldShowReloadBtns.forAllQuizListExcludedMyQuizzesList ? (
+										<Button
+											variant='outlined'
+											endIcon={<ReplayIcon />}
+											onClick={
+												reFetchAllQuizListExcludedMyQuizzesList
+											}
+										>
+											Reload
+										</Button>
+									) : (
+										<Typography
+											variant='button'
+											gutterBottom
+											component='div'
+											textAlign={'center'}
+											sx={{
+												textTransform: 'capitalize',
+											}}
+										>
+											{'Try After Sometime.....'}
+										</Typography>
+									)}
+								</Box>
+							)}
 					</Paper>
 				</Grid>
 			</Grid>

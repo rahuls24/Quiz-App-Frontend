@@ -61,6 +61,13 @@ export const apiSlice = createApi({
 			}),
 			invalidatesTags: ['Quiz'],
 		}),
+		saveAQuiz: builder.mutation({
+			query: payload => ({
+				url: '/quiz/save-a-quiz',
+				method: 'POST',
+				body: payload,
+			}),
+		}),
 	}),
 });
 
@@ -71,4 +78,5 @@ export const {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 	useEnrollForAQuizMutation,
+	useSaveAQuizMutation,
 } = apiSlice;

@@ -1,6 +1,7 @@
 import authReducer from './../features/auth/authSlice';
 import { apiSlice } from './apis/apiSlice';
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import {loadReduxState} from '../shared/functions/browserStorage'
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,7 @@ export const store = configureStore({
   getDefaultMiddleware().concat(apiSlice.middleware),
   preloadedState: loadReduxState(),
 });
-
+setupListeners(store.dispatch);
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

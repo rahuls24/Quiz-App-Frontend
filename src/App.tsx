@@ -5,6 +5,7 @@ import { defaultTheme } from './shared/components/globalTheme';
 import Signin from './features/auth/signin/Signin';
 import Signup from './features/auth/signup/Signup';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import QuizMakerPage from './pages/QuizMakerPage';
 function App() {
 	return (
 		<>
@@ -14,6 +15,7 @@ function App() {
 						<Route path='/' element={<HomePage />}></Route>
 						<Route path='auth/signin' element={<Signin />} />
 						<Route path='auth/signup' element={<Signup />} />
+						<Route path='quiz/make-a-quiz' element={<QuizMakerPage />} />
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</BrowserRouter>

@@ -229,7 +229,7 @@ function getNavBtnForCurrentUser(role='examinee') {
 		case 'examiner':
 			return [
 				{ name: 'Live Quizzes', path: '/' },
-				{ name: 'Make a Quiz', path: 'make-a-quiz' },
+				{ name: 'Make a Quiz', path: 'quiz/make-a-quiz' },
 				{ name: 'Quizzes History', path: 'quiz-history' },
 			];
 		default:

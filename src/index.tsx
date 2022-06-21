@@ -9,25 +9,33 @@ import { store } from './app/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-import { debounce } from "debounce";
+import { debounce } from 'debounce';
 import { saveReduxState } from './shared/functions/browserStorage';
 store.subscribe(
-  // we use debounce to save the state once each 800ms
-  // for better performances in case multiple changes occur in a short time
-  debounce(() => {
-    saveReduxState(store.getState());
-  }, 800)
+	// we use debounce to save the state once each 800ms
+	// for better performances in case multiple changes occur in a short time
+	debounce(() => {
+		saveReduxState(store.getState());
+	}, 800),
 );
 const container = document.getElementById('root')!;
 const root = createRoot(container);
-
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
-);
+const isStrictMode = true;
+if (isStrictMode) {
+	root.render(
+		<React.StrictMode>
+			<Provider store={store}>
+				<App />
+			</Provider>
+		</React.StrictMode>,
+	);
+} else {
+	root.render(
+		<Provider store={store}>
+			<App />
+		</Provider>,
+	);
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
