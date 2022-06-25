@@ -19,8 +19,7 @@ type QuestionsViewProps = {
 };
 
 export default function QuestionsView(props: QuestionsViewProps) {
-	const { questionIndex, question, updateQuestionsList} =
-		props;
+	const { questionIndex, question, updateQuestionsList } = props;
 	const questionOptionsInputHandler = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 		index: number,
@@ -32,12 +31,7 @@ export default function QuestionsView(props: QuestionsViewProps) {
 			);
 
 			if (currentQuestion.options[index] === '') {
-				if (index % 2 === 0) {
-					currentQuestion.options.push('');
-				} else {
-					currentQuestion.options.push('');
-					currentQuestion.options.push('');
-				}
+				currentQuestion.options.push('');
 			}
 
 			currentQuestion.options[index] = currentOptionValue;
@@ -62,12 +56,11 @@ export default function QuestionsView(props: QuestionsViewProps) {
 	) => {
 		let currentQuestion: Question = JSON.parse(JSON.stringify(question));
 		if (e.target.checked) {
-			currentQuestion.correctAnswers.push(index);
+			currentQuestion.answers.push(index);
 		} else {
-			currentQuestion.correctAnswers =
-				currentQuestion.correctAnswers.filter(
-					answer => answer !== index,
-				);
+			currentQuestion.answers = currentQuestion.answers.filter(
+				answer => answer !== index,
+			);
 		}
 		updateQuestionsList({
 			updatedQuestion: currentQuestion,
@@ -79,19 +72,17 @@ export default function QuestionsView(props: QuestionsViewProps) {
 		currentQuestion.options = currentQuestion.options.filter(
 			(_, i) => i !== index,
 		);
-		currentQuestion.correctAnswers = currentQuestion.correctAnswers.filter(
+		currentQuestion.answers = currentQuestion.answers.filter(
 			answer => answer !== index,
 		);
-		console.log({ filter: currentQuestion.correctAnswers });
-		currentQuestion.correctAnswers = currentQuestion.correctAnswers.map(
-			answer => {
-				if (index > answer) {
-					return answer;
-				} else {
-					return answer - 1;
-				}
-			},
-		);
+		console.log({ filter: currentQuestion.answers });
+		currentQuestion.answers = currentQuestion.answers.map(answer => {
+			if (index > answer) {
+				return answer;
+			} else {
+				return answer - 1;
+			}
+		});
 		updateQuestionsList({
 			updatedQuestion: currentQuestion,
 			index: questionIndex,
@@ -159,7 +150,7 @@ export default function QuestionsView(props: QuestionsViewProps) {
 										<Tooltip title='Mark Correct Answer'>
 											<Checkbox
 												color='success'
-												checked={question.correctAnswers.includes(
+												checked={question.answers.includes(
 													index,
 												)}
 												onChange={e =>

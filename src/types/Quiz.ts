@@ -5,5 +5,15 @@ export type QuizzesMappingWithIndex = {
 export type Question = {
 	title: string;
 	options: string[];
-	correctAnswers: number[];
+	answers: number[];
 };
+
+export type QuizData= {
+	quiz: IQuiz,
+	questions :{
+		_id:string;
+		title: string;
+		options: string[];
+		answers: string[];
+	}[]
+}

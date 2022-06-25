@@ -20,6 +20,7 @@ const getDesignTokens = (mode: PaletteMode) => ({
 						secondary: '#757575',
 					},
 					divider: '#BDBDBD',
+					
 			  }
             //   TODO: Implement dark design
 			: {

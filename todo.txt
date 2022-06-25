@@ -1,0 +1,2 @@
+1. Make a 404 page 
+2. Make a no quiz page

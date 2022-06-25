@@ -24,7 +24,7 @@ import AutoHideAlert from '../../../shared/components/AutoHideAlert';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Location } from 'react-router-dom';
 
 import { useSigninUserMutation } from '../../../app/apis/apiSlice';
 import {
@@ -62,11 +62,14 @@ export default function Signin() {
 	const [shouldShowPassword, setShowPassword] = React.useState(false);
 	const dispatch = useAppDispatch();
 	let navigate = useNavigate();
+	let location = useLocation();
+	let from = getRedirectLocation(location);
+
 	React.useEffect(() => {
 		if (isLogin) {
-			navigate('/');
+			navigate(from);
 		}
-	}, [isLogin, navigate]);
+	}, [isLogin, navigate, from]);
 
 	React.useEffect(() => {
 		if (isError) {
@@ -264,4 +267,13 @@ export default function Signin() {
 			/>
 		</>
 	);
+}
+interface ReactRouterLocationStateType {
+	from: { pathname: string };
+}
+// Util Function
+function getRedirectLocation(location: Location) {
+	let state: ReactRouterLocationStateType =
+		location.state as ReactRouterLocationStateType;
+	return state?.from?.pathname ?? '/';
 }

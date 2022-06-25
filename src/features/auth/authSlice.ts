@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+export interface IAuthAlertState {
+	flag: boolean;
+	severity: 'error' | 'warning' | 'success';
+	autoHideDuration: number;
+}
 export interface IUSerDetails{
 	_id:string,
 		name:string,
@@ -69,8 +74,4 @@ export const selectAuthAlertState = (state: RootState) =>
 export const selectUserDetails = (state: RootState) => state.auth.userDetails;
 export default authSlice.reducer;
 
-export interface IAuthAlertState {
-	flag: boolean;
-	severity: 'error' | 'warning' | 'success';
-	autoHideDuration: number;
-}
+

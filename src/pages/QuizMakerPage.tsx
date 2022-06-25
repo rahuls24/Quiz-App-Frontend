@@ -8,7 +8,10 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import { useSaveAQuizMutation } from '../app/apis/apiSlice';
+import {
+	useSaveAQuizMutation,
+	useSaveQuestionsForAQuizMutation,
+} from '../app/apis/apiSlice';
 import Save from '@mui/material/DialogTitle';
 import AddQuizInputField from '../features/examiner/QuizMaker/AddQuizInputField';
 import ConfirmQuizPopup from '../features/examiner/QuizMaker/ConfirmQuizPopupProps';
@@ -17,24 +20,28 @@ import QuestionsView from '../features/examiner/QuizMaker/QuestionsView';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AutoHideAlert from '../shared/components/AutoHideAlert';
 import { IAutoHideAlert } from '../interfaces/Components';
+import Header from '../shared/components/Header';
+import { isNonEmptyString } from '../shared/functions/utility';
+import { useNavigate } from 'react-router-dom';
 // --------------------------Import Ended----------------------------------------
 
-type QuizMakerForm = {
-	quizName: string;
-	quizId: string;
-	topics: string;
-	questions: Question[];
-};
-const quizMakerFormInitialState: QuizMakerForm = {
-	quizName: '',
-	topics: '',
-	quizId: '',
-	questions: [] as Question[],
-};
-
 function QuizMakerPage() {
-	const [saveAQuiz, { isError, isSuccess, isLoading }] =
-		useSaveAQuizMutation();
+	const [
+		saveAQuiz,
+		{
+			isError: isErrorForSaveAQuiz,
+			isSuccess: isSuccessForSaveAQuiz,
+			isLoading: isLoadingForSaveAQuiz,
+		},
+	] = useSaveAQuizMutation();
+	const [
+		saveQuestionsOfTheQuiz,
+		{
+			isError: isErrorForSaveQuestionsOfTheQuiz,
+			isSuccess: isSuccessForSaveQuestionsOfTheQuiz,
+			isLoading: isLoadingForSaveQuestionsOfTheQuiz,
+		},
+	] = useSaveQuestionsForAQuizMutation();
 	const [isQuizSaveConfirmationPopupOpen, setQuizSaveConfirmationPopupOpen] =
 		React.useState(false);
 	const [autoHideAlertProps, setAutoHideAlertProps] =
@@ -46,18 +53,20 @@ function QuizMakerPage() {
 		});
 	const [quizMakerFormState, quizMakerFormDispatch] = React.useReducer(
 		quizMakerReducer,
-		quizMakerFormInitialState,
+		getQuizMakerFormInitialState(),
 	);
 	const actionDispatcherForQuizMakerForm = React.useMemo(() => {
 		return actionCreatorForQuizMakerForm(quizMakerFormDispatch);
 	}, []);
+
+	const navigate = useNavigate();
 	const addQuestionHandler = () => {
 		// It means quiz is already save in db. Now we have add new question
 		if (quizMakerFormState.quizId !== '') {
 			let newQuestion = {
 				title: '',
 				options: ['', ''],
-				correctAnswers: [] as number[],
+				answers: [] as number[],
 			};
 			let updateQuestionsListPayload = {
 				updatedQuestion: newQuestion,
@@ -79,28 +88,59 @@ function QuizMakerPage() {
 					? 'misc'
 					: quizMakerFormState.topics,
 		};
-		const quizData = await saveAQuiz(saveAQuizPayload);
-		if (quizData && 'error' in quizData) return;
-		if (!quizData.data?.quiz?._id) return;
-		actionDispatcherForQuizMakerForm.setQuizId(quizData.data?.quiz?._id);
-		const firstQuestion: Question = {
-			title: '',
-			options: ['', ''],
-			correctAnswers: [] as number[],
-		};
-		const updateQuestionsListPayload = {
-			updatedQuestion: firstQuestion,
-			index: 0,
-		};
-		actionDispatcherForQuizMakerForm.updateQuestionsList(
-			updateQuestionsListPayload,
+		try {
+			const quizData = await saveAQuiz(saveAQuizPayload);
+			if (quizData && 'error' in quizData) return;
+			if (!quizData.data?.quiz?._id) return;
+			actionDispatcherForQuizMakerForm.setQuizId(
+				quizData.data?.quiz?._id,
+			);
+			const firstQuestion: Question = {
+				title: '',
+				options: ['', ''],
+				answers: [] as number[],
+			};
+			const updateQuestionsListPayload = {
+				updatedQuestion: firstQuestion,
+				index: 0,
+			};
+			actionDispatcherForQuizMakerForm.updateQuestionsList(
+				updateQuestionsListPayload,
+			);
+		} catch (error) {}
+	};
+
+	const saveQuestionsOfTheQuizHandler = async () => {
+		const questionsArrayForPayload = quizMakerFormState.questions.map(
+			question => {
+				return {
+					questionText: question.title,
+					questionType:
+						question.answers.length === 1
+							? 'singleAnswer'
+							: 'multipleAnswer',
+					quizzes: [quizMakerFormState.quizId],
+					options: question.options,
+					answers: question.answers,
+				};
+			},
 		);
+		const questionPayload = {
+			questionsData: questionsArrayForPayload,
+		};
+		try {
+			await saveQuestionsOfTheQuiz(questionPayload);
+		} catch (error) {
+			// ignore
+		}
 	};
 
 	//! useEffect ---
 	// For manipulating autoHideAlertProps
+
+	// For saving quiz name and its topic
 	React.useEffect(() => {
-		if (isSuccess) {
+		if (isSuccessForSaveAQuiz) {
 			setAutoHideAlertProps({
 				isOpen: true,
 				alertMsg: 'Quiz name and topics are saved successfully',
@@ -109,7 +149,7 @@ function QuizMakerPage() {
 			});
 			return;
 		}
-		if (isError) {
+		if (isErrorForSaveAQuiz) {
 			setAutoHideAlertProps({
 				isOpen: true,
 				alertMsg: 'Something went wrong. Please try again',
@@ -118,9 +158,34 @@ function QuizMakerPage() {
 			});
 			return;
 		}
-	}, [isError, isSuccess]);
+	}, [isErrorForSaveAQuiz, isSuccessForSaveAQuiz]);
+
+	// For Saving the complete quiz
+	React.useEffect(() => {
+		if (isSuccessForSaveQuestionsOfTheQuiz) {
+			setAutoHideAlertProps({
+				isOpen: true,
+				alertMsg: 'Quiz is created successfully',
+				severity: 'success',
+				autoHideDuration: 6000,
+			});
+			navigate('/');
+			return;
+		}
+		if (isErrorForSaveQuestionsOfTheQuiz) {
+			setAutoHideAlertProps({
+				isOpen: true,
+				alertMsg: 'Something went wrong. Please try again',
+				severity: 'error',
+				autoHideDuration: 4000,
+			});
+			return;
+		}
+	}, [isSuccessForSaveQuestionsOfTheQuiz, isErrorForSaveQuestionsOfTheQuiz]);
+
 	return (
 		<>
+			<Header />
 			<Container component='main' maxWidth='md'>
 				<CssBaseline />
 				<Box
@@ -174,7 +239,9 @@ function QuizMakerPage() {
 							quizMakerFormState.questions.length <= 0 ? (
 								<Grid item xs={4} md={12}>
 									<LoadingButton
-										loading={isLoading ? true : false}
+										loading={
+											isLoadingForSaveAQuiz ? true : false
+										}
 										fullWidth
 										loadingPosition='end'
 										endIcon={<AddIcon />}
@@ -224,21 +291,27 @@ function QuizMakerPage() {
 										}}
 									></Grid>
 									<Grid item xs={4} md={3}>
-										<Button
+										<LoadingButton
 											variant='contained'
 											fullWidth
-											endIcon={<Save />}
-											sx={{ marginTop: 1 }}
-											color='success'
-											disabled={
-												quizMakerFormState.questions[0]
-													.title === ''
+											loading={
+												isLoadingForSaveQuestionsOfTheQuiz
 													? true
 													: false
 											}
+											loadingPosition='end'
+											endIcon={<Save />}
+											sx={{ marginTop: 1 }}
+											color='success'
+											disabled={shouldDisableSaveQuiz(
+												quizMakerFormState.questions,
+											)}
+											onClick={
+												saveQuestionsOfTheQuizHandler
+											}
 										>
 											Save Quiz
-										</Button>
+										</LoadingButton>
 									</Grid>
 								</>
 							)}
@@ -267,6 +340,12 @@ function QuizMakerPage() {
 export default QuizMakerPage;
 
 // For Reducer Start
+type QuizMakerForm = {
+	quizName: string;
+	quizId: string;
+	topics: string;
+	questions: Question[];
+};
 type QuizMakerFormActionWithStringPayload = {
 	type:
 		| 'SET_QUIZ_NAME'
@@ -283,9 +362,15 @@ type QuizMakerFormActionWithQuestionTypePayload = {
 	};
 };
 
+type QuizMakerFromActionWithWholeState = {
+	type: 'SET_THE_STORE_TO_INITIAL_STATE';
+	payload: QuizMakerForm;
+};
+
 type QuizMakerFormAction =
 	| QuizMakerFormActionWithStringPayload
-	| QuizMakerFormActionWithQuestionTypePayload;
+	| QuizMakerFormActionWithQuestionTypePayload
+	| QuizMakerFromActionWithWholeState;
 
 function quizMakerReducer(state: QuizMakerForm, action: QuizMakerFormAction) {
 	switch (action.type) {
@@ -300,6 +385,8 @@ function quizMakerReducer(state: QuizMakerForm, action: QuizMakerFormAction) {
 			currentQuestionsList[action.payload.index] =
 				action.payload.updatedQuestion;
 			return { ...state, questions: currentQuestionsList };
+		case 'SET_THE_STORE_TO_INITIAL_STATE':
+			return { ...action.payload };
 		default:
 			return state;
 	}
@@ -326,11 +413,50 @@ function actionCreatorForQuizMakerForm(
 			payload: questionsList,
 		});
 	}
+
+	function setQuizMakerFormStateToInitialState(state: QuizMakerForm) {
+		dispatch({
+			type: 'SET_THE_STORE_TO_INITIAL_STATE',
+			payload: state,
+		});
+	}
 	return {
 		setQuizName,
 		setTopicsForTheQuiz,
 		setQuizId,
 		updateQuestionsList,
+		setQuizMakerFormStateToInitialState,
+	};
+}
+
+function getQuizMakerFormInitialState(): QuizMakerForm {
+	return {
+		quizName: '',
+		topics: '',
+		quizId: '',
+		questions: [] as Question[],
 	};
 }
 // For Reducer Ended
+
+// Util Functions
+function shouldDisableSaveQuiz(questionsList: Question[]) {
+	return !questionsList.every(isValidQuestion);
+	// Helper functions
+	function isValidQuestion(question: Question) {
+		return (
+			isNonEmptyString(question.title) &&
+			isValidOptionAndAnswer(question.options, question.answers)
+		);
+	}
+	function isValidOptionAndAnswer(options: string[], answers: number[]) {
+		if (options.length === 0 || answers.length === 0) return false;
+		const isValidAnswer = isValidAnswerHelper(options.length);
+		return options.every(isNonEmptyString) && answers.every(isValidAnswer);
+	}
+	function isValidAnswerHelper(optionLength: number) {
+		return (answer: number) => {
+			return optionLength > answer;
+		};
+	}
+}

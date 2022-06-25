@@ -1,23 +1,25 @@
 import React from 'react';
+import * as R from 'ramda';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import ReplayIcon from '@mui/icons-material/Replay';
-import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 } from '../../app/apis/apiSlice';
-import QuizCard from '../../shared/components/QuizCard';
-import { enrolledQuizCardViewGenerator } from '../../shared/functions/quizRelated';
-import { IQuiz } from '../../interfaces/Quiz';
-import QuizzesTable from './QuizzesTable';
+import AllQuizView from './components/AllQuizView';
+import MyQuizView from './components/MyQuizView';
+import QuizDetailsView from '../quiz/QuizDetailsView';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {
+	selectIsQuizDetailsViewOpen,
+	setIsQuizDetailsViewOpen,
+} from '../quiz/QuizSlice';
+import { useNavigate } from 'react-router-dom';
+
 function ExaminerHomePage() {
+	const navigate = useNavigate()
 	const {
 		data: { quizzes: myQuizzesList = [] } = {},
 		isFetching: isMyQuizzesApiFetching,
@@ -25,7 +27,6 @@ function ExaminerHomePage() {
 		error: errorOfMyQuizzesApi,
 		refetch: reFetchMyQuizzesList,
 	} = useGetAllEnrolledCoursesQuery(null, {
-		refetchOnFocus: true,
 		refetchOnReconnect: true,
 	});
 	const {
@@ -35,7 +36,6 @@ function ExaminerHomePage() {
 		error: errorOfAllQuizListExcludedMyQuizzesApi,
 		refetch: reFetchAllQuizListExcludedMyQuizzesList,
 	} = useGetAllUnenrolledCoursesQuery(null, {
-		refetchOnFocus: true,
 		refetchOnReconnect: true,
 	});
 	const [shouldShowReloadBtns, shouldShowReloadBtnsHandler] = React.useState({
@@ -78,6 +78,51 @@ function ExaminerHomePage() {
 		reFetchMyQuizzesList();
 		reFetchAllQuizListExcludedMyQuizzesList();
 	}, [reFetchMyQuizzesList, reFetchAllQuizListExcludedMyQuizzesList]);
+	const allQuizViewProps = React.useMemo(() => {
+		return {
+			isFetching: isAllQuizListExcludedMyQuizzesApiFetching,
+			isError: isAllQuizListExcludedMyQuizzesHavingError,
+			reFetchAllQuizList: reFetchAllQuizListExcludedMyQuizzesList,
+
+			shouldShowReloadBtn:
+				shouldShowReloadBtns.forAllQuizListExcludedMyQuizzesList,
+
+			quizList: allQuizListExcludedMyQuizzesList,
+		};
+	}, [
+		isAllQuizListExcludedMyQuizzesApiFetching,
+		isAllQuizListExcludedMyQuizzesHavingError,
+		reFetchAllQuizListExcludedMyQuizzesList,
+		shouldShowReloadBtns.forAllQuizListExcludedMyQuizzesList,
+		allQuizListExcludedMyQuizzesList,
+	]);
+	const myQuizViewProps = React.useMemo(() => {
+		return {
+			isFetching: isMyQuizzesApiFetching,
+			isError: isMyQuizzesHavingError,
+			reFetchQuizList: reFetchMyQuizzesList,
+
+			shouldShowReloadBtn: shouldShowReloadBtns.forMyQuizzesList,
+
+			quizList: myQuizzesList,
+		};
+	}, [
+		isMyQuizzesApiFetching,
+		isMyQuizzesHavingError,
+		reFetchMyQuizzesList,
+		shouldShowReloadBtns.forMyQuizzesList,
+		myQuizzesList,
+	]);
+
+	// For Quiz Details
+	const dispatch = useAppDispatch();
+	const isQuizDetailsViewOpen = useAppSelector(selectIsQuizDetailsViewOpen);
+
+	React.useEffect(() => {
+		return () => {
+			R.compose(dispatch, setIsQuizDetailsViewOpen)(false);
+		};
+	}, [dispatch]);
 	return (
 		<>
 			<Grid
@@ -94,102 +139,10 @@ function ExaminerHomePage() {
 						}}
 						elevation={3}
 					>
-						<Typography
-							variant='h4'
-							gutterBottom
-							component='div'
-							textAlign={'center'}
-							paddingTop={1}
-						>
-							{'My Quizzes'}
-						</Typography>
-						<Divider variant='middle' />
-						<Grid
-							container
-							columns={{ xs: 4, md: 12 }}
-							sx={{
-								maxHeight: '75vh',
-								minHeight: '75vh',
-								overflowY: 'auto',
-							}}
-							className={'scroll'}
-						>
-							{isMyQuizzesApiFetching && (
-								<Box
-									sx={{
-										width: '100%',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<CircularProgress />
-								</Box>
-							)}
-							{!isMyQuizzesApiFetching &&
-								!isMyQuizzesHavingError &&
-								myQuizzesList.map((quiz: IQuiz) => {
-									const cardProps =
-										enrolledQuizCardViewGenerator(
-											quiz,
-											'examiner',
-										);
-									return (
-										<React.Fragment key={quiz._id}>
-											<Grid item xs={4} md={12}>
-												<QuizCard {...cardProps} />
-											</Grid>
-										</React.Fragment>
-									);
-								})}
-							{!isMyQuizzesApiFetching &&
-								isMyQuizzesHavingError && (
-									<Box
-										sx={{
-											width: '100%',
-											display: 'flex',
-											flexDirection: 'column',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<Typography
-											variant='body1'
-											gutterBottom
-											component='div'
-											textAlign={'center'}
-											color={'error'}
-											sx={{ textTransform: 'capitalize' }}
-										>
-											{'Unable to fetch all live Quizzes'}
-										</Typography>
-										{shouldShowReloadBtns.forMyQuizzesList ? (
-											<Button
-												variant='outlined'
-												endIcon={<ReplayIcon />}
-												onClick={reFetchMyQuizzesList}
-											>
-												Reload
-											</Button>
-										) : (
-											<Typography
-												variant='button'
-												gutterBottom
-												component='div'
-												textAlign={'center'}
-												sx={{
-													textTransform: 'capitalize',
-												}}
-											>
-												{'Try After Sometime.....'}
-											</Typography>
-										)}
-									</Box>
-								)}
-						</Grid>
+						<MyQuizView {...myQuizViewProps} />
 					</Paper>
 				</Grid>
-				<Grid item xs={4} md={7} >
+				<Grid item xs={4} md={7}>
 					<Paper
 						sx={{
 							minHeight: '85vh',
@@ -197,100 +150,32 @@ function ExaminerHomePage() {
 						elevation={3}
 						className={'scroll'}
 					>
-						<Typography
-							variant='h4'
-							gutterBottom
-							component='div'
-							textAlign={'center'}
-							paddingTop={1}
-						>
-							Quizzes Live Now
-						</Typography>
-						<Divider variant='middle' />
-						{isAllQuizListExcludedMyQuizzesApiFetching && (
-							<Box
-								sx={{
-									width: '100%',
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									height:'75vh'
-								}}
-							>
-								<CircularProgress />
-							</Box>
-						)}
-						{!isAllQuizListExcludedMyQuizzesApiFetching &&
-							!isAllQuizListExcludedMyQuizzesHavingError && (
-								<QuizzesTable
-									quizzesList={
-										allQuizListExcludedMyQuizzesList
-									}
-								/>
-							)}
-
-						{!isAllQuizListExcludedMyQuizzesApiFetching &&
-							isAllQuizListExcludedMyQuizzesHavingError && (
-								<Box
+						{!isQuizDetailsViewOpen && (
+							<>
+								<AllQuizView {...allQuizViewProps} />
+								<Fab
+									color='primary'
+									aria-label='add'
 									sx={{
-										width: '100%',
-										height:'75vh',
-										display: 'flex',
-										flexDirection: 'column',
-										justifyContent: 'center',
-										alignItems: 'center',
+										margin: 0,
+										right: 20,
+										bottom: 20,
+										position: 'fixed',
 									}}
+									onClick={() => navigate('/quiz/make-a-quiz')}
 								>
-									<Typography
-										variant='body1'
-										gutterBottom
-										component='div'
-										textAlign={'center'}
-										color={'error'}
-										sx={{ textTransform: 'capitalize' }}
-									>
-										{'Unable to fetch all live Quizzes'}
-									</Typography>
-									{shouldShowReloadBtns.forAllQuizListExcludedMyQuizzesList ? (
-										<Button
-											variant='outlined'
-											endIcon={<ReplayIcon />}
-											onClick={
-												reFetchAllQuizListExcludedMyQuizzesList
-											}
-										>
-											Reload
-										</Button>
-									) : (
-										<Typography
-											variant='button'
-											gutterBottom
-											component='div'
-											textAlign={'center'}
-											sx={{
-												textTransform: 'capitalize',
-											}}
-										>
-											{'Try After Sometime.....'}
-										</Typography>
-									)}
-								</Box>
-							)}
+									<AddIcon />
+								</Fab>
+							</>
+						)}
+						{isQuizDetailsViewOpen && (
+							<>
+								<QuizDetailsView />
+							</>
+						)}
 					</Paper>
 				</Grid>
 			</Grid>
-			<Fab
-				color='primary'
-				aria-label='add'
-				sx={{
-					margin: 0,
-					right: 20,
-					bottom: 20,
-					position: 'fixed',
-				}}
-			>
-				<AddIcon />
-			</Fab>
 		</>
 	);
 }

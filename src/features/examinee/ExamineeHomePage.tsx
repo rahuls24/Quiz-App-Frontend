@@ -10,21 +10,18 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import Box from '@mui/material/Box';
 // Components import
 import AutoHideAlert from '../../shared/components/AutoHideAlert';
-import QuizCard from '../../shared/components/QuizCard';
+
 // interfaces import
 import { IQuiz } from '../../interfaces/Quiz';
 import { IAutoHideAlert } from '../../interfaces/Components';
 // Util function import
-import {
-	enrolledQuizCardViewGenerator,
-	unenrolledQuizCardViewGenerator,
-} from '../../shared/functions/quizRelated';
 //  Redux toolkit related import
 import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 	useEnrollForAQuizMutation,
 } from '../../app/apis/apiSlice';
+import QuizCardView from '../quiz/QuizCardView';
 
 // For useReducer
 const initialState: ExamineeHomePageLocalState = {
@@ -47,7 +44,6 @@ function ExamineeHomePage() {
 		error: errorOfEnrolledQuizApi,
 		refetch: reFetchEnrolledQuizzesList,
 	} = useGetAllEnrolledCoursesQuery(null, {
-		refetchOnFocus: true,
 		refetchOnReconnect: true,
 	});
 
@@ -58,7 +54,6 @@ function ExamineeHomePage() {
 		error: errorOfUnenrolledQuizApi,
 		refetch: reFetchUnenrolledQuizzesList,
 	} = useGetAllUnenrolledCoursesQuery(null, {
-		refetchOnFocus: true,
 		refetchOnReconnect: true,
 	});
 
@@ -90,7 +85,6 @@ function ExamineeHomePage() {
 		let currentLoadingEnrollBtns = [...state.currentLoadingEnrollBtns];
 		currentLoadingEnrollBtns.push(quizPayload.quizId);
 		setCurrentLoadingEnrollBtns(dispatch, currentLoadingEnrollBtns);
-
 		try {
 			let data = await enrollForAQuizHandler(quizPayload);
 			if ('error' in data) {
@@ -102,14 +96,8 @@ function ExamineeHomePage() {
 				severity: 'success',
 				autoHideDuration: 3000,
 			});
-			currentLoadingEnrollBtns = [...state.currentLoadingEnrollBtns];
-			currentLoadingEnrollBtns.shift();
-			setCurrentLoadingEnrollBtns(dispatch, currentLoadingEnrollBtns);
+			// ! Info: We are not removing quiz id from currentLoadingEnrollBtns state because due to closure we are not getting all request made by user at the same time.
 		} catch (error) {
-			currentLoadingEnrollBtns = [...state.currentLoadingEnrollBtns];
-			currentLoadingEnrollBtns.shift();
-			setCurrentLoadingEnrollBtns(dispatch, currentLoadingEnrollBtns);
-
 			let currentQuizAlertMsg = { ...state.quizAlertMsg };
 			currentQuizAlertMsg.isOpen = true;
 			currentQuizAlertMsg.alertMsg =
@@ -119,6 +107,9 @@ function ExamineeHomePage() {
 			setQuizAlertMsg(dispatch, currentQuizAlertMsg);
 		}
 	};
+	React.useEffect(() => {
+		return () => setCurrentLoadingEnrollBtns(dispatch, []);
+	}, []);
 	return (
 		<>
 			<Grid
@@ -169,15 +160,14 @@ function ExamineeHomePage() {
 							)}
 							{!isEnrolledQuizApiFetching &&
 								enrolledQuizzesList.map((quiz: IQuiz) => {
-									const cardProps =
-										enrolledQuizCardViewGenerator(
-											quiz,
-											'examinee',
-										);
 									return (
 										<React.Fragment key={quiz._id}>
 											<Grid item xs={4} md={12}>
-												<QuizCard {...cardProps} />
+												<QuizCardView
+													quiz={quiz}
+													roleOfUser='examinee'
+													renderedBy='enrolledQuizzes'
+												/>
 											</Grid>
 										</React.Fragment>
 									);
@@ -273,17 +263,20 @@ function ExamineeHomePage() {
 							)}
 							{!isUnenrolledQuizApiFetching &&
 								unenrolledQuizzesList.map((quiz: IQuiz) => {
-									const cardProps =
-										unenrolledQuizCardViewGenerator(
-											quiz,
-											enrollForAQuizHandlerHelper,
-											state.currentLoadingEnrollBtns,
-											'examinee',
-										);
 									return (
 										<React.Fragment key={quiz._id}>
 											<Grid item xs={4} md={6}>
-												<QuizCard {...cardProps} />
+												<QuizCardView
+													quiz={quiz}
+													roleOfUser='examinee'
+													renderedBy='liveQuizzes'
+													enrollForAQuizHandler={
+														enrollForAQuizHandlerHelper
+													}
+													currentLoadingEnrollBtns={
+														state.currentLoadingEnrollBtns
+													}
+												/>
 											</Grid>
 										</React.Fragment>
 									);

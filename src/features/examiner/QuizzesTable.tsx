@@ -1,9 +1,14 @@
 import * as React from 'react';
+import * as R from 'ramda';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import { IQuiz, IQuizRow } from '../../interfaces/Quiz';
 import { IQuizzesTableProps } from '../../interfaces/Components';
 import { QuizzesMappingWithIndex } from '../../types/Quiz';
+import { useLazyGetAllQuestionsOfAQuizQuery } from '../../app/apis/apiSlice';
+import { useAppDispatch } from '../../app/hooks';
+import { setIsQuizDetailsViewOpen, setQuizData } from '../quiz/QuizSlice';
+import { getQuestionsData } from '../../shared/functions/quizRelated';
 const columns: GridColDef[] = [
 	{ field: 'id', headerName: 'NO', width: 90, hideable: false },
 	{
@@ -27,7 +32,25 @@ const columns: GridColDef[] = [
 export default function QuizzesTable(props: IQuizzesTableProps) {
 	const { quizzesList } = props;
 	let [rows, quizzesMappingWithRowIndex] = createRows(quizzesList);
-
+	const dispatch = useAppDispatch();
+	const [getAllQuestions, { isFetching: isViewBtnLoading }] =
+		useLazyGetAllQuestionsOfAQuizQuery();
+	const viewHandler = async (quiz: IQuiz) => {
+		try {
+			const response = await getAllQuestions(quiz._id);
+			let questions = getQuestionsData(response);
+			if (questions === undefined)
+				throw new Error('Something went wrong');
+			const quizDataForDetailedView = {
+				quiz,
+				questions,
+			};
+			R.compose(dispatch, setQuizData)(quizDataForDetailedView);
+			R.compose(dispatch, setIsQuizDetailsViewOpen)(true);
+		} catch (error) {
+			// ! Handle this
+		}
+	};
 	return (
 		<>
 			<Box sx={{ height: '63vh', width: '99%', paddingLeft: '1%' }}>
@@ -40,8 +63,13 @@ export default function QuizzesTable(props: IQuizzesTableProps) {
 					// TODO: handle this
 					onRowClick={e => {
 						if ('id' in e.row) {
-							console.log(
+							viewHandler(
 								quizzesMappingWithRowIndex[String(e.row.id)],
+							);
+							console.log(
+								quizzesMappingWithRowIndex[String(e.row.id)][
+									'_id'
+								],
 							);
 						}
 					}}

@@ -15,8 +15,11 @@ code {
     monospace;
 }
 .scroll::-webkit-scrollbar {
-  width: 0.313rem;
+  max-width: 0.324rem;
+  max-height: 0.324rem;
 }
+
+
 
 .scroll::-webkit-scrollbar-thumb {
   background-color:#bdbdbd;

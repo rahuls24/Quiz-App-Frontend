@@ -13,8 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {useAppSelector} from '../../app/hooks';
-import {selectUserDetails} from '../../features/auth/authSlice'
+import { useAppSelector } from '../../app/hooks';
+import { selectUserDetails } from '../../features/auth/authSlice';
 const settings = ['Profile', 'Settings', 'Logout'];
 
 const Header = () => {
@@ -39,8 +39,8 @@ const Header = () => {
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
 	};
-  const userDetails = useAppSelector(selectUserDetails);
-  const pages = getNavBtnForCurrentUser(userDetails?.role);
+	const userDetails = useAppSelector(selectUserDetails);
+	const pages = getNavBtnForCurrentUser(userDetails?.role);
 	let location = useLocation();
 	let navigate = useNavigate();
 	const [currentActiveNavBtn, setCurrentActiveBtn] =
@@ -49,6 +49,9 @@ const Header = () => {
 		switch (location.pathname) {
 			case '/':
 				setCurrentActiveBtn('Live Quizzes');
+				break;
+			case '/quiz/make-a-quiz':
+				setCurrentActiveBtn('Make a Quiz');
 				break;
 			default:
 				break;
@@ -219,7 +222,7 @@ const Header = () => {
 export default Header;
 
 // Util Function
-function getNavBtnForCurrentUser(role='examinee') {
+function getNavBtnForCurrentUser(role = 'examinee') {
 	switch (role.toLowerCase()) {
 		case 'examinee':
 			return [
@@ -230,9 +233,8 @@ function getNavBtnForCurrentUser(role='examinee') {
 			return [
 				{ name: 'Live Quizzes', path: '/' },
 				{ name: 'Make a Quiz', path: 'quiz/make-a-quiz' },
-				{ name: 'Quizzes History', path: 'quiz-history' },
 			];
 		default:
-      return []
+			return [];
 	}
 }

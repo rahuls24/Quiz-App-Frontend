@@ -68,6 +68,18 @@ export const apiSlice = createApi({
 				body: payload,
 			}),
 		}),
+		saveQuestionsForAQuiz: builder.mutation({
+			query: payload => ({
+				url: '/question/save-questions',
+				method: 'POST',
+				body: payload,
+			}),
+		}),
+		getAllQuestionsOfAQuiz: builder.query({
+			query: (quizId) => ({
+				url: `/question/get-all-questions/${quizId}`,
+			}),
+		}),
 	}),
 });
 
@@ -79,4 +91,6 @@ export const {
 	useGetAllEnrolledCoursesQuery,
 	useEnrollForAQuizMutation,
 	useSaveAQuizMutation,
+	useSaveQuestionsForAQuizMutation,
+	useLazyGetAllQuestionsOfAQuizQuery,
 } = apiSlice;
