@@ -20,16 +20,26 @@ import {
 	selectQuizData,
 	selectIsQuizDetailsViewOpen,
 } from './QuizSlice';
-import { useLazyGetAllQuestionsOfAQuizQuery } from '../../app/apis/apiSlice';
+import {
+	useLazyGetAllQuestionsOfAQuizQuery,
+	useEnrollForAQuizMutation,
+} from '../../app/apis/apiSlice';
 import { getQuestionsData } from '../../shared/functions/quizRelated';
-
+import { IAutoHideAlert } from '../../interfaces/Components';
+import { useIsOverflowX } from '../../shared/hooks/useIsOverflow';
+var allEnrolledLoadingBtn = new Set<string>();
 export default function QuizCardView(props: QuizCardViewProps) {
+	const topicsViewRef = React.useRef();
+	const isOverflowInTopicView = useIsOverflowX(topicsViewRef);
 	const { quiz, roleOfUser } = props;
 	const quizData = useAppSelector(selectQuizData);
 	const isQuizDetailsViewOpen = useAppSelector(selectIsQuizDetailsViewOpen);
 	const dispatch = useAppDispatch();
-	const [getAllQuestions, { isFetching: isViewBtnLoading }] =
-		useLazyGetAllQuestionsOfAQuizQuery();
+	const [
+		getAllQuestions,
+		{ isFetching: isViewBtnLoading, isError: isErrorInGetAllQuestions },
+	] = useLazyGetAllQuestionsOfAQuizQuery();
+	// View Handler
 	const viewHandler = async () => {
 		try {
 			const response = await getAllQuestions(quiz._id);
@@ -46,9 +56,42 @@ export default function QuizCardView(props: QuizCardViewProps) {
 			// ! Handle this
 		}
 	};
+	const isCurrentQuizOpenedInDetailsView = React.useMemo(() => {
+		return (
+			isQuizDetailsViewOpen &&
+			isCurrentQuizIsViewedInDetailedView(quizData?.quiz?._id, quiz._id)
+		);
+	}, [quizData?.quiz?._id, quiz._id, isQuizDetailsViewOpen]);
+
+	// Enroll for a quiz handler
+	const [enrolledForAQuiz, { isError: isErrorUnenrolledForAQuiz }] =
+		useEnrollForAQuizMutation();
+	const enrolledForAQuizHandler = async () => {
+		if (roleOfUser === 'examiner') return;
+		try {
+			allEnrolledLoadingBtn.add(quiz._id);
+			await enrolledForAQuiz({
+				quizId: quiz._id,
+			});
+			allEnrolledLoadingBtn.delete(quiz._id);
+			props.setAlertMsg({
+				isOpen: true,
+				alertMsg: 'You have enrolled successfully...',
+				severity: 'success',
+				autoHideDuration: 4000,
+			});
+		} catch (error) {}
+	};
+	React.useEffect(() => {}, [
+		isErrorUnenrolledForAQuiz,
+		isErrorInGetAllQuestions,
+	]);
 	return (
 		<>
-			<Card sx={{ margin: 2 }}>
+			<Card
+				sx={{ margin: 2 }}
+				elevation={isCurrentQuizOpenedInDetailsView ? 24 : 1}
+			>
 				<CardMedia component='img' height='140' image={quiz.imageUrl} />
 				<CardContent>
 					<>
@@ -64,18 +107,19 @@ export default function QuizCardView(props: QuizCardViewProps) {
 						<Stack
 							direction='row'
 							spacing={2}
-							justifyContent='center'
+							justifyContent={isOverflowInTopicView ? 'start' : 'center'}
 							alignItems='center'
-							flexWrap={'wrap'}
-							className='scroll'
+							flexWrap={'nowrap'}
+							className='thin-scroll'
 							rowGap={2}
+							overflow={'auto'}
+							ref={topicsViewRef}
 						>
 							{quiz?.topics?.map((topic: string) => {
 								return (
 									<React.Fragment key={topic}>
 										<Chip
 											label={`${topic?.toLowerCase()}`}
-											sx={{ cursor: 'pointer' }}
 										/>
 									</React.Fragment>
 								);
@@ -121,14 +165,10 @@ export default function QuizCardView(props: QuizCardViewProps) {
 								<Button>Start</Button>
 							) : (
 								<LoadingButton
-									loading={props.currentLoadingEnrollBtns.includes(
+									loading={allEnrolledLoadingBtn.has(
 										quiz._id,
 									)}
-									onClick={() =>
-										props.enrollForAQuizHandler({
-											quizId: quiz._id,
-										})
-									}
+									onClick={enrolledForAQuizHandler}
 								>
 									Enroll
 								</LoadingButton>
@@ -138,10 +178,7 @@ export default function QuizCardView(props: QuizCardViewProps) {
 						<LoadingButton
 							loading={isViewBtnLoading}
 							onClick={viewHandler}
-							disabled={
-								quizData?.quiz?._id === quiz._id &&
-								isQuizDetailsViewOpen
-							}
+							disabled={isCurrentQuizOpenedInDetailsView}
 						>
 							View
 						</LoadingButton>
@@ -159,13 +196,14 @@ type QuizCardViewProps =
 	| {
 			quiz: IQuiz;
 			roleOfUser: 'examinee';
-			renderedBy: 'enrolledQuizzes';
-	  }
-	| {
-			quiz: IQuiz;
-			roleOfUser: 'examinee';
-			renderedBy: 'liveQuizzes';
-			enrollForAQuizHandler: Function;
-			currentLoadingEnrollBtns: string[];
+			renderedBy: 'enrolledQuizzes' | 'liveQuizzes';
+			setAlertMsg: (payload: IAutoHideAlert) => void;
 	  };
 
+//  Util Functions
+function isCurrentQuizIsViewedInDetailedView(
+	idOfCurrentQuizInDetailedView: string,
+	currentQuizId: string,
+) {
+	return idOfCurrentQuizInDetailedView === currentQuizId;
+}

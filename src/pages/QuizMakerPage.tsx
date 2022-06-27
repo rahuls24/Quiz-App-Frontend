@@ -13,10 +13,10 @@ import {
 	useSaveQuestionsForAQuizMutation,
 } from '../app/apis/apiSlice';
 import Save from '@mui/material/DialogTitle';
-import AddQuizInputField from '../features/examiner/QuizMaker/AddQuizInputField';
-import ConfirmQuizPopup from '../features/examiner/QuizMaker/ConfirmQuizPopupProps';
+import AddQuizInputField from '../features/quiz/examiner/quizMaker/AddQuizInputField';
+import ConfirmQuizPopup from '../features/quiz/examiner/quizMaker/ConfirmQuizPopupProps';
 import { Question } from '../types/Quiz';
-import QuestionsView from '../features/examiner/QuizMaker/QuestionsView';
+import QuestionsView from '../features/quiz/examiner/quizMaker/QuestionsView';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AutoHideAlert from '../shared/components/AutoHideAlert';
 import { IAutoHideAlert } from '../interfaces/Components';
@@ -181,7 +181,11 @@ function QuizMakerPage() {
 			});
 			return;
 		}
-	}, [isSuccessForSaveQuestionsOfTheQuiz, isErrorForSaveQuestionsOfTheQuiz]);
+	}, [
+		isSuccessForSaveQuestionsOfTheQuiz,
+		isErrorForSaveQuestionsOfTheQuiz,
+		navigate,
+	]);
 
 	return (
 		<>

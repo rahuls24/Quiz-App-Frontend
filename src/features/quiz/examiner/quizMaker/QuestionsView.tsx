@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
 import PlusOneOutlined from '@mui/icons-material/PlusOneOutlined';
-import { Question } from '../../../types/Quiz';
+import { Question } from '../../../../types/Quiz';
 
 type QuestionsViewProps = {
 	questionIndex: number;
@@ -75,7 +75,6 @@ export default function QuestionsView(props: QuestionsViewProps) {
 		currentQuestion.answers = currentQuestion.answers.filter(
 			answer => answer !== index,
 		);
-		console.log({ filter: currentQuestion.answers });
 		currentQuestion.answers = currentQuestion.answers.map(answer => {
 			if (index > answer) {
 				return answer;

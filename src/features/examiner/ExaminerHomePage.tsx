@@ -1,25 +1,33 @@
 import React from 'react';
 import * as R from 'ramda';
+
+// MUI import
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+
+// Components import
+import AllQuizView from '../quiz/examiner/quizView/AllQuizView';
+import QuizView from '../quiz/QuizView';
+import QuizDetailsView from '../quiz/QuizDetailsView';
+
+//  Redux toolkit related import
 import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 } from '../../app/apis/apiSlice';
-import AllQuizView from './components/AllQuizView';
-import MyQuizView from './components/MyQuizView';
-import QuizDetailsView from '../quiz/QuizDetailsView';
+
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
 	selectIsQuizDetailsViewOpen,
 	setIsQuizDetailsViewOpen,
 } from '../quiz/QuizSlice';
-import { useNavigate } from 'react-router-dom';
 
+// Router Related imports
+import { useNavigate } from 'react-router-dom';
 function ExaminerHomePage() {
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const {
 		data: { quizzes: myQuizzesList = [] } = {},
 		isFetching: isMyQuizzesApiFetching,
@@ -101,10 +109,14 @@ function ExaminerHomePage() {
 			isFetching: isMyQuizzesApiFetching,
 			isError: isMyQuizzesHavingError,
 			reFetchQuizList: reFetchMyQuizzesList,
-
 			shouldShowReloadBtn: shouldShowReloadBtns.forMyQuizzesList,
-
 			quizList: myQuizzesList,
+			cardViewGridStyle: {
+				xs: 4,
+				md: 12,
+			},
+			headerTitle: 'My Quizzes',
+			roleOfUser: 'examiner' as examinerRole,
 		};
 	}, [
 		isMyQuizzesApiFetching,
@@ -139,7 +151,7 @@ function ExaminerHomePage() {
 						}}
 						elevation={3}
 					>
-						<MyQuizView {...myQuizViewProps} />
+						<QuizView {...myQuizViewProps} />
 					</Paper>
 				</Grid>
 				<Grid item xs={4} md={7}>
@@ -162,7 +174,9 @@ function ExaminerHomePage() {
 										bottom: 20,
 										position: 'fixed',
 									}}
-									onClick={() => navigate('/quiz/make-a-quiz')}
+									onClick={() =>
+										navigate('/quiz/make-a-quiz')
+									}
 								>
 									<AddIcon />
 								</Fab>
@@ -181,3 +195,5 @@ function ExaminerHomePage() {
 }
 
 export default ExaminerHomePage;
+
+type examinerRole = 'examiner';

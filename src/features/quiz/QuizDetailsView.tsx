@@ -12,8 +12,10 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectQuizData, setIsQuizDetailsViewOpen } from './QuizSlice';
 import QuestionsList from './QuestionsList';
 import { selectUserDetails } from '../auth/authSlice';
-
+import { useIsOverflowX } from '../../shared/hooks/useIsOverflow';
 function QuizDetailsView() {
+	const topicViewRef = React.useRef();
+	const isTopicViewOverflow = useIsOverflowX(topicViewRef);
 	const dispatch = useAppDispatch();
 	const quizData = useAppSelector(selectQuizData);
 	const { _id: currentUserId = '' } = useAppSelector(selectUserDetails) ?? {};
@@ -50,34 +52,22 @@ function QuizDetailsView() {
 							minHeight: '55px',
 							maxHeight: '40px',
 							display: 'flex',
-							// TODO: Learn about why some of content is not showing in overflow condition
-							// To Reproduce make justifyContent => 'center' and make this box to overflow
-							justifyContent: {
-								xs: isArrayOfStringHavingMoreCharacter(
-									quizTopics,
-									30,
-								)
-									? 'start'
-									: 'center',
-								md: isArrayOfStringHavingMoreCharacter(
-									quizTopics,
-									30,
-								)
-									? 'start'
-									: 'center',
-							},
+							justifyContent: isTopicViewOverflow
+								? 'start'
+								: 'center',
 							alignItems: 'center',
 							overflowX: 'auto',
 							columnGap: '10px',
 							paddingX: 2,
 						}}
 						className='scroll'
+						ref={topicViewRef}
 					>
-						{quizTopics.map((topic, index) => {
+						{quizTopics.map(topic => {
 							return (
-								<>
+								<React.Fragment key={`orderDetails${topic}`}>
 									<Chip label={`${topic}`} />
-								</>
+								</React.Fragment>
 							);
 						})}
 					</Box>
@@ -90,9 +80,9 @@ function QuizDetailsView() {
 					}}
 					className='scroll'
 				>
-					{questions.map((question, index) => {
+					{questions?.map((question, index) => {
 						return (
-							<>
+							<React.Fragment key={question._id}>
 								<Box
 									sx={{
 										display: 'flex',
@@ -120,7 +110,7 @@ function QuizDetailsView() {
 									answers={question.answers}
 									isCreatedByUser={isCreatedByUser}
 								/>
-							</>
+							</React.Fragment>
 						);
 					})}
 				</Box>
@@ -173,17 +163,6 @@ function QuizDetailsView() {
 export default QuizDetailsView;
 
 // Util Functions
-
-function isArrayOfStringHavingMoreCharacter(array: string[], limit: number) {
-	let masterString = '';
-	for (let index = 0; index < array.length; index++) {
-		masterString += array[index];
-		if (masterString.length > 70) return true;
-	}
-	return false;
-}
-
 function isCreatedByCurrentUser(createdBy: string, userId: string) {
-	console.log(createdBy, userId);
 	return createdBy === userId;
 }

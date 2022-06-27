@@ -23,10 +23,17 @@ code {
 
 .scroll::-webkit-scrollbar-thumb {
   background-color:#bdbdbd;
-  /* background-color:rgba(0, 188, 212, 0.10); */
   border-radius: 5px;
 }
 
+.thin-scroll::-webkit-scrollbar {
+  max-width: 0.1rem;
+  max-height: 0.1rem;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background-color:#bdbdbd;
+  border-radius: 5px;
+}
 /* Overriding material ui style */
 
 .MuiDataGrid-row{

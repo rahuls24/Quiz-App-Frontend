@@ -5,8 +5,8 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Box from '@mui/material/Box';
-import QuizzesTable from '../QuizzesTable';
-import { IQuiz } from '../../../interfaces/Quiz';
+import QuizzesTable from './QuizzesTable';
+import { IQuiz } from '../../../../interfaces/Quiz';
 type AllQuizViewProps = {
 	isFetching: boolean;
 	isError: boolean;

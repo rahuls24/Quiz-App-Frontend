@@ -2,26 +2,18 @@ import React from 'react';
 // MUI import
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import ReplayIcon from '@mui/icons-material/Replay';
-import Box from '@mui/material/Box';
 // Components import
 import AutoHideAlert from '../../shared/components/AutoHideAlert';
-
+import QuizView from '../quiz/QuizView';
 // interfaces import
-import { IQuiz } from '../../interfaces/Quiz';
+import { roleOfUser } from '../../types/User';
 import { IAutoHideAlert } from '../../interfaces/Components';
 // Util function import
 //  Redux toolkit related import
 import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
-	useEnrollForAQuizMutation,
 } from '../../app/apis/apiSlice';
-import QuizCardView from '../quiz/QuizCardView';
 
 // For useReducer
 const initialState: ExamineeHomePageLocalState = {
@@ -58,57 +50,88 @@ function ExamineeHomePage() {
 	});
 
 	const [state, dispatch] = React.useReducer(reducer, initialState);
-
+	const actionDispatcher = React.useMemo(() => {
+		return actionCreator(dispatch);
+	}, []);
 	React.useEffect(() => {
 		if (!isUnenrolledQuizHavingError) return;
 		if (errorOfUnenrolledQuizApi && 'status' in errorOfUnenrolledQuizApi) {
 			if (errorOfUnenrolledQuizApi.status === 500)
-				setShouldShowReloadBtnForUnenrolledQuizApiError(
-					dispatch,
+				actionDispatcher.setShouldShowReloadBtnForUnenrolledQuizApiError(
 					false,
 				);
 		}
-	}, [isUnenrolledQuizHavingError, errorOfUnenrolledQuizApi]);
+	}, [
+		isUnenrolledQuizHavingError,
+		errorOfUnenrolledQuizApi,
+		actionDispatcher,
+	]);
 
 	React.useEffect(() => {
 		if (isEnrolledQuizHavingError) return;
 		if (errorOfEnrolledQuizApi && 'status' in errorOfEnrolledQuizApi) {
 			if (errorOfEnrolledQuizApi.status === 500)
-				setShouldShowReloadBtnForEnrolledQuizApiError(dispatch, false);
+				actionDispatcher.setShouldShowReloadBtnForEnrolledQuizApiError(
+					false,
+				);
 		}
-	}, [isEnrolledQuizHavingError, errorOfEnrolledQuizApi]);
+	}, [isEnrolledQuizHavingError, errorOfEnrolledQuizApi, actionDispatcher]);
 
-	const [enrollForAQuizHandler] = useEnrollForAQuizMutation();
-	const enrollForAQuizHandlerHelper = async (quizPayload: {
-		quizId: string;
-	}) => {
-		let currentLoadingEnrollBtns = [...state.currentLoadingEnrollBtns];
-		currentLoadingEnrollBtns.push(quizPayload.quizId);
-		setCurrentLoadingEnrollBtns(dispatch, currentLoadingEnrollBtns);
-		try {
-			let data = await enrollForAQuizHandler(quizPayload);
-			if ('error' in data) {
-				throw new Error('Something went wrong while enrolling');
-			}
-			setQuizAlertMsg(dispatch, {
-				isOpen: true,
-				alertMsg: 'Enrollment is successful',
-				severity: 'success',
-				autoHideDuration: 3000,
-			});
-			// ! Info: We are not removing quiz id from currentLoadingEnrollBtns state because due to closure we are not getting all request made by user at the same time.
-		} catch (error) {
-			let currentQuizAlertMsg = { ...state.quizAlertMsg };
-			currentQuizAlertMsg.isOpen = true;
-			currentQuizAlertMsg.alertMsg =
-				'Something went wrong. Try to enroll after sometime';
-			currentQuizAlertMsg.severity = 'error';
-			currentQuizAlertMsg.autoHideDuration = 4000;
-			setQuizAlertMsg(dispatch, currentQuizAlertMsg);
-		}
-	};
+	const liveQuizViewProps = React.useMemo(() => {
+		return {
+			isFetching: isUnenrolledQuizApiFetching,
+			isError: isUnenrolledQuizHavingError,
+			reFetchQuizList: reFetchUnenrolledQuizzesList,
+			shouldShowReloadBtn:
+				state.shouldShowReloadBtnForUnenrolledQuizApiError,
+			quizList: unenrolledQuizzesList,
+			cardViewGridStyle: {
+				xs: 4,
+				md: 6,
+			},
+			headerTitle: 'Live Quizzes',
+			roleOfUser: 'examinee' as roleOfUser,
+			renderedBy: 'liveQuizzes' as renderByForExaminee,
+			setAlertMsg: actionDispatcher.setQuizAlertMsg,
+		};
+	}, [
+		isUnenrolledQuizApiFetching,
+		isUnenrolledQuizHavingError,
+		reFetchUnenrolledQuizzesList,
+		state.shouldShowReloadBtnForUnenrolledQuizApiError,
+		unenrolledQuizzesList,
+		actionDispatcher.setQuizAlertMsg,
+	]);
+	const enrolledQuizViewProps = React.useMemo(() => {
+		return {
+			isFetching: isEnrolledQuizApiFetching,
+			isError: isEnrolledQuizHavingError,
+			reFetchQuizList: reFetchEnrolledQuizzesList,
+			shouldShowReloadBtn:
+				state.shouldShowReloadBtnForEnrolledQuizApiError,
+			quizList: enrolledQuizzesList,
+			cardViewGridStyle: {
+				xs: 4,
+				md: 12,
+			},
+			headerTitle: 'My Quizzes',
+			roleOfUser: 'examinee' as roleOfUser,
+			renderedBy: 'enrolledQuizzes' as renderByForExaminee,
+			setAlertMsg: actionDispatcher.setQuizAlertMsg,
+		};
+	}, [
+		isEnrolledQuizApiFetching,
+		isEnrolledQuizHavingError,
+		reFetchEnrolledQuizzesList,
+		state.shouldShowReloadBtnForEnrolledQuizApiError,
+		enrolledQuizzesList,
+		actionDispatcher.setQuizAlertMsg,
+	]);
+
 	React.useEffect(() => {
-		return () => setCurrentLoadingEnrollBtns(dispatch, []);
+		reFetchEnrolledQuizzesList();
+		reFetchUnenrolledQuizzesList();
+		return () => actionDispatcher.setCurrentLoadingEnrollBtns([]);
 	}, []);
 	return (
 		<>
@@ -126,99 +149,7 @@ function ExamineeHomePage() {
 						}}
 						elevation={3}
 					>
-						<Typography
-							variant='h4'
-							gutterBottom
-							component='div'
-							textAlign={'center'}
-							paddingTop={1}
-						>
-							Enrolled Quizzes
-						</Typography>
-						<Divider variant='middle' />
-						<Grid
-							container
-							columns={{ xs: 4, md: 12 }}
-							sx={{
-								maxHeight: '75vh',
-								minHeight: '75vh',
-								overflowY: 'auto',
-							}}
-							className={'scroll'}
-						>
-							{isEnrolledQuizApiFetching && (
-								<Box
-									sx={{
-										width: '100%',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<CircularProgress />
-								</Box>
-							)}
-							{!isEnrolledQuizApiFetching &&
-								enrolledQuizzesList.map((quiz: IQuiz) => {
-									return (
-										<React.Fragment key={quiz._id}>
-											<Grid item xs={4} md={12}>
-												<QuizCardView
-													quiz={quiz}
-													roleOfUser='examinee'
-													renderedBy='enrolledQuizzes'
-												/>
-											</Grid>
-										</React.Fragment>
-									);
-								})}
-							{!isEnrolledQuizApiFetching &&
-								isEnrolledQuizHavingError && (
-									<Box
-										sx={{
-											width: '100%',
-											display: 'flex',
-											flexDirection: 'column',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<Typography
-											variant='body1'
-											gutterBottom
-											component='div'
-											textAlign={'center'}
-											color={'error'}
-											sx={{ textTransform: 'capitalize' }}
-										>
-											{'Unable to fetch all live Quizzes'}
-										</Typography>
-										{state.shouldShowReloadBtnForEnrolledQuizApiError ? (
-											<Button
-												variant='outlined'
-												endIcon={<ReplayIcon />}
-												onClick={
-													reFetchEnrolledQuizzesList
-												}
-											>
-												Reload
-											</Button>
-										) : (
-											<Typography
-												variant='button'
-												gutterBottom
-												component='div'
-												textAlign={'center'}
-												sx={{
-													textTransform: 'capitalize',
-												}}
-											>
-												{'Try After Sometime.....'}
-											</Typography>
-										)}
-									</Box>
-								)}
-						</Grid>
+						<QuizView {...enrolledQuizViewProps} />
 					</Paper>
 				</Grid>
 				<Grid item xs={4} md={7}>
@@ -229,105 +160,7 @@ function ExamineeHomePage() {
 						elevation={3}
 						className={'scroll'}
 					>
-						<Typography
-							variant='h4'
-							gutterBottom
-							component='div'
-							textAlign={'center'}
-							paddingTop={1}
-						>
-							Quizzes Live Now
-						</Typography>
-						<Divider variant='middle' />
-						<Grid
-							container
-							columns={{ xs: 4, md: 12 }}
-							sx={{
-								maxHeight: '75vh',
-								minHeight: '75vh',
-								overflowY: 'auto',
-							}}
-							className={'scroll'}
-						>
-							{isUnenrolledQuizApiFetching && (
-								<Box
-									sx={{
-										width: '100%',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<CircularProgress />
-								</Box>
-							)}
-							{!isUnenrolledQuizApiFetching &&
-								unenrolledQuizzesList.map((quiz: IQuiz) => {
-									return (
-										<React.Fragment key={quiz._id}>
-											<Grid item xs={4} md={6}>
-												<QuizCardView
-													quiz={quiz}
-													roleOfUser='examinee'
-													renderedBy='liveQuizzes'
-													enrollForAQuizHandler={
-														enrollForAQuizHandlerHelper
-													}
-													currentLoadingEnrollBtns={
-														state.currentLoadingEnrollBtns
-													}
-												/>
-											</Grid>
-										</React.Fragment>
-									);
-								})}
-							{!isUnenrolledQuizApiFetching &&
-								isUnenrolledQuizHavingError && (
-									<Box
-										sx={{
-											width: '100%',
-											display: 'flex',
-											flexDirection: 'column',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<Typography
-											variant='body1'
-											gutterBottom
-											component='div'
-											textAlign={'center'}
-											color={'error'}
-											sx={{ textTransform: 'capitalize' }}
-										>
-											{'Unable to fetch all live Quizzes'}
-										</Typography>
-										{state.shouldShowReloadBtnForUnenrolledQuizApiError ? (
-											<Button
-												variant='outlined'
-												endIcon={<ReplayIcon />}
-												onClick={
-													reFetchUnenrolledQuizzesList
-												}
-											>
-												Reload
-											</Button>
-										) : (
-											<Typography
-												variant='button'
-												gutterBottom
-												component='div'
-												textAlign={'center'}
-												sx={{
-													textTransform: 'capitalize',
-												}}
-											>
-												{'Try After Sometime.....'}
-											</Typography>
-										)}
-									</Box>
-								)}
-						</Grid>
+						<QuizView {...liveQuizViewProps} />
 					</Paper>
 				</Grid>
 			</Grid>
@@ -338,7 +171,7 @@ function ExamineeHomePage() {
 				onCloseHandler={() => {
 					let currentQuizAlertMsg = { ...state.quizAlertMsg };
 					currentQuizAlertMsg.isOpen = false;
-					setQuizAlertMsg(dispatch, currentQuizAlertMsg);
+					actionDispatcher.setQuizAlertMsg(currentQuizAlertMsg);
 				}}
 				autoHideDuration={state.quizAlertMsg.autoHideDuration}
 			/>
@@ -402,42 +235,39 @@ function reducer(state: ExamineeHomePageLocalState, action: reducerAction) {
 	}
 }
 
-function setShouldShowReloadBtnForEnrolledQuizApiError(
-	dispatch: React.Dispatch<reducerAction>,
-	payload: boolean,
-) {
-	dispatch({
-		type: 'SET_RELOAD_BTN_FOR_ENROLLED_QUIZ_API_ERROR',
-		payload,
-	});
+function actionCreator(dispatch: React.Dispatch<reducerAction>) {
+	function setShouldShowReloadBtnForEnrolledQuizApiError(payload: boolean) {
+		dispatch({
+			type: 'SET_RELOAD_BTN_FOR_ENROLLED_QUIZ_API_ERROR',
+			payload,
+		});
+	}
+	function setShouldShowReloadBtnForUnenrolledQuizApiError(payload: boolean) {
+		dispatch({
+			type: 'SET_RELOAD_BTN_FOR_UNENROLLED_QUIZ_API_ERROR',
+			payload,
+		});
+	}
+
+	function setQuizAlertMsg(payload: IAutoHideAlert) {
+		dispatch({
+			type: 'SET_QUIZ_ALERT_MSG',
+			payload,
+		});
+	}
+
+	function setCurrentLoadingEnrollBtns(payload: string[]) {
+		dispatch({
+			type: 'SET_CURRENT_LOADING_ENROLL_BTNS',
+			payload,
+		});
+	}
+	return {
+		setShouldShowReloadBtnForEnrolledQuizApiError,
+		setCurrentLoadingEnrollBtns,
+		setQuizAlertMsg,
+		setShouldShowReloadBtnForUnenrolledQuizApiError,
+	};
 }
 
-function setShouldShowReloadBtnForUnenrolledQuizApiError(
-	dispatch: React.Dispatch<reducerAction>,
-	payload: boolean,
-) {
-	dispatch({
-		type: 'SET_RELOAD_BTN_FOR_UNENROLLED_QUIZ_API_ERROR',
-		payload,
-	});
-}
-
-function setQuizAlertMsg(
-	dispatch: React.Dispatch<reducerAction>,
-	payload: IAutoHideAlert,
-) {
-	dispatch({
-		type: 'SET_QUIZ_ALERT_MSG',
-		payload,
-	});
-}
-
-function setCurrentLoadingEnrollBtns(
-	dispatch: React.Dispatch<reducerAction>,
-	payload: string[],
-) {
-	dispatch({
-		type: 'SET_CURRENT_LOADING_ENROLL_BTNS',
-		payload,
-	});
-}
+export type renderByForExaminee = 'liveQuizzes' | 'enrolledQuizzes';

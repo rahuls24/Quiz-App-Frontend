@@ -6,15 +6,38 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Box from '@mui/material/Box';
-import { IQuiz } from '../../../interfaces/Quiz';
-import QuizCardView from '../../quiz/QuizCardView';
-type MyQuizViewProps = {
-	isFetching: boolean;
-	isError: boolean;
-	quizList: IQuiz[];
-	shouldShowReloadBtn: boolean;
-	reFetchQuizList: () => void;
-};
+import { IQuiz } from '../../interfaces/Quiz';
+import QuizCardView from './QuizCardView';
+import { IAutoHideAlert } from '../../interfaces/Components';
+type MyQuizViewProps =
+	| {
+			isFetching: boolean;
+			isError: boolean;
+			quizList: IQuiz[];
+			shouldShowReloadBtn: boolean;
+			reFetchQuizList: () => void;
+			cardViewGridStyle: {
+				xs: number;
+				md: number;
+			};
+			headerTitle: string;
+			roleOfUser: 'examiner';
+	  }
+	| {
+			isFetching: boolean;
+			isError: boolean;
+			quizList: IQuiz[];
+			shouldShowReloadBtn: boolean;
+			reFetchQuizList: () => void;
+			cardViewGridStyle: {
+				xs: number;
+				md: number;
+			};
+			headerTitle: string;
+			roleOfUser: 'examinee';
+			renderedBy: 'liveQuizzes' | 'enrolledQuizzes';
+			setAlertMsg: (payload: IAutoHideAlert) => void;
+	  };
 export default function MyQuizView(props: MyQuizViewProps) {
 	const {
 		isFetching,
@@ -22,6 +45,9 @@ export default function MyQuizView(props: MyQuizViewProps) {
 		quizList,
 		shouldShowReloadBtn,
 		reFetchQuizList,
+		cardViewGridStyle,
+		headerTitle,
+		roleOfUser,
 	} = props;
 	return (
 		<>
@@ -32,7 +58,7 @@ export default function MyQuizView(props: MyQuizViewProps) {
 				textAlign={'center'}
 				paddingTop={1}
 			>
-				{'My Quizzes'}
+				{headerTitle}
 			</Typography>
 			<Divider variant='middle' />
 			<Grid
@@ -62,11 +88,21 @@ export default function MyQuizView(props: MyQuizViewProps) {
 					quizList.map((quiz: IQuiz) => {
 						return (
 							<React.Fragment key={quiz._id}>
-								<Grid item xs={4} md={12}>
-									<QuizCardView
-										quiz={quiz}
-										roleOfUser={'examiner'}
-									/>
+								<Grid item {...cardViewGridStyle}>
+									{roleOfUser === 'examiner' && (
+										<QuizCardView
+											quiz={quiz}
+											roleOfUser={roleOfUser}
+										/>
+									)}
+									{roleOfUser === 'examinee' && (
+										<QuizCardView
+											quiz={quiz}
+											roleOfUser={roleOfUser}
+											renderedBy={props.renderedBy}
+											setAlertMsg={props.setAlertMsg}
+										/>
+									)}
 								</Grid>
 							</React.Fragment>
 						);

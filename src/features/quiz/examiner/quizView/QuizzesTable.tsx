@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as R from 'ramda';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import { IQuiz, IQuizRow } from '../../interfaces/Quiz';
-import { IQuizzesTableProps } from '../../interfaces/Components';
-import { QuizzesMappingWithIndex } from '../../types/Quiz';
-import { useLazyGetAllQuestionsOfAQuizQuery } from '../../app/apis/apiSlice';
-import { useAppDispatch } from '../../app/hooks';
-import { setIsQuizDetailsViewOpen, setQuizData } from '../quiz/QuizSlice';
-import { getQuestionsData } from '../../shared/functions/quizRelated';
+import { IQuiz, IQuizRow } from '../../../../interfaces/Quiz';
+import { IQuizzesTableProps } from '../../../../interfaces/Components';
+import { QuizzesMappingWithIndex } from '../../../../types/Quiz';
+import { useLazyGetAllQuestionsOfAQuizQuery } from '../../../../app/apis/apiSlice';
+import { useAppDispatch } from '../../../../app/hooks';
+import { setIsQuizDetailsViewOpen, setQuizData } from '../../QuizSlice';
+import { getQuestionsData } from '../../../../shared/functions/quizRelated';
 const columns: GridColDef[] = [
 	{ field: 'id', headerName: 'NO', width: 90, hideable: false },
 	{
@@ -60,16 +60,10 @@ export default function QuizzesTable(props: IQuizzesTableProps) {
 					pageSize={5}
 					rowsPerPageOptions={[5]}
 					disableSelectionOnClick
-					// TODO: handle this
 					onRowClick={e => {
 						if ('id' in e.row) {
 							viewHandler(
 								quizzesMappingWithRowIndex[String(e.row.id)],
-							);
-							console.log(
-								quizzesMappingWithRowIndex[String(e.row.id)][
-									'_id'
-								],
 							);
 						}
 					}}

@@ -1,0 +1,1 @@
+export type roleOfUser = 'examiner' | 'examinee';

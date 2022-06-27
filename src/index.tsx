@@ -20,7 +20,7 @@ store.subscribe(
 );
 const container = document.getElementById('root')!;
 const root = createRoot(container);
-const isStrictMode = true;
+const isStrictMode = false;
 if (isStrictMode) {
 	root.render(
 		<React.StrictMode>
