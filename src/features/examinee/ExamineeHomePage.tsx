@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 // MUI import
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -14,6 +15,12 @@ import {
 	useGetAllUnenrolledCoursesQuery,
 	useGetAllEnrolledCoursesQuery,
 } from '../../app/apis/apiSlice';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {
+	selectIsQuizDetailsViewOpen,
+	setIsQuizDetailsViewOpen,
+} from '../quiz/QuizSlice';
+import QuizDetailsView from '../quiz/QuizDetailsView';
 
 // For useReducer
 const initialState: ExamineeHomePageLocalState = {
@@ -128,6 +135,15 @@ function ExamineeHomePage() {
 		actionDispatcher.setQuizAlertMsg,
 	]);
 
+	// View Quiz
+	const reduxDispatch = useAppDispatch();
+	const isQuizDetailsViewOpen = useAppSelector(selectIsQuizDetailsViewOpen);
+
+	React.useEffect(() => {
+		return () => {
+			R.compose(reduxDispatch, setIsQuizDetailsViewOpen)(false);
+		};
+	}, [reduxDispatch]);
 	React.useEffect(() => {
 		reFetchEnrolledQuizzesList();
 		reFetchUnenrolledQuizzesList();
@@ -160,7 +176,11 @@ function ExamineeHomePage() {
 						elevation={3}
 						className={'scroll'}
 					>
-						<QuizView {...liveQuizViewProps} />
+						{isQuizDetailsViewOpen ? (
+							<QuizDetailsView roleOfUser='examinee' />
+						) : (
+							<QuizView {...liveQuizViewProps} />
+						)}
 					</Paper>
 				</Grid>
 			</Grid>

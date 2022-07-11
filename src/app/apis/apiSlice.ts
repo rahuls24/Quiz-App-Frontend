@@ -76,8 +76,20 @@ export const apiSlice = createApi({
 			}),
 		}),
 		getAllQuestionsOfAQuiz: builder.query({
-			query: (quizId) => ({
+			query: quizId => ({
 				url: `/question/get-all-questions/${quizId}`,
+			}),
+		}),
+		saveStartTime: builder.mutation({
+			query: payload => ({
+				url: '/quiz/save-start-time',
+				method: 'POST',
+				body: payload,
+			}),
+		}),
+		getStartTimeOfTheQuiz: builder.query({
+			query: quizId => ({
+				url: `/quiz/get-quiz-start-time/${quizId}`,
 			}),
 		}),
 	}),
@@ -93,4 +105,6 @@ export const {
 	useSaveAQuizMutation,
 	useSaveQuestionsForAQuizMutation,
 	useLazyGetAllQuestionsOfAQuizQuery,
+	useSaveStartTimeMutation,
+	useGetStartTimeOfTheQuizQuery,
 } = apiSlice;

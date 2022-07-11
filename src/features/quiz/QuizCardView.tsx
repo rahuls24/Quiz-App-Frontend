@@ -19,14 +19,17 @@ import {
 	setQuizData,
 	selectQuizData,
 	selectIsQuizDetailsViewOpen,
+	setCurrentOnGoingQuiz,
 } from './QuizSlice';
 import {
 	useLazyGetAllQuestionsOfAQuizQuery,
 	useEnrollForAQuizMutation,
+	useSaveStartTimeMutation,
 } from '../../app/apis/apiSlice';
 import { getQuestionsData } from '../../shared/functions/quizRelated';
 import { IAutoHideAlert } from '../../interfaces/Components';
 import { useIsOverflowX } from '../../shared/hooks/useIsOverflow';
+import { useNavigate } from 'react-router-dom';
 var allEnrolledLoadingBtn = new Set<string>();
 export default function QuizCardView(props: QuizCardViewProps) {
 	const topicsViewRef = React.useRef();
@@ -39,6 +42,7 @@ export default function QuizCardView(props: QuizCardViewProps) {
 		getAllQuestions,
 		{ isFetching: isViewBtnLoading, isError: isErrorInGetAllQuestions },
 	] = useLazyGetAllQuestionsOfAQuizQuery();
+	const navigate = useNavigate();
 	// View Handler
 	const viewHandler = async () => {
 		try {
@@ -82,6 +86,18 @@ export default function QuizCardView(props: QuizCardViewProps) {
 			});
 		} catch (error) {}
 	};
+	// Start quiz
+	const [saveStartTime] = useSaveStartTimeMutation();
+
+	const startHandler = async () => {
+		await Promise.all([
+			R.compose(dispatch, setCurrentOnGoingQuiz)(quiz),
+			saveStartTime({
+				quizId: quiz._id,
+			}),
+		]);
+		navigate(`quiz/start/${quiz._id}`);
+	};
 	React.useEffect(() => {}, [
 		isErrorUnenrolledForAQuiz,
 		isErrorInGetAllQuestions,
@@ -107,7 +123,9 @@ export default function QuizCardView(props: QuizCardViewProps) {
 						<Stack
 							direction='row'
 							spacing={2}
-							justifyContent={isOverflowInTopicView ? 'start' : 'center'}
+							justifyContent={
+								isOverflowInTopicView ? 'start' : 'center'
+							}
 							alignItems='center'
 							flexWrap={'nowrap'}
 							className='thin-scroll'
@@ -160,9 +178,15 @@ export default function QuizCardView(props: QuizCardViewProps) {
 				>
 					{roleOfUser === 'examinee' ? (
 						<>
-							<Button onClick={viewHandler}>View</Button>
+							{/* Currently I am running out of design for quiz view for examiner so it is disabled */}
+							<Button
+								onClick={viewHandler}
+								disabled={roleOfUser === 'examinee'}
+							>
+								View
+							</Button>
 							{props.renderedBy === 'enrolledQuizzes' ? (
-								<Button>Start</Button>
+								<Button onClick={startHandler}>Start</Button>
 							) : (
 								<LoadingButton
 									loading={allEnrolledLoadingBtn.has(

@@ -87,6 +87,7 @@ function QuizMakerPage() {
 				quizMakerFormState.topics === ''
 					? 'misc'
 					: quizMakerFormState.topics,
+			totalTime: quizMakerFormState.totalTime,
 		};
 		try {
 			const quizData = await saveAQuiz(saveAQuizPayload);
@@ -349,6 +350,7 @@ type QuizMakerForm = {
 	quizId: string;
 	topics: string;
 	questions: Question[];
+	totalTime: number;
 };
 type QuizMakerFormActionWithStringPayload = {
 	type:
@@ -356,6 +358,10 @@ type QuizMakerFormActionWithStringPayload = {
 		| 'SET_TOPICS_OF_THE_QUIZ'
 		| 'SET_QUIZ_ID_OF_THE_QUIZ';
 	payload: string;
+};
+type QuizMakerFormActionWithNumberPayload = {
+	type: 'SET_QUIZ_TIME';
+	payload: number;
 };
 
 type QuizMakerFormActionWithQuestionTypePayload = {
@@ -374,7 +380,8 @@ type QuizMakerFromActionWithWholeState = {
 type QuizMakerFormAction =
 	| QuizMakerFormActionWithStringPayload
 	| QuizMakerFormActionWithQuestionTypePayload
-	| QuizMakerFromActionWithWholeState;
+	| QuizMakerFromActionWithWholeState
+	| QuizMakerFormActionWithNumberPayload;
 
 function quizMakerReducer(state: QuizMakerForm, action: QuizMakerFormAction) {
 	switch (action.type) {
@@ -389,6 +396,8 @@ function quizMakerReducer(state: QuizMakerForm, action: QuizMakerFormAction) {
 			currentQuestionsList[action.payload.index] =
 				action.payload.updatedQuestion;
 			return { ...state, questions: currentQuestionsList };
+		case 'SET_QUIZ_TIME':
+			return { ...state, totalTime: action.payload };
 		case 'SET_THE_STORE_TO_INITIAL_STATE':
 			return { ...action.payload };
 		default:
@@ -424,12 +433,19 @@ function actionCreatorForQuizMakerForm(
 			payload: state,
 		});
 	}
+	function setQuizTime(time: number) {
+		dispatch({
+			type: 'SET_QUIZ_TIME',
+			payload: time,
+		});
+	}
 	return {
 		setQuizName,
 		setTopicsForTheQuiz,
 		setQuizId,
 		updateQuestionsList,
 		setQuizMakerFormStateToInitialState,
+		setQuizTime,
 	};
 }
 
@@ -439,6 +455,7 @@ function getQuizMakerFormInitialState(): QuizMakerForm {
 		topics: '',
 		quizId: '',
 		questions: [] as Question[],
+		totalTime: 30,
 	};
 }
 // For Reducer Ended

@@ -9,7 +9,9 @@ export interface IQuiz{
 	price:number;
 	imageUrl: string;
 	createOn: Date;
+	quizDuration: number;
 }
+
 
 export interface IQuizRow {
 	id: number;

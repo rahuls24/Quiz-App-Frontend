@@ -1,3 +1,5 @@
+import { QuestionOfCurrentOngoingQuiz } from '../../types/Quiz';
+
 export function getQuestionsData(response: any) {
 	let questions = response?.data?.questions;
 	if (Array.isArray(questions)) {
@@ -6,8 +8,17 @@ export function getQuestionsData(response: any) {
 			let title = '';
 			let options = [] as string[];
 			let answers = [] as string[];
+			let questionType = 'singleAnswer' as
+				| 'singleAnswer'
+				| 'multipleAnswer';
 			if ('_id' in question && typeof question?._id === 'string') {
 				_id = question._id;
+			}
+			if (
+				'questionType' in question &&
+				typeof question?.questionType === 'string'
+			) {
+				questionType = question.questionType;
 			}
 			if (
 				'questionText' in question &&
@@ -37,10 +48,31 @@ export function getQuestionsData(response: any) {
 				title,
 				options,
 				answers,
+				questionType,
 			};
 		});
 		return questionsList;
 	} else {
 		return undefined;
 	}
+}
+
+export function getCurrentOnGoingQuizQuestionsData(questionResponse: any) {
+	const questionData = getQuestionsData(questionResponse);
+	if (questionData === undefined) return undefined;
+	const questionDataForResponse = [] as QuestionOfCurrentOngoingQuiz;
+	questionData.forEach((question, index) => {
+		questionDataForResponse.push({
+			...question,
+			isVisited: false,
+			isMarkedAsReview: false,
+			isAnswered: false,
+			isActive: false,
+			index: index,
+		});
+	});
+	// By Default First question should active
+	if (questionDataForResponse.length > 0)
+		questionDataForResponse[0].isActive = true;
+	return questionDataForResponse;
 }

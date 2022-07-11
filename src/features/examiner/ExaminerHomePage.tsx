@@ -184,7 +184,7 @@ function ExaminerHomePage() {
 						)}
 						{isQuizDetailsViewOpen && (
 							<>
-								<QuizDetailsView />
+								<QuizDetailsView roleOfUser='examiner' />
 							</>
 						)}
 					</Paper>

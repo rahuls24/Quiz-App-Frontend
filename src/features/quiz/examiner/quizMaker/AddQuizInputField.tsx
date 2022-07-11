@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -9,6 +8,14 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
+import Grid from '@mui/material/Grid';
+import Slider from '@mui/material/Slider';
+import MuiInput from '@mui/material/Input';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+
+const Input = styled(MuiInput)`
+	width: 42px;
+`;
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 	<Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -24,12 +31,13 @@ type AddQuizInputFieldProps = {
 	actionDispatcherForQuizMakerForm: {
 		setQuizName: (quizName: string) => void;
 		setTopicsForTheQuiz: (quizTitle: string) => void;
+		setQuizTime: (time: number) => void;
 	};
 	quizId: string;
 };
 
 export default function AddQuizInputField(props: AddQuizInputFieldProps) {
-	const { setQuizName, setTopicsForTheQuiz } =
+	const { setQuizName, setTopicsForTheQuiz, setQuizTime } =
 		props.actionDispatcherForQuizMakerForm;
 	const { quizId } = props;
 	const [quizNameInputState, setQuizNameInputState] = React.useState({
@@ -69,6 +77,29 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 		const topics = e.target.value;
 		setTopics(topics);
 	};
+	const [value, setValue] = React.useState<
+		number | string | Array<number | string>
+	>(30);
+
+	const handleSliderChange = (event: Event, newValue: number | number[]) => {
+		setValue(newValue);
+	};
+
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setValue(event.target.value === '' ? '' : Number(event.target.value));
+	};
+
+	const handleBlur = () => {
+		if (value < 10) {
+			setValue(10);
+		} else if (value > 120) {
+			setValue(120);
+		}
+	};
+	React.useEffect(() => {
+		if (typeof value === 'string' || typeof value === 'number')
+			setQuizTime(Number(value));
+	}, [value, setQuizTime]);
 	return (
 		<>
 			<Box>
@@ -164,6 +195,40 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 					onBlur={() => setTopicsForTheQuiz(topics)}
 					disabled={quizId !== '' ? true : false}
 				/>
+
+				<Typography id='input-slider' gutterBottom>
+					Total Quiz Time
+				</Typography>
+				<Grid container spacing={2} alignItems='center'>
+					<Grid item>
+						<AccessTimeIcon />
+					</Grid>
+					<Grid item xs>
+						<Slider
+							value={typeof value === 'number' ? value : 0}
+							onChange={handleSliderChange}
+							aria-labelledby='input-slider'
+							min={10}
+							max={120}
+							defaultValue={30}
+						/>
+					</Grid>
+					<Grid item>
+						<Input
+							value={value}
+							size='small'
+							onChange={handleInputChange}
+							onBlur={handleBlur}
+							inputProps={{
+								step: 5,
+								min: 10,
+								max: 120,
+								type: 'number',
+								'aria-labelledby': 'input-slider',
+							}}
+						/>
+					</Grid>
+				</Grid>
 			</Box>
 		</>
 	);

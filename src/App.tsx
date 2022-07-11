@@ -7,6 +7,7 @@ import Signup from './features/auth/signup/Signup';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import QuizMakerPage from './pages/QuizMakerPage';
 import RequireAuth from './features/auth/RequireAuth';
+import StartQuiz from './pages/StartQuiz';
 
 function App() {
 	return (
@@ -29,6 +30,14 @@ function App() {
 							element={
 								<RequireAuth>
 									<QuizMakerPage />
+								</RequireAuth>
+							}
+						/>
+						<Route
+							path='quiz/start/:quizId'
+							element={
+								<RequireAuth>
+									<StartQuiz />
 								</RequireAuth>
 							}
 						/>

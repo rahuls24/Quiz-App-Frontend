@@ -1,2 +1,5 @@
 1. Make a 404 page 
 2. Make a no quiz page
+3. Try to work with redux store rather than global variable to show loader 
+
+-----------------------------

@@ -10,11 +10,19 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 type QuestionsListProps = {
 	options: string[];
-	answers: string[];
 	isCreatedByUser: boolean;
+	questionType: 'singleAnswer' | 'multipleAnswer';
+	answers?: string[];
+	onChangeHandler?: (value: string, shouldAdd: boolean) => void;
 };
 export default function QuestionsList(props: QuestionsListProps) {
-	const { options, answers, isCreatedByUser } = props;
+	const {
+		options,
+		answers = [],
+		isCreatedByUser,
+		onChangeHandler,
+		questionType,
+	} = props;
 	return (
 		<>
 			<List sx={{ width: '100%' }}>
@@ -23,7 +31,7 @@ export default function QuestionsList(props: QuestionsListProps) {
 
 					return (
 						<ListItem
-							key={option}
+							key={`option-key-in-question-list-${option}`}
 							secondaryAction={
 								// This btn is disabled because edit option is not part of MVP
 								isCreatedByUser ? (
@@ -37,34 +45,56 @@ export default function QuestionsList(props: QuestionsListProps) {
 								) : null
 							}
 							disablePadding
+							onClick={() => {
+								if (!onChangeHandler) return;
+								if (questionType === 'multipleAnswer') {
+									if (answers.includes(String(index)))
+										onChangeHandler(String(index), false);
+									else onChangeHandler(String(index), true);
+								} else {
+									onChangeHandler(String(index), true);
+								}
+							}}
 						>
 							<ListItemButton role={undefined} dense>
 								<ListItemIcon>
-									{answers.length > 1 ? (
+									{questionType === 'multipleAnswer' ? (
 										<Checkbox
 											edge='start'
-											checked={
-												answers.includes(
-													String(index),
-												) && isCreatedByUser
-											}
+											checked={answers.includes(
+												String(index),
+											)}
 											tabIndex={-1}
 											disableRipple
 											inputProps={{
 												'aria-labelledby': labelId,
 											}}
+											value={option}
 											color={'success'}
-											disabled
+											onChange={(e, checked) => {
+												console.log(
+													e.target.value,
+													checked,
+												);
+												if (onChangeHandler)
+													onChangeHandler(
+														String(index),
+														checked,
+													);
+											}}
 										/>
 									) : (
 										<Radio
-											checked={
-												answers.includes(
-													String(index),
-												) && isCreatedByUser
-											}
+											checked={answers.includes(
+												String(index),
+											)}
+											value={option}
 											color={'success'}
-											disabled
+											// onChange={e => {
+											// 	console.log(e.target);
+											// 	if (onChangeHandler)
+											// 		onChangeHandler(e);
+											// }}
 										/>
 									)}
 								</ListItemIcon>

@@ -10,10 +10,15 @@ import Tooltip from '@mui/material/Tooltip';
 import Chip from '@mui/material/Chip';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectQuizData, setIsQuizDetailsViewOpen } from './QuizSlice';
-import QuestionsList from './QuestionsList';
 import { selectUserDetails } from '../auth/authSlice';
 import { useIsOverflowX } from '../../shared/hooks/useIsOverflow';
-function QuizDetailsView() {
+import QuestionsViewForDetailedView from './QuestionsView';
+import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
+type QuizDetailsViewProps = {
+	roleOfUser: 'examiner' | 'examinee';
+};
+function QuizDetailsView(props: QuizDetailsViewProps) {
+	const { roleOfUser } = props;
 	const topicViewRef = React.useRef();
 	const isTopicViewOverflow = useIsOverflowX(topicViewRef);
 	const dispatch = useAppDispatch();
@@ -80,39 +85,12 @@ function QuizDetailsView() {
 					}}
 					className='scroll'
 				>
-					{questions?.map((question, index) => {
-						return (
-							<React.Fragment key={question._id}>
-								<Box
-									sx={{
-										display: 'flex',
-										columnGap: 1,
-										padding: 1,
-									}}
-								>
-									<Typography
-										variant='h6'
-										gutterBottom
-										component='div'
-									>
-										{`Q ${index + 1}.`}
-									</Typography>
-									<Typography
-										variant='h6'
-										gutterBottom
-										component='div'
-									>
-										{question.title}
-									</Typography>
-								</Box>
-								<QuestionsList
-									options={question.options}
-									answers={question.answers}
-									isCreatedByUser={isCreatedByUser}
-								/>
-							</React.Fragment>
-						);
-					})}
+					{roleOfUser === 'examiner' && (
+						<QuestionsViewForDetailedView
+							isCreatedByUser={isCreatedByUser}
+							questions={questions}
+						/>
+					)}
 				</Box>
 				<Box
 					sx={{
@@ -140,7 +118,7 @@ function QuizDetailsView() {
 							</IconButton>
 						</Tooltip>
 					</Box>
-					{isCreatedByUser && (
+					{roleOfUser === 'examiner' && isCreatedByUser && (
 						<Box sx={{ margin: 1 }}>
 							<Tooltip title='Edit Quiz'>
 								{/* This feature is not part of current MVP */}
@@ -150,6 +128,15 @@ function QuizDetailsView() {
 									disabled
 								>
 									<EditIcon fontSize='large' />
+								</IconButton>
+							</Tooltip>
+						</Box>
+					)}
+					{roleOfUser === 'examinee' && (
+						<Box sx={{ margin: 1 }}>
+							<Tooltip title='Start Quiz'>
+								<IconButton aria-label='edit' size='large'>
+									<PlayCircleOutlineOutlinedIcon fontSize='large' />
 								</IconButton>
 							</Tooltip>
 						</Box>
