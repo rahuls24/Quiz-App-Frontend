@@ -28,6 +28,5 @@ export type QuestionOfCurrentOngoingQuiz = {
 	isVisited: boolean;
 	isMarkedAsReview: boolean;
 	isAnswered: boolean;
-	isActive:boolean;
 	index:number;
 }[];

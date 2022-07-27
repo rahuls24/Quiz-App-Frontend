@@ -13,9 +13,10 @@ type startQuizHeaderProps = {
 	quizName: string;
 	quizId: string;
 	quizDuration: number;
+	isQuickSelectViewOpen: boolean;
 };
 function StartQuizHeader(props: startQuizHeaderProps) {
-	const { quizName, quizId, quizDuration } = props;
+	const { quizName, quizId, quizDuration, isQuickSelectViewOpen } = props;
 
 	const { data: startTimeData, refetch } =
 		useGetStartTimeOfTheQuizQuery(quizId);
@@ -61,6 +62,12 @@ function StartQuizHeader(props: startQuizHeaderProps) {
 							variant='button'
 							gutterBottom
 							component='div'
+							sx={{
+								marginRight:
+									isQuickSelectViewOpen === true
+										? '240px'
+										: '0px',
+							}}
 						>
 							{`${hours} : ${mins} : ${seconds}`}
 						</Typography>
@@ -68,7 +75,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
 					<Toolbar
 						disableGutters
 						sx={{
-							justifyContent: 'center',
+							justifyContent:
+								isQuickSelectViewOpen === true
+									? 'start'
+									: 'center',
 							display: { xs: 'flex', md: 'none' },
 						}}
 					>
@@ -89,16 +99,21 @@ function StartQuizHeader(props: startQuizHeaderProps) {
 					<Toolbar
 						disableGutters
 						sx={{
-							justifyContent: 'center',
 							display: { xs: 'flex', md: 'none' },
+							width: '100%',
 						}}
 					>
 						<Typography
 							variant='h6'
 							component='div'
-							textAlign={'center'}
+							align={
+								isQuickSelectViewOpen === true
+									? 'left'
+									: 'center'
+							}
+							sx={{ width: '100%' }}
 						>
-							{'Quiz Name'}
+							{quizName}
 						</Typography>
 					</Toolbar>
 				</Container>

@@ -67,12 +67,8 @@ export function getCurrentOnGoingQuizQuestionsData(questionResponse: any) {
 			isVisited: false,
 			isMarkedAsReview: false,
 			isAnswered: false,
-			isActive: false,
 			index: index,
 		});
 	});
-	// By Default First question should active
-	if (questionDataForResponse.length > 0)
-		questionDataForResponse[0].isActive = true;
 	return questionDataForResponse;
 }

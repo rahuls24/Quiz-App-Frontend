@@ -54,6 +54,7 @@ export const {
 	setQuizData,
 	setCurrentOnGoingQuiz,
 	setCurrentOnGoingQuizQuestions,
+	setCurrentOngoingQuestionIndex,
 } = quizSlice.actions;
 
 export const selectIsQuizDetailsViewOpen = (state: RootState) =>

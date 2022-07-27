@@ -13,7 +13,11 @@ type QuestionsListProps = {
 	isCreatedByUser: boolean;
 	questionType: 'singleAnswer' | 'multipleAnswer';
 	answers?: string[];
-	onChangeHandler?: (value: string, shouldAdd: boolean) => void;
+	onChangeHandler?: (
+		value: string,
+		shouldAdd: boolean,
+		questionType: 'singleAnswer' | 'multipleAnswer',
+	) => void;
 };
 export default function QuestionsList(props: QuestionsListProps) {
 	const {
@@ -49,10 +53,23 @@ export default function QuestionsList(props: QuestionsListProps) {
 								if (!onChangeHandler) return;
 								if (questionType === 'multipleAnswer') {
 									if (answers.includes(String(index)))
-										onChangeHandler(String(index), false);
-									else onChangeHandler(String(index), true);
+										onChangeHandler(
+											String(index),
+											false,
+											'multipleAnswer',
+										);
+									else
+										onChangeHandler(
+											String(index),
+											true,
+											"multipleAnswer",
+										);
 								} else {
-									onChangeHandler(String(index), true);
+									onChangeHandler(
+										String(index),
+										true,
+										'singleAnswer',
+									);
 								}
 							}}
 						>
@@ -80,6 +97,7 @@ export default function QuestionsList(props: QuestionsListProps) {
 													onChangeHandler(
 														String(index),
 														checked,
+														'multipleAnswer',
 													);
 											}}
 										/>
