@@ -8,51 +8,58 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import QuizMakerPage from './pages/QuizMakerPage';
 import RequireAuth from './features/auth/RequireAuth';
 import StartQuiz from './pages/StartQuiz';
+import QuizResultPage from './pages/QuizResultPage';
 
 function App() {
-	return (
-		<>
-			<ThemeProvider theme={defaultTheme}>
-				<BrowserRouter>
-					<Routes>
-						<Route
-							path='/'
-							element={
-								<RequireAuth>
-									<HomePage />
-								</RequireAuth>
-							}
-						></Route>
-						<Route path='auth/signin' element={<Signin />} />
-						<Route path='auth/signup' element={<Signup />} />
-						<Route
-							path='quiz/make-a-quiz'
-							element={
-								<RequireAuth>
-									<QuizMakerPage />
-								</RequireAuth>
-							}
-						/>
-						<Route
-							path='quiz/start/:quizId'
-							element={
-								<RequireAuth>
-									<StartQuiz />
-								</RequireAuth>
-							}
-						/>
-						<Route path='*' element={<NotFound />} />
-					</Routes>
-				</BrowserRouter>
-			</ThemeProvider>
-		</>
-	);
+    return (
+        <>
+            <ThemeProvider theme={defaultTheme}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={
+                                <RequireAuth>
+                                    <HomePage />
+                                </RequireAuth>
+                            }
+                        ></Route>
+                        <Route path="auth/signin" element={<Signin />} />
+                        <Route path="auth/signup" element={<Signup />} />
+                        <Route
+                            path="quiz/make-a-quiz"
+                            element={
+                                <RequireAuth>
+                                    <QuizMakerPage />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="quiz/start/:quizId"
+                            element={
+                                <RequireAuth>
+                                    <StartQuiz />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="quiz/result"
+                            element={
+                                <RequireAuth>
+                                    <QuizResultPage />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </BrowserRouter>
+            </ThemeProvider>
+        </>
+    );
 }
 
 export default App;
 
 function NotFound() {
-	return <h1>Page no found</h1>;
+    return <h1>Page no found</h1>;
 }
-
-   
