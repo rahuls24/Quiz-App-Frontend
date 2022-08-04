@@ -1,29 +1,33 @@
-import * as React from 'react';
-import * as R from 'ramda';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import QuestionsList from '@Feature/quiz/QuestionsList';
 import {
     selectCurrentOngoingQuestionIndex,
     selectCurrentOnGoingQuizQuestions,
     setCurrentOngoingQuestionIndex,
     setCurrentOnGoingQuizQuestions,
-} from '../QuizSlice';
+} from '@Feature/quiz/QuizSlice';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
+import AutoHideAlert from '@SharedComponent/AutoHideAlert';
+import * as R from 'ramda';
+import * as React from 'react';
+import BackToQuestionOnePopup from './BackToQuestionOnePopup';
 import BottomNavigationForQuestionView from './BottomNavigationForQuestionView';
 import QuestionQuickSelect from './QuestionQuickSelect';
-import QuestionsList from '../QuestionsList';
-import AutoHideAlert from '../../../shared/components/AutoHideAlert';
-import BackToQuestionOnePopup from './BackToQuestionOnePopup';
+import SubmitQuizPopup from './SubmitQuizPopup';
 type QuestionViewProps = {
     isQuickSelectViewOpen: boolean;
     setIsQuickSelectViewOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    quizSubmitHandler: () => Promise<boolean>;
 };
 export default function QuestionView(props: QuestionViewProps) {
     const dispatch = useAppDispatch();
     const [answers, setAnswers] = React.useState<Array<string>>([]);
     const [isBackToQuestionOnePopupOpen, setIsBackToQuestionOnePopupOpen] =
+        React.useState(false);
+    const [isQuestionQuickSelectOpen, setIsQuestionQuickSelectOpen] =
         React.useState(false);
     const [autoHideAlertMsg, setAutoHideAlertMsg] = React.useState({
         isOpen: false,
@@ -31,7 +35,11 @@ export default function QuestionView(props: QuestionViewProps) {
         severity: 'error' as 'error' | 'warning' | 'success',
         autoHideDuration: 4000,
     });
-    const { isQuickSelectViewOpen, setIsQuickSelectViewOpen } = props;
+    const {
+        isQuickSelectViewOpen,
+        setIsQuickSelectViewOpen,
+        quizSubmitHandler,
+    } = props;
     const currentOnGoingQuizQuestions = useAppSelector(
         selectCurrentOnGoingQuizQuestions
     );
@@ -250,7 +258,10 @@ export default function QuestionView(props: QuestionViewProps) {
             <QuestionQuickSelect
                 open={isQuickSelectViewOpen}
                 handleDrawerClose={() => setIsQuickSelectViewOpen(false)}
-                questionList={currentOnGoingQuizQuestions}
+                questionsList={currentOnGoingQuizQuestions}
+                setOpenSubmitQuizPopup={() =>
+                    setIsQuestionQuickSelectOpen(true)
+                }
             />
             <AutoHideAlert
                 onCloseHandler={() =>
@@ -261,6 +272,11 @@ export default function QuestionView(props: QuestionViewProps) {
             <BackToQuestionOnePopup
                 open={isBackToQuestionOnePopupOpen}
                 setOpen={setIsBackToQuestionOnePopupOpen}
+            />
+            <SubmitQuizPopup
+                open={isQuestionQuickSelectOpen}
+                setOpen={setIsQuestionQuickSelectOpen}
+                quizSubmitHandler={quizSubmitHandler}
             />
         </>
     );

@@ -1,26 +1,26 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@ReduxStore/store';
 import {
     QuestionOfCurrentOngoingQuiz,
+    Quiz,
+    QuizData,
     QuizResultDetails,
-} from './../../types/Quiz';
-import { RootState } from './../../app/store';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuizData } from '../../types/Quiz';
-import { IQuiz } from '../../interfaces/Quiz';
+} from '@Type/Quiz';
 
-export interface IQuizRelatedRelated {
+export interface QuizRelatedRelated {
     isQuizDetailsViewOpen: boolean;
     quizData: QuizData;
-    currentOnGoingQuiz: IQuiz;
+    currentOnGoingQuiz: Quiz;
 
     currentOnGoingQuizQuestions: QuestionOfCurrentOngoingQuiz;
     currentOngoingQuestionIndex: number;
     quizResultDetails: QuizResultDetails;
 }
 
-const initialState: IQuizRelatedRelated = {
+const initialState: QuizRelatedRelated = {
     isQuizDetailsViewOpen: false,
     quizData: {} as QuizData,
-    currentOnGoingQuiz: {} as IQuiz,
+    currentOnGoingQuiz: {} as Quiz,
     currentOnGoingQuizQuestions: [] as QuestionOfCurrentOngoingQuiz,
     currentOngoingQuestionIndex: 0,
     quizResultDetails: {
@@ -43,7 +43,7 @@ export const quizSlice = createSlice({
         setQuizData: (state, action: PayloadAction<QuizData>) => {
             state.quizData = action.payload;
         },
-        setCurrentOnGoingQuiz: (state, action: PayloadAction<IQuiz>) => {
+        setCurrentOnGoingQuiz: (state, action: PayloadAction<Quiz>) => {
             state.currentOnGoingQuiz = action.payload;
         },
         setCurrentOnGoingQuizQuestions: (

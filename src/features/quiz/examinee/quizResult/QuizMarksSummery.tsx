@@ -1,12 +1,12 @@
-import React from 'react';
-import Grid from '@mui/material/Grid';
+import accuracyIcon from '@Asset/accuracy.svg';
+import attemptedIcon from '@Asset/attempted.svg';
+import scoreIcon from '@Asset/score.svg';
+import speedIcon from '@Asset/speed.svg';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import accuracyIcon from '../../../assets/accuracy.svg';
-import attemptedIcon from '../../../assets/attempted.svg';
-import scoreIcon from '../../../assets/score.svg';
-import speedIcon from '../../../assets/speed.svg';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import React from 'react';
 type QuizMarksSummeryProps = {
     numberOfRightAnswers: number;
     numberOfWrongAnswers: number;

@@ -1,14 +1,12 @@
-import React from 'react';
+import CircleIcon from '@mui/icons-material/Circle';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { PieChart } from 'react-minimal-pie-chart';
-import CircleIcon from '@mui/icons-material/Circle';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import { useAppSelector } from '../../../app/hooks';
-import { selectQuizResultDetails } from '../QuizSlice';
+import React from 'react';
+import { PieChart } from 'react-minimal-pie-chart';
 const sections = [
     {
         sectionName: 'CORRECT',

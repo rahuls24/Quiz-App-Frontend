@@ -1,22 +1,22 @@
-import * as R from 'ramda';
+import { setCurrentOngoingQuestionIndex } from '@Feature/quiz/QuizSlice';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import Drawer from '@mui/material/Drawer';
-import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import {
     deepPurple,
     green,
-    red,
     indigo,
     purple,
+    red,
     teal,
 } from '@mui/material/colors';
-import { QuestionOfCurrentOngoingQuiz } from '../../../types/Quiz';
-import { useAppDispatch } from '../../../app/hooks';
-import { setCurrentOngoingQuestionIndex } from '../QuizSlice';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
+import { useAppDispatch } from '@ReduxStore/hooks';
+import { QuestionOfCurrentOngoingQuiz } from '@Type/Quiz';
+import * as R from 'ramda';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -28,10 +28,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 type QuestionQuickSelectProps = {
     open: boolean;
     handleDrawerClose: any;
-    questionList: QuestionOfCurrentOngoingQuiz | undefined;
+    questionsList: QuestionOfCurrentOngoingQuiz | undefined;
+    setOpenSubmitQuizPopup: () => void;
 };
 export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
-    const { open, handleDrawerClose, questionList } = props;
+    const { open, handleDrawerClose, questionsList, setOpenSubmitQuizPopup } =
+        props;
     const dispatch = useAppDispatch();
     return (
         <>
@@ -62,8 +64,8 @@ export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
                         marginTop: 2,
                     }}
                 >
-                    {questionList !== undefined &&
-                        questionList.map((question: any, index: any) => {
+                    {questionsList !== undefined &&
+                        questionsList.map((question: any, index: any) => {
                             if (question.isAnswered)
                                 return (
                                     <OptionBtn
@@ -143,7 +145,12 @@ export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
                         bottom: 0,
                     }}
                 >
-                    <Button variant="contained">Submit</Button>
+                    <Button
+                        variant="contained"
+                        onClick={setOpenSubmitQuizPopup}
+                    >
+                        Submit
+                    </Button>
                 </Box>
             </Drawer>
         </>

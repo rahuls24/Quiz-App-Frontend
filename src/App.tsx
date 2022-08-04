@@ -1,15 +1,13 @@
-import React from 'react';
+import RequireAuth from '@Feature/auth/RequireAuth';
+import Signin from '@Feature/auth/signin/Signin';
+import Signup from '@Feature/auth/signup/Signup';
 import { ThemeProvider } from '@mui/material/styles';
-import HomePage from './pages/HomePage';
-import { defaultTheme } from './shared/components/globalTheme';
-import Signin from './features/auth/signin/Signin';
-import Signup from './features/auth/signup/Signup';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import QuizMakerPage from './pages/QuizMakerPage';
-import RequireAuth from './features/auth/RequireAuth';
-import StartQuiz from './pages/StartQuiz';
-import QuizResultPage from './pages/QuizResultPage';
-
+import HomePage from '@Page/HomePage';
+import QuizMakerPage from '@Page/QuizMakerPage';
+import QuizResultPage from '@Page/QuizResultPage';
+import StartQuiz from '@Page/StartQuiz';
+import { defaultTheme } from '@SharedComponent/globalTheme';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 function App() {
     return (
         <>

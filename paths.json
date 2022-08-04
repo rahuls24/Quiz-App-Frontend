@@ -4,14 +4,14 @@
         "lib": ["dom", "dom.iterable", "esnext"],
         "baseUrl": "./",
         "paths": {
-            "@Page/*": ["src/pages/*"],
-            "@Type/*": ["src/types/*"],
-            "@Feature/*": ["src/features/*"],
-            "@Asset/*": ["src/assets/*"],
-            "@ReduxStore/*": ["src/app/*"],
-            "@SharedComponent/*": ["src/shared/components/*"],
-            "@SharedFunction/*": ["src/shared/functions/*"],
-            "@CustomHook/*": ["src/shared/hooks/*"]
+            "@page/*": ["src/pages/*"],
+            "@types/*": ["src/types/*"],
+            "@features/*": ["src/features/*"],
+            "@assets/*": ["src/assets/*"],
+            "@reduxStore/*": ["src/app/*"],
+            "@sharedComponent/*": ["src/shared/components/*"],
+            "@sharedFunction/*": ["src/shared/functions/*"],
+            "@customHook/*": ["src/shared/hooks/*"]
         },
         "allowJs": true,
         "skipLibCheck": true,
@@ -26,6 +26,5 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx"
-    },
-    "include": ["src"]
+    }
 }

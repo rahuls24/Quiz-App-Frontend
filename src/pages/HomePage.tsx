@@ -1,32 +1,32 @@
-import React from 'react';
+import { selectUserDetails, setUserDetails } from '@Feature/auth/authSlice';
+import ExamineeHomePage from '@Feature/examinee/ExamineeHomePage';
+import ExaminerHomePage from '@Feature/examiner/ExaminerHomePage';
+import { useGetUserDetailsQuery } from '@ReduxStore/apis/apiSlice';
+import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
+import Header from '@SharedComponent/Header';
 import * as R from 'ramda';
-import { setUserDetails, selectUserDetails } from '../features/auth/authSlice';
-import { useGetUserDetailsQuery } from '../app/apis/apiSlice';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import Header from '../shared/components/Header';
-import ExamineeHomePage from '../features/examinee/ExamineeHomePage';
-import ExaminerHomePage from '../features/examiner/ExaminerHomePage';
+import React from 'react';
 
 function HomePage() {
-	const { role: currentUserRole = 'examinee' } =
-		useAppSelector(selectUserDetails) ?? {};
-	const dispatch = useAppDispatch();
-	const { data: userDetails, isSuccess } = useGetUserDetailsQuery('');
-	React.useEffect(() => {
-		if (isSuccess) {
-			R.compose(dispatch, setUserDetails)(userDetails?.user);
-		}
-	}, [isSuccess, dispatch, userDetails]);
-	return (
-		<>
-			<Header />
-			{currentUserRole === 'examiner' ? (
-				<ExaminerHomePage />
-			) : (
-				<ExamineeHomePage />
-			)}
-		</>
-	);
+    const { role: currentUserRole = 'examinee' } =
+        useAppSelector(selectUserDetails) ?? {};
+    const dispatch = useAppDispatch();
+    const { data: userDetails, isSuccess } = useGetUserDetailsQuery('');
+    React.useEffect(() => {
+        if (isSuccess) {
+            R.compose(dispatch, setUserDetails)(userDetails?.user);
+        }
+    }, [isSuccess, dispatch, userDetails]);
+    return (
+        <>
+            <Header />
+            {currentUserRole === 'examiner' ? (
+                <ExaminerHomePage />
+            ) : (
+                <ExamineeHomePage />
+            )}
+        </>
+    );
 }
 
 export default HomePage;

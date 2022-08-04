@@ -1,14 +1,15 @@
-import React from 'react';
-import Header from '../shared/components/Header';
+import QuizMarksSummery from '@Feature/quiz/examinee/quizResult/QuizMarksSummery';
+import ScorePieChart from '@Feature/quiz/examinee/quizResult/ScorePieChart';
+import { selectQuizResultDetails } from '@Feature/quiz/QuizSlice';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import QuizMarksSummery from '../features/quiz/quizResult/QuizMarksSummery';
-import ScorePieChart from '../features/quiz/quizResult/ScorePieChart';
-import { useAppSelector } from '../app/hooks';
-import { selectQuizResultDetails } from '../features/quiz/QuizSlice';
+import { useAppSelector } from '@ReduxStore/hooks';
+import Header from '@SharedComponent/Header';
+import React from 'react';
+
 function QuizResultPage() {
     const quizResultDetails = useAppSelector(selectQuizResultDetails);
     const quizMarksSummeryProps = React.useMemo(() => {
