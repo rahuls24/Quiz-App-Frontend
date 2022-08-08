@@ -1,3 +1,4 @@
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -13,13 +14,14 @@ type BackToQuestionOnePopupProps = {
 };
 export default function SubmitQuizPopup(props: BackToQuestionOnePopupProps) {
     const { open, setOpen, quizSubmitHandler } = props;
+    const [isSubmitBtnLoading, setIsSubmitBtnLoading] = React.useState(false);
     let navigate = useNavigate();
     const handleSubmit = async () => {
+        setIsSubmitBtnLoading(true);
         const isSubmitted = await quizSubmitHandler();
         setOpen(false);
         if (isSubmitted) navigate('/quiz/result');
-        else {
-        }
+        setIsSubmitBtnLoading(false);
     };
 
     const handleClose = () => {
@@ -34,15 +36,23 @@ export default function SubmitQuizPopup(props: BackToQuestionOnePopupProps) {
             fullWidth={true}
             maxWidth={'md'}
         >
-            <DialogTitle id="alert-dialog-title">{'Submit Quiz'}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+                {'Do you want to Submit?'}
+            </DialogTitle>
             <DialogContent>
                 <QuestionsDetailsTable />
             </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose}>Back</Button>
-                <Button onClick={handleSubmit} autoFocus>
-                    Submit
+            <DialogActions sx={{ marginRight: 3 }}>
+                <Button onClick={handleClose} variant="outlined">
+                    Back
                 </Button>
+                <LoadingButton
+                    onClick={handleSubmit}
+                    loading={isSubmitBtnLoading}
+                    variant="outlined"
+                >
+                    Submit
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     );

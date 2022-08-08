@@ -52,7 +52,11 @@ export default function QuestionView(props: QuestionViewProps) {
             currentOnGoingQuizQuestions.length - 1
         );
     };
-    const updateAnswer = (action: string, value?: string) => {
+    const updateAnswer = (
+        action: string,
+        value?: string,
+        shouldUpdateQuestionIndex?: boolean
+    ) => {
         let tmpCurrentOnGoingQuizQuestions = JSON.parse(
             JSON.stringify(currentOnGoingQuizQuestions)
         );
@@ -77,6 +81,11 @@ export default function QuestionView(props: QuestionViewProps) {
                     });
                     return;
                 }
+                R.compose(
+                    dispatch,
+                    setCurrentOnGoingQuizQuestions
+                )(tmpCurrentOnGoingQuizQuestions);
+                if (shouldUpdateQuestionIndex === false) return;
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
@@ -84,10 +93,7 @@ export default function QuestionView(props: QuestionViewProps) {
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
-                R.compose(
-                    dispatch,
-                    setCurrentOnGoingQuizQuestions
-                )(tmpCurrentOnGoingQuizQuestions);
+
                 break;
             case 'next':
                 questionStateObj = getModifyQuestionState('next');
@@ -97,6 +103,11 @@ export default function QuestionView(props: QuestionViewProps) {
                     ],
                     ...questionStateObj,
                 };
+                R.compose(
+                    dispatch,
+                    setCurrentOnGoingQuizQuestions
+                )(tmpCurrentOnGoingQuizQuestions);
+                if (shouldUpdateQuestionIndex === false) return;
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
@@ -104,10 +115,7 @@ export default function QuestionView(props: QuestionViewProps) {
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
-                R.compose(
-                    dispatch,
-                    setCurrentOnGoingQuizQuestions
-                )(tmpCurrentOnGoingQuizQuestions);
+
                 break;
             case 'markAsReview':
                 tmpCurrentOnGoingQuizQuestions[currentOngoingQuestionIndex][
@@ -128,6 +136,11 @@ export default function QuestionView(props: QuestionViewProps) {
                     });
                     return;
                 }
+                R.compose(
+                    dispatch,
+                    setCurrentOnGoingQuizQuestions
+                )(tmpCurrentOnGoingQuizQuestions);
+                if (shouldUpdateQuestionIndex === false) return;
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
@@ -135,10 +148,7 @@ export default function QuestionView(props: QuestionViewProps) {
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
-                R.compose(
-                    dispatch,
-                    setCurrentOnGoingQuizQuestions
-                )(tmpCurrentOnGoingQuizQuestions);
+
                 break;
             case 'clearResponse':
                 tmpCurrentOnGoingQuizQuestions[currentOngoingQuestionIndex][
@@ -262,6 +272,7 @@ export default function QuestionView(props: QuestionViewProps) {
                 setOpenSubmitQuizPopup={() =>
                     setIsQuestionQuickSelectOpen(true)
                 }
+                updateAnswer={updateAnswer}
             />
             <AutoHideAlert
                 onCloseHandler={() =>

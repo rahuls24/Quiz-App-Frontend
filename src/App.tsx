@@ -33,7 +33,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="quiz/start/:quizId"
+                            path="quiz/start/:quizId/"
                             element={
                                 <RequireAuth>
                                     <StartQuiz />

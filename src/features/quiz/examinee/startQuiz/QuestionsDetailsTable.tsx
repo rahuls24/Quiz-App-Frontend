@@ -15,7 +15,7 @@ export default function QuestionsDetailsTable() {
         answeredQuestions,
         markedAsReviewQuestions,
         notAnsweredQuestions,
-        skippedQuestions,
+        numberSkippedQuestions,
     ] = getTableRowDetails(questionsList);
     return (
         <TableContainer>
@@ -49,7 +49,9 @@ export default function QuestionsDetailsTable() {
                         <TableCell align="center">
                             {markedAsReviewQuestions}
                         </TableCell>
-                        <TableCell align="center">{skippedQuestions}</TableCell>
+                        <TableCell align="center">
+                            {numberSkippedQuestions}
+                        </TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
@@ -61,20 +63,20 @@ function getTableRowDetails(questionsList: QuestionOfCurrentOngoingQuiz) {
     let totalQuestions = questionsList.length;
     let answeredQuestions = 0,
         notAnsweredQuestions = 0,
-        skippedQuestions = 0,
+        numberSkippedQuestions = 0,
         markedAsReviewQuestions = 0;
     questionsList.forEach((question) => {
         if (question.isAnswered) answeredQuestions++;
-        if (question.isAnswered) markedAsReviewQuestions++;
+        else if (question.isMarkedAsReview) markedAsReviewQuestions++;
         else if (question.isVisited && !question.isAnswered)
             notAnsweredQuestions++;
-        else if (!question.isVisited) skippedQuestions++;
+        else if (!question.isVisited) numberSkippedQuestions++;
     });
     return [
         totalQuestions,
         answeredQuestions,
         markedAsReviewQuestions,
         notAnsweredQuestions,
-        skippedQuestions,
+        numberSkippedQuestions,
     ];
 }

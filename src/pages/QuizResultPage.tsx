@@ -16,7 +16,7 @@ function QuizResultPage() {
         return {
             numberOfRightAnswers: quizResultDetails.numberOfRightAnswers,
             numberOfWrongAnswers: quizResultDetails.numberOfWrongAnswers,
-            skippedQuestions: quizResultDetails.skippedQuestions,
+            numberSkippedQuestions: quizResultDetails.numberSkippedQuestions,
             totalTimeTaken: quizResultDetails.totalTimeTaken,
             marks: quizResultDetails.marks,
         };
@@ -25,7 +25,7 @@ function QuizResultPage() {
         return {
             numberOfRightAnswers: quizResultDetails.numberOfRightAnswers,
             numberOfWrongAnswers: quizResultDetails.numberOfWrongAnswers,
-            skippedQuestions: quizResultDetails.skippedQuestions,
+            numberSkippedQuestions: quizResultDetails.numberSkippedQuestions,
         };
     }, [quizResultDetails]);
     return (

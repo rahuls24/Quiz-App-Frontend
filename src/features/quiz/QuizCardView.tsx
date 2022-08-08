@@ -33,6 +33,7 @@ import {
 var allEnrolledLoadingBtn = new Set<string>();
 export default function QuizCardView(props: QuizCardViewProps) {
     const topicsViewRef = React.useRef();
+
     const isOverflowInTopicView = useIsOverflowX(topicsViewRef);
     const { quiz, roleOfUser } = props;
     const quizData = useAppSelector(selectQuizData);
@@ -90,18 +91,18 @@ export default function QuizCardView(props: QuizCardViewProps) {
     const [saveStartTime] = useSaveStartTimeMutation();
 
     const startHandler = async () => {
-        await Promise.all([
-            R.compose(dispatch, setCurrentOnGoingQuiz)(quiz),
-            saveStartTime({
-                quizId: quiz._id,
-            }),
-        ]);
+        await saveStartTime({
+            quizId: quiz._id,
+        });
+
+        R.compose(dispatch, setCurrentOnGoingQuiz)(quiz);
         navigate(`quiz/start/${quiz._id}`);
     };
     React.useEffect(() => {}, [
         isErrorUnenrolledForAQuiz,
         isErrorInGetAllQuestions,
     ]);
+
     return (
         <>
             <Card

@@ -1,7 +1,11 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 type BottomNavigationForQuestionViewProps = {
-    updateAnswer: (action: string, value?: string) => void;
+    updateAnswer: (
+        action: string,
+        value?: string,
+        shouldUpdateQuestionIndex?: boolean
+    ) => void;
     isQuickSelectViewOpen: boolean;
 };
 export default function BottomNavigationForQuestionView(

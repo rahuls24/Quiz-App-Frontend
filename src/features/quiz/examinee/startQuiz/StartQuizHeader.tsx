@@ -9,6 +9,7 @@ import differenceInSeconds from 'date-fns/differenceInSeconds';
 import * as R from 'ramda';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import AlreadyGivenTheQuizAlertPopup from './AlreadyGivenTheQuizAlertPopup';
 type startQuizHeaderProps = {
     quizName: string;
     quizId: string;
@@ -25,6 +26,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         quizSubmitHandler,
     } = props;
     let navigate = useNavigate();
+    const [
+        isAlreadyGivenTheQuizAlertPopupOpen,
+        setIsAlreadyGivenTheQuizAlertPopupOpen,
+    ] = React.useState(false);
     const isExamStarted = React.useRef(false);
     const { data: startTimeData, refetch } =
         useGetStartTimeOfTheQuizQuery(quizId);
@@ -44,10 +49,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
             const endTime = addMinutes(startedAt, quizDuration);
             const timeDiff = differenceInSeconds(endTime, new Date());
             if (isNaN(timeDiff)) return;
-            if (timeDiff < 1) {
+            if (timeDiff < 0) {
                 clearInterval(timeIntervalId);
-                // Do the submission things
-                quizSubmitHandlerHelper();
+                if (isExamStarted.current) quizSubmitHandlerHelper();
+                else setIsAlreadyGivenTheQuizAlertPopupOpen(true);
                 return;
             }
             isExamStarted.current = true;
@@ -66,6 +71,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
             }
         }
     }, [timer]);
+    const alreadyGivenTheQuizAlertPopupCloseHandler = (reason: string) => {
+        if (reason === 'backdropClick') return;
+        setIsAlreadyGivenTheQuizAlertPopupOpen(false);
+    };
     return (
         <>
             <AppBar position="static" color="transparent">
@@ -140,6 +149,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
                     </Toolbar>
                 </Container>
             </AppBar>
+            <AlreadyGivenTheQuizAlertPopup
+                open={isAlreadyGivenTheQuizAlertPopupOpen}
+                onCloseHandler={alreadyGivenTheQuizAlertPopupCloseHandler}
+            />
         </>
     );
 }

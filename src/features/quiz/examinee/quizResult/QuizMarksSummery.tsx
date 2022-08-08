@@ -10,7 +10,7 @@ import React from 'react';
 type QuizMarksSummeryProps = {
     numberOfRightAnswers: number;
     numberOfWrongAnswers: number;
-    skippedQuestions: number;
+    numberSkippedQuestions: number;
     totalTimeTaken: number;
     marks: number;
 };
@@ -18,7 +18,7 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
     const {
         numberOfRightAnswers,
         numberOfWrongAnswers,
-        skippedQuestions,
+        numberSkippedQuestions,
         totalTimeTaken,
         marks,
     } = props;
@@ -26,6 +26,7 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
         const totalAttemptQuestions =
             numberOfRightAnswers + numberOfWrongAnswers;
         const speed = Math.ceil(totalAttemptQuestions / totalTimeTaken);
+
         const accuracy = Math.ceil(
             (numberOfRightAnswers * 100) / totalAttemptQuestions
         );
@@ -33,7 +34,9 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
             {
                 icon: scoreIcon,
                 headerText: 'Score',
-                value: `${marks}/${totalAttemptQuestions + skippedQuestions}`,
+                value: `${marks}/${
+                    totalAttemptQuestions + numberSkippedQuestions
+                }`,
             },
             {
                 icon: attemptedIcon,
@@ -48,13 +51,13 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
             {
                 icon: accuracyIcon,
                 headerText: 'Accuracy',
-                value: `${accuracy}%`,
+                value: isNaN(accuracy) ? '0%' : `${accuracy}%`,
             },
         ];
     }, [
         numberOfRightAnswers,
         numberOfWrongAnswers,
-        skippedQuestions,
+        numberSkippedQuestions,
         totalTimeTaken,
         marks,
     ]);
@@ -63,33 +66,31 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
             <Grid container spacing={2}>
                 {summaryData.map((item) => {
                     return (
-                        <>
-                            <Grid item xs={6}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        margin: 2,
-                                    }}
-                                >
-                                    <Avatar alt="Score Icon" src={item.icon} />
-                                    <Box sx={{ paddingLeft: 2 }}>
-                                        <Typography
-                                            variant="overline"
-                                            display="block"
-                                        >
-                                            {item.headerText}
-                                        </Typography>
-                                        <Typography
-                                            variant="button"
-                                            display="block"
-                                        >
-                                            {item.value}
-                                        </Typography>
-                                    </Box>
+                        <Grid item xs={6} key={item.headerText}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    margin: 2,
+                                }}
+                            >
+                                <Avatar alt="Score Icon" src={item.icon} />
+                                <Box sx={{ paddingLeft: 2 }}>
+                                    <Typography
+                                        variant="overline"
+                                        display="block"
+                                    >
+                                        {item.headerText}
+                                    </Typography>
+                                    <Typography
+                                        variant="button"
+                                        display="block"
+                                    >
+                                        {item.value}
+                                    </Typography>
                                 </Box>
-                            </Grid>
-                        </>
+                            </Box>
+                        </Grid>
                     );
                 })}
             </Grid>

@@ -27,7 +27,7 @@ const initialState: QuizRelatedRelated = {
         quizName: '',
         numberOfWrongAnswers: 0,
         numberOfRightAnswers: 0,
-        skippedQuestions: 0,
+        numberSkippedQuestions: 0,
         totalTimeTaken: 0,
         marks: 0,
     },

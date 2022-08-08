@@ -47,7 +47,7 @@ export type QuizResultDetails = {
     quizName: string;
     numberOfRightAnswers: number;
     numberOfWrongAnswers: number;
-    skippedQuestions: number;
+    numberSkippedQuestions: number;
     totalTimeTaken: number;
     marks: number;
 };
@@ -58,10 +58,17 @@ export type QuizRow = {
     enrolledBy: number;
 };
 
+export type AutoHideAlertSeverity = 'error' | 'warning' | 'success';
 export type AutoHideAlertProps = {
     isOpen: boolean;
     onCloseHandler?: () => void;
     alertMsg: string;
-    severity: 'error' | 'warning' | 'success';
+    severity: AutoHideAlertSeverity;
     autoHideDuration: number;
+};
+
+export type PieChartDataType = {
+    title: string;
+    value: number;
+    color: string;
 };

@@ -5,6 +5,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { PieChartDataType } from '@Type/Quiz';
 import React from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 const sections = [
@@ -25,11 +26,14 @@ const sections = [
 type ScorePieChartProps = {
     numberOfRightAnswers: number;
     numberOfWrongAnswers: number;
-    skippedQuestions: number;
+    numberSkippedQuestions: number;
 };
 function ScorePieChart(props: ScorePieChartProps) {
-    const { numberOfRightAnswers, numberOfWrongAnswers, skippedQuestions } =
-        props;
+    const {
+        numberOfRightAnswers,
+        numberOfWrongAnswers,
+        numberSkippedQuestions,
+    } = props;
     const [
         currentSelectedSectionOfPieChart,
         setCurrentSelectedSectionOfPieChart,
@@ -40,8 +44,10 @@ function ScorePieChart(props: ScorePieChartProps) {
         );
     };
     const totalNumberOfQuestions = React.useMemo(() => {
-        return numberOfRightAnswers + numberOfWrongAnswers + skippedQuestions;
-    }, [numberOfRightAnswers, numberOfWrongAnswers, skippedQuestions]);
+        return (
+            numberOfRightAnswers + numberOfWrongAnswers + numberSkippedQuestions
+        );
+    }, [numberOfRightAnswers, numberOfWrongAnswers, numberSkippedQuestions]);
     return (
         <>
             <Box
@@ -52,23 +58,11 @@ function ScorePieChart(props: ScorePieChartProps) {
                 }}
             >
                 <PieChart
-                    data={[
-                        {
-                            title: 'Correct',
-                            value: numberOfRightAnswers,
-                            color: '#2e7d32',
-                        },
-                        {
-                            title: 'Wrong',
-                            value: numberOfWrongAnswers,
-                            color: '#d32f2f',
-                        },
-                        {
-                            title: 'Skipped',
-                            value: skippedQuestions,
-                            color: '#7D7D7D',
-                        },
-                    ]}
+                    data={getDataForPieChart(
+                        numberOfRightAnswers,
+                        numberOfWrongAnswers,
+                        numberSkippedQuestions
+                    )}
                     style={{ height: '150px', fontSize: '8px' }}
                     radius={PieChart.defaultProps.radius - 6}
                     lineWidth={60}
@@ -99,38 +93,52 @@ function ScorePieChart(props: ScorePieChartProps) {
                 />
                 <List>
                     {sections.map((section, index) => {
+                        if (
+                            section.sectionName === 'CORRECT' &&
+                            numberOfRightAnswers === 0
+                        )
+                            return null;
+                        else if (
+                            section.sectionName === 'WRONG' &&
+                            numberOfWrongAnswers === 0
+                        )
+                            return null;
+                        if (
+                            section.sectionName === 'SKIPPED' &&
+                            numberSkippedQuestions === 0
+                        )
+                            return null;
                         return (
-                            <>
-                                <ListItem
+                            <ListItem
+                                sx={{
+                                    display: 'list-item',
+                                }}
+                                key={section.sectionName}
+                            >
+                                <ListItemButton
+                                    onClick={() =>
+                                        currentSelectedSectionOfPieChartHandler(
+                                            index
+                                        )
+                                    }
                                     sx={{
-                                        display: 'list-item',
+                                        backgroundColor:
+                                            currentSelectedSectionOfPieChart ===
+                                            index
+                                                ? '#F5F5F5'
+                                                : '',
                                     }}
                                 >
-                                    <ListItemButton
-                                        onClick={() =>
-                                            currentSelectedSectionOfPieChartHandler(
-                                                index
-                                            )
-                                        }
-                                        sx={{
-                                            backgroundColor:
-                                                currentSelectedSectionOfPieChart ===
-                                                index
-                                                    ? '#F5F5F5'
-                                                    : '',
-                                        }}
-                                    >
-                                        <ListItemIcon>
-                                            <CircleIcon
-                                                color={section.bulletColor}
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={section.sectionName}
+                                    <ListItemIcon>
+                                        <CircleIcon
+                                            color={section.bulletColor}
                                         />
-                                    </ListItemButton>
-                                </ListItem>
-                            </>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={section.sectionName}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
                         );
                     })}
                 </List>
@@ -140,3 +148,30 @@ function ScorePieChart(props: ScorePieChartProps) {
 }
 
 export default ScorePieChart;
+
+function getDataForPieChart(
+    numberOfRightAnswers: number,
+    numberOfWrongAnswers: number,
+    numberSkippedQuestions: number
+) {
+    const dataForPieChart = [] as Array<PieChartDataType>;
+    if (numberOfRightAnswers > 0)
+        dataForPieChart.push({
+            title: 'Correct',
+            value: numberOfRightAnswers,
+            color: '#2e7d32',
+        });
+    if (numberOfWrongAnswers > 0)
+        dataForPieChart.push({
+            title: 'Wrong',
+            value: numberOfWrongAnswers,
+            color: '#d32f2f',
+        });
+    if (numberSkippedQuestions > 0)
+        dataForPieChart.push({
+            title: 'Skipped',
+            value: numberSkippedQuestions,
+            color: '#7D7D7D',
+        });
+    return dataForPieChart;
+}

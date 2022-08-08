@@ -1,4 +1,7 @@
-import { setCurrentOngoingQuestionIndex } from '@Feature/quiz/QuizSlice';
+import {
+    selectCurrentOngoingQuestionIndex,
+    setCurrentOngoingQuestionIndex,
+} from '@Feature/quiz/QuizSlice';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
@@ -14,9 +17,10 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import { useAppDispatch } from '@ReduxStore/hooks';
+import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { QuestionOfCurrentOngoingQuiz } from '@Type/Quiz';
 import * as R from 'ramda';
+import React from 'react';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -30,11 +34,29 @@ type QuestionQuickSelectProps = {
     handleDrawerClose: any;
     questionsList: QuestionOfCurrentOngoingQuiz | undefined;
     setOpenSubmitQuizPopup: () => void;
+    updateAnswer: (
+        action: string,
+        value?: string,
+        shouldUpdateQuestionIndex?: boolean
+    ) => void;
 };
 export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
-    const { open, handleDrawerClose, questionsList, setOpenSubmitQuizPopup } =
-        props;
+    const {
+        open,
+        handleDrawerClose,
+        questionsList,
+        setOpenSubmitQuizPopup,
+        updateAnswer,
+    } = props;
+    const currentOngoingQuestionIndex = useAppSelector(
+        selectCurrentOngoingQuestionIndex
+    );
     const dispatch = useAppDispatch();
+    const quickSelectBtnHandler = (index: number) => {
+        if (currentOngoingQuestionIndex === index) return;
+        R.compose(dispatch, setCurrentOngoingQuestionIndex)(index);
+        updateAnswer('next', '', false);
+    };
     return (
         <>
             <Drawer
@@ -65,70 +87,65 @@ export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
                     }}
                 >
                     {questionsList !== undefined &&
-                        questionsList.map((question: any, index: any) => {
+                        questionsList.map((question, index) => {
                             if (question.isAnswered)
                                 return (
-                                    <OptionBtn
-                                        btnType="answered"
-                                        questionNumber={index + 1}
-                                        clickHandler={() =>
-                                            R.compose(
-                                                dispatch,
-                                                setCurrentOngoingQuestionIndex
-                                            )(index)
-                                        }
-                                    />
+                                    <React.Fragment key={question._id}>
+                                        <OptionBtn
+                                            btnType="answered"
+                                            questionNumber={index + 1}
+                                            clickHandler={() =>
+                                                quickSelectBtnHandler(index)
+                                            }
+                                        />
+                                    </React.Fragment>
                                 );
                             if (question.isMarkedAsReview)
                                 return (
-                                    <OptionBtn
-                                        btnType="markedForReview"
-                                        questionNumber={index + 1}
-                                        clickHandler={() =>
-                                            R.compose(
-                                                dispatch,
-                                                setCurrentOngoingQuestionIndex
-                                            )(index)
-                                        }
-                                    />
+                                    <React.Fragment key={question._id}>
+                                        <OptionBtn
+                                            btnType="markedForReview"
+                                            questionNumber={index + 1}
+                                            clickHandler={() =>
+                                                quickSelectBtnHandler(index)
+                                            }
+                                        />
+                                    </React.Fragment>
                                 );
                             if (!question.isVisited)
                                 return (
-                                    <OptionBtn
-                                        btnType="notVisited"
-                                        questionNumber={index + 1}
-                                        clickHandler={() =>
-                                            R.compose(
-                                                dispatch,
-                                                setCurrentOngoingQuestionIndex
-                                            )(index)
-                                        }
-                                    />
+                                    <React.Fragment key={question._id}>
+                                        <OptionBtn
+                                            btnType="notVisited"
+                                            questionNumber={index + 1}
+                                            clickHandler={() =>
+                                                quickSelectBtnHandler(index)
+                                            }
+                                        />
+                                    </React.Fragment>
                                 );
                             if (question.isVisited)
                                 return (
+                                    <React.Fragment key={question._id}>
+                                        <OptionBtn
+                                            btnType="notAnswered"
+                                            questionNumber={index + 1}
+                                            clickHandler={() =>
+                                                quickSelectBtnHandler(index)
+                                            }
+                                        />
+                                    </React.Fragment>
+                                );
+                            return (
+                                <React.Fragment key={question._id}>
                                     <OptionBtn
                                         btnType="notAnswered"
                                         questionNumber={index + 1}
                                         clickHandler={() =>
-                                            R.compose(
-                                                dispatch,
-                                                setCurrentOngoingQuestionIndex
-                                            )(index)
+                                            quickSelectBtnHandler(index)
                                         }
                                     />
-                                );
-                            return (
-                                <OptionBtn
-                                    btnType="notAnswered"
-                                    questionNumber={index + 1}
-                                    clickHandler={() =>
-                                        R.compose(
-                                            dispatch,
-                                            setCurrentOngoingQuestionIndex
-                                        )(index)
-                                    }
-                                />
+                                </React.Fragment>
                             );
                         })}
                 </Box>
@@ -148,6 +165,7 @@ export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
                     <Button
                         variant="contained"
                         onClick={setOpenSubmitQuizPopup}
+                        color={'success'}
                     >
                         Submit
                     </Button>
