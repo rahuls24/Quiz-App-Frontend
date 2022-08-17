@@ -142,7 +142,11 @@ function ExamineeHomePage() {
         reFetchEnrolledQuizzesList();
         reFetchUnenrolledQuizzesList();
         return () => actionDispatcher.setCurrentLoadingEnrollBtns([]);
-    }, []);
+    }, [
+        actionDispatcher,
+        reFetchEnrolledQuizzesList,
+        reFetchUnenrolledQuizzesList,
+    ]);
     return (
         <>
             <Grid

@@ -6,8 +6,11 @@ import Header from '@SharedComponent/Header';
 import { QuizzesHistory } from '@Type/Quiz';
 import React from 'react';
 function QuizHistory() {
-    const { data: { quizzesDetails = [] } = {}, refetch } =
-        useGetQuizzesHistoryQuery('');
+    const {
+        data: { quizzesDetails = [] } = {},
+        isFetching: isQuizzesDetailsFetching,
+        refetch,
+    } = useGetQuizzesHistoryQuery('');
     React.useEffect(() => {
         refetch();
     }, []);
@@ -19,6 +22,7 @@ function QuizHistory() {
     const quizzesSummeryDetails = React.useMemo(() => {
         return getQuizzesSummery(quizzesHistoryData);
     }, [quizzesHistoryData]);
+
     return (
         <>
             <Header />
@@ -26,7 +30,10 @@ function QuizHistory() {
                 <UserQuizHistorySummery {...quizzesSummeryDetails} />
             </Box>
             <Box sx={{ margin: { xs: 0, sm: 2 } }}>
-                <QuizHistoryTable quizzesHistoryData={quizzesHistoryData} />
+                <QuizHistoryTable
+                    quizzesHistoryData={quizzesHistoryData}
+                    isLoading={isQuizzesDetailsFetching}
+                />
             </Box>
         </>
     );

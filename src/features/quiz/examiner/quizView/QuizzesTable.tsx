@@ -1,11 +1,14 @@
+import NoQuizInHistoryTable from '@Feature/quiz/NoQuizInHistoryTable';
 import { setIsQuizDetailsViewOpen, setQuizData } from '@Feature/quiz/QuizSlice';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useLazyGetAllQuestionsOfAQuizQuery } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch } from '@ReduxStore/hooks';
 import { getQuestionsData } from '@SharedFunction/quizRelated';
 import { Quiz, QuizRow, QuizzesMappingWithIndex } from '@Type/Quiz';
 import * as R from 'ramda';
+import React from 'react';
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'NO', width: 90, hideable: false },
     {
@@ -36,6 +39,13 @@ export default function QuizzesTable(props: QuizzesTableProps) {
     const dispatch = useAppDispatch();
     const [getAllQuestions, { isFetching: isViewBtnLoading }] =
         useLazyGetAllQuestionsOfAQuizQuery();
+    const NoContentInTheTable = React.useCallback(() => {
+        return (
+            <NoQuizInHistoryTable
+                content={<NoQuizInLiveQuizzesTableContent />}
+            />
+        );
+    }, []);
     const viewHandler = async (quiz: Quiz) => {
         try {
             const response = await getAllQuestions(quiz._id);
@@ -68,6 +78,10 @@ export default function QuizzesTable(props: QuizzesTableProps) {
                             );
                         }
                     }}
+                    loading={false}
+                    components={{
+                        NoRowsOverlay: NoContentInTheTable,
+                    }}
                 />
             </Box>
         </>
@@ -90,4 +104,17 @@ function createRows(
         Map[String(index + 1)] = quiz;
     });
     return [rows, Map];
+}
+
+function NoQuizInLiveQuizzesTableContent() {
+    return (
+        <>
+            <Typography variant="h6" gutterBottom component="div">
+                No Quiz found
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+                When another examiner adds a quiz, it will appear here.
+            </Typography>
+        </>
+    );
 }
