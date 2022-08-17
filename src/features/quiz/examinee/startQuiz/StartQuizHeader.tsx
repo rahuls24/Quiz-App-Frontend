@@ -9,13 +9,15 @@ import differenceInSeconds from 'date-fns/differenceInSeconds';
 import * as R from 'ramda';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import AlreadyGivenTheQuizAlertPopup from './AlreadyGivenTheQuizAlertPopup';
 type startQuizHeaderProps = {
     quizName: string;
     quizId: string;
     quizDuration: number;
     isQuickSelectViewOpen: boolean;
     quizSubmitHandler: () => Promise<boolean>;
+    setIsAlreadyGivenTheQuizAlertPopupOpen: React.Dispatch<
+        React.SetStateAction<boolean>
+    >;
 };
 function StartQuizHeader(props: startQuizHeaderProps) {
     const {
@@ -24,12 +26,10 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         quizDuration,
         isQuickSelectViewOpen,
         quizSubmitHandler,
+        setIsAlreadyGivenTheQuizAlertPopupOpen,
     } = props;
     let navigate = useNavigate();
-    const [
-        isAlreadyGivenTheQuizAlertPopupOpen,
-        setIsAlreadyGivenTheQuizAlertPopupOpen,
-    ] = React.useState(false);
+
     const isExamStarted = React.useRef(false);
     const { data: startTimeData, refetch } =
         useGetStartTimeOfTheQuizQuery(quizId);
@@ -71,10 +71,6 @@ function StartQuizHeader(props: startQuizHeaderProps) {
             }
         }
     }, [timer]);
-    const alreadyGivenTheQuizAlertPopupCloseHandler = (reason: string) => {
-        if (reason === 'backdropClick') return;
-        setIsAlreadyGivenTheQuizAlertPopupOpen(false);
-    };
     return (
         <>
             <AppBar position="static" color="transparent">
@@ -149,10 +145,6 @@ function StartQuizHeader(props: startQuizHeaderProps) {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <AlreadyGivenTheQuizAlertPopup
-                open={isAlreadyGivenTheQuizAlertPopupOpen}
-                onCloseHandler={alreadyGivenTheQuizAlertPopupCloseHandler}
-            />
         </>
     );
 }

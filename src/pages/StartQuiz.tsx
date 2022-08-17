@@ -1,3 +1,4 @@
+import AlreadyGivenTheQuizAlertPopup from '@Feature/quiz/examinee/startQuiz/AlreadyGivenTheQuizAlertPopup';
 import QuestionView from '@Feature/quiz/examinee/startQuiz/QuestionView';
 import StartQuizHeader from '@Feature/quiz/examinee/startQuiz/StartQuizHeader';
 import {
@@ -32,6 +33,10 @@ function StartQuiz() {
             severity: 'error' as AutoHideAlertSeverity,
             autoHideDuration: 4000,
         });
+    const [
+        isAlreadyGivenTheQuizAlertPopupOpen,
+        setIsAlreadyGivenTheQuizAlertPopupOpen,
+    ] = React.useState(false);
     const currentQuiz = useAppSelector(selectCurrentOnGoingQuiz);
     const [fetchQuestionList, { isError: isErrorForFetchQuestionList }] =
         useLazyGetAllQuestionsOfAQuizQuery();
@@ -42,14 +47,19 @@ function StartQuiz() {
             );
             if (questionListResponse.status === 'rejected') {
                 // Handle error
-                setAutoHideErrorAlertProps((prev) => {
-                    return {
-                        ...prev,
-                        isOpen: true,
-                        alertMsg:
-                            'Something went wrong while fetching questions of quiz',
-                    };
-                });
+                if ('status' in questionListResponse.error) {
+                    if (questionListResponse.error.status === 403) {
+                        setIsAlreadyGivenTheQuizAlertPopupOpen(true);
+                    }
+                } else
+                    setAutoHideErrorAlertProps((prev) => {
+                        return {
+                            ...prev,
+                            isOpen: true,
+                            alertMsg:
+                                'Something went wrong. Please try after sometime',
+                        };
+                    });
                 return;
             }
             let questionsList =
@@ -119,8 +129,7 @@ function StartQuiz() {
     }, []);
 
     React.useEffect(() => {
-        if (isErrorForSubmitQuiz || isErrorForFetchQuestionList) {
-            console.log('Effect is called');
+        if (isErrorForSubmitQuiz) {
             setAutoHideErrorAlertProps((prev) => {
                 return {
                     ...prev,
@@ -129,7 +138,11 @@ function StartQuiz() {
                 };
             });
         }
-    }, [isErrorForSubmitQuiz, isErrorForFetchQuestionList]);
+    }, [isErrorForSubmitQuiz]);
+    const alreadyGivenTheQuizAlertPopupCloseHandler = (reason: string) => {
+        if (reason === 'backdropClick') return;
+        setIsAlreadyGivenTheQuizAlertPopupOpen(false);
+    };
     return (
         <>
             <StartQuizHeader
@@ -138,6 +151,9 @@ function StartQuiz() {
                 quizDuration={Number(currentQuiz?.quizDuration ?? '0')}
                 isQuickSelectViewOpen={isQuickSelectViewOpen}
                 quizSubmitHandler={quizSubmitHandler}
+                setIsAlreadyGivenTheQuizAlertPopupOpen={
+                    setIsAlreadyGivenTheQuizAlertPopupOpen
+                }
             />
             <QuestionView
                 isQuickSelectViewOpen={isQuickSelectViewOpen}
@@ -147,6 +163,10 @@ function StartQuiz() {
             <AutoHideAlert
                 {...autoHideErrorAlertProps}
                 onCloseHandler={onCloseHandlerForAutoHideAlert}
+            />
+            <AlreadyGivenTheQuizAlertPopup
+                open={isAlreadyGivenTheQuizAlertPopupOpen}
+                onCloseHandler={alreadyGivenTheQuizAlertPopupCloseHandler}
             />
         </>
     );

@@ -94,9 +94,14 @@ export const apiSlice = createApi({
         }),
         submitQuiz: builder.mutation({
             query: (payload) => ({
-                url: '/question/submit-quiz',
+                url: '/quiz/submit-quiz',
                 method: 'POST',
                 body: payload,
+            }),
+        }),
+        getQuizzesHistory: builder.query({
+            query: () => ({
+                url: `/quiz/get-quizzes-history`,
             }),
         }),
     }),
@@ -115,4 +120,5 @@ export const {
     useSaveStartTimeMutation,
     useGetStartTimeOfTheQuizQuery,
     useSubmitQuizMutation,
+    useGetQuizzesHistoryQuery,
 } = apiSlice;

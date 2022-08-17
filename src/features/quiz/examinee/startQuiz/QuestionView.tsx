@@ -96,6 +96,14 @@ export default function QuestionView(props: QuestionViewProps) {
 
                 break;
             case 'next':
+                if (
+                    isQuestionAnswered(
+                        tmpCurrentOnGoingQuizQuestions[
+                            currentOngoingQuestionIndex
+                        ]
+                    )
+                )
+                    return;
                 questionStateObj = getModifyQuestionState('next');
                 tmpCurrentOnGoingQuizQuestions[currentOngoingQuestionIndex] = {
                     ...tmpCurrentOnGoingQuizQuestions[
@@ -336,4 +344,8 @@ function getModifyQuestionState(state: questionStateAction) {
                 isAnswered: false,
             };
     }
+}
+
+function isQuestionAnswered(questionDetails: any) {
+    return questionDetails?.isAnswered ?? false;
 }

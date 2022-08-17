@@ -53,6 +53,9 @@ const Header = () => {
             case '/quiz/make-a-quiz':
                 setCurrentActiveBtn('Make a Quiz');
                 break;
+            case '/quiz/history':
+                setCurrentActiveBtn('Quizzes History');
+                break;
             default:
                 setCurrentActiveBtn('');
                 break;
@@ -228,7 +231,7 @@ function getNavBtnForCurrentUser(role = 'examinee') {
         case 'examinee':
             return [
                 { name: 'Live Quizzes', path: '/' },
-                { name: 'Quizzes History', path: 'quiz-history' },
+                { name: 'Quizzes History', path: 'quiz/history' },
             ];
         case 'examiner':
             return [

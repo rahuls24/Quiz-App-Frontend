@@ -72,3 +72,17 @@ export type PieChartDataType = {
     value: number;
     color: string;
 };
+export type QuizResult = {
+    marks: number;
+    examineeId: string;
+    numberOfRightAnswers: number;
+    numberOfWrongAnswers: number;
+    numberSkippedQuestions: number;
+    totalTimeTaken: number;
+};
+export type QuizzesHistory = {
+    quizId: string;
+    quizName: string;
+    quizDuration: number;
+    quizResult: QuizResult;
+};

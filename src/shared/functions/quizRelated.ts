@@ -72,3 +72,14 @@ export function getCurrentOnGoingQuizQuestionsData(questionResponse: any) {
     });
     return questionDataForResponse;
 }
+
+export function calculateAccuracy(
+    totalCorrectAnswers: number,
+    totalWrongAnswer: number
+) {
+    if (totalCorrectAnswers === 0) return 0;
+    if (totalWrongAnswer === 0) return 0;
+    return (
+        (totalCorrectAnswers * 100) / (totalCorrectAnswers + totalWrongAnswer)
+    );
+}

@@ -3,6 +3,7 @@ import Signin from '@Feature/auth/signin/Signin';
 import Signup from '@Feature/auth/signup/Signup';
 import { ThemeProvider } from '@mui/material/styles';
 import HomePage from '@Page/HomePage';
+import QuizHistory from '@Page/QuizHistory';
 import QuizMakerPage from '@Page/QuizMakerPage';
 import QuizResultPage from '@Page/QuizResultPage';
 import StartQuiz from '@Page/StartQuiz';
@@ -48,6 +49,15 @@ function App() {
                                 </RequireAuth>
                             }
                         />
+                        <Route
+                            path="quiz/history"
+                            element={
+                                <RequireAuth>
+                                    <QuizHistory />
+                                </RequireAuth>
+                            }
+                        />
+
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </BrowserRouter>
