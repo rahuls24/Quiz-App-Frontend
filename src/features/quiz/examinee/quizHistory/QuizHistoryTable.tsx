@@ -1,3 +1,4 @@
+import NoQuizInHistoryTable from '@Feature/quiz/NoQuizInHistoryTable';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -5,6 +6,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { calculateAccuracy } from '@SharedFunction/quizRelated';
 import { QuizzesHistory } from '@Type/Quiz';
 import React from 'react';
+
 const columns: GridColDef[] = [
     {
         field: 'id',
@@ -64,13 +66,18 @@ const columns: GridColDef[] = [
 
 type QuizHistoryTableProps = {
     quizzesHistoryData: Array<QuizzesHistory>;
+    isLoading: boolean;
 };
 function QuizHistoryTable(props: QuizHistoryTableProps) {
-    const { quizzesHistoryData } = props;
+    const { quizzesHistoryData, isLoading } = props;
     const rows = React.useMemo(() => {
         return createRows(quizzesHistoryData);
     }, [quizzesHistoryData]);
-    console.log(rows);
+    const NoContentInTheTable = React.useCallback(() => {
+        return (
+            <NoQuizInHistoryTable content={<NoQuizInHistoryTableContent />} />
+        );
+    }, []);
     return (
         <>
             <Box>
@@ -90,6 +97,10 @@ function QuizHistoryTable(props: QuizHistoryTableProps) {
                         pageSize={5}
                         rowsPerPageOptions={[5]}
                         disableSelectionOnClick
+                        loading={isLoading}
+                        components={{
+                            NoRowsOverlay: NoContentInTheTable,
+                        }}
                     />
                 </Paper>
             </Box>
@@ -137,4 +148,16 @@ function createRows(quizzesHistory: Array<QuizzesHistory>) {
     });
 
     return quizHistoryRowData;
+}
+function NoQuizInHistoryTableContent() {
+    return (
+        <>
+            <Typography variant="h6" gutterBottom component="div">
+                No Quiz found
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+                Try to attempt a quiz. You can track that quiz result here.
+            </Typography>
+        </>
+    );
 }

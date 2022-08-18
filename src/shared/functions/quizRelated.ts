@@ -80,6 +80,7 @@ export function calculateAccuracy(
     if (totalCorrectAnswers === 0) return 0;
     if (totalWrongAnswer === 0) return 0;
     return (
-        (totalCorrectAnswers * 100) / (totalCorrectAnswers + totalWrongAnswer)
-    );
+        (totalCorrectAnswers * 100) /
+        (totalCorrectAnswers + totalWrongAnswer)
+    ).toFixed(2);
 }
