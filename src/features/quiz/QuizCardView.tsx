@@ -19,8 +19,8 @@ import {
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { getQuestionsData } from '@SharedFunction/quizRelated';
 import { AutoHideAlertProps, Quiz } from '@Type/Quiz';
-import * as R from 'ramda';
-import React from 'react';
+import { compose } from 'ramda';
+import { useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -32,7 +32,7 @@ import {
 } from './QuizSlice';
 var allEnrolledLoadingBtn = new Set<string>();
 export default function QuizCardView(props: QuizCardViewProps) {
-    const topicsViewRef = React.useRef();
+    const topicsViewRef = useRef();
 
     const isOverflowInTopicView = useIsOverflowX(topicsViewRef);
     const { quiz, roleOfUser } = props;
@@ -55,13 +55,13 @@ export default function QuizCardView(props: QuizCardViewProps) {
                 quiz,
                 questions,
             };
-            R.compose(dispatch, setQuizData)(quizDataForDetailedView);
-            R.compose(dispatch, setIsQuizDetailsViewOpen)(true);
+            compose(dispatch, setQuizData)(quizDataForDetailedView);
+            compose(dispatch, setIsQuizDetailsViewOpen)(true);
         } catch (error) {
             // ! Handle this
         }
     };
-    const isCurrentQuizOpenedInDetailsView = React.useMemo(() => {
+    const isCurrentQuizOpenedInDetailsView = useMemo(() => {
         return (
             isQuizDetailsViewOpen &&
             isCurrentQuizIsViewedInDetailedView(quizData?.quiz?._id, quiz._id)
@@ -95,122 +95,112 @@ export default function QuizCardView(props: QuizCardViewProps) {
             quizId: quiz._id,
         });
 
-        R.compose(dispatch, setCurrentOnGoingQuiz)(quiz);
+        compose(dispatch, setCurrentOnGoingQuiz)(quiz);
         navigate(`quiz/start/${quiz._id}`);
     };
-    React.useEffect(() => {}, [
-        isErrorUnenrolledForAQuiz,
-        isErrorInGetAllQuestions,
-    ]);
+    useEffect(() => {}, [isErrorUnenrolledForAQuiz, isErrorInGetAllQuestions]);
 
     return (
-        <>
-            <Card
-                sx={{ margin: 2 }}
-                elevation={isCurrentQuizOpenedInDetailsView ? 24 : 1}
-            >
-                <CardMedia component="img" height="140" image={quiz.imageUrl} />
-                <CardContent>
-                    <>
-                        <Typography
-                            gutterBottom
-                            variant="h5"
-                            component="div"
-                            textAlign={'center'}
-                            sx={{ textTransform: 'capitalize' }}
-                        >
-                            {quiz?.name}
-                        </Typography>
-                        <Stack
-                            direction="row"
-                            spacing={2}
-                            justifyContent={
-                                isOverflowInTopicView ? 'start' : 'center'
-                            }
-                            alignItems="center"
-                            flexWrap={'nowrap'}
-                            className="thin-scroll"
-                            rowGap={2}
-                            overflow={'auto'}
-                            ref={topicsViewRef}
-                        >
-                            {quiz?.topics?.map((topic: string) => {
-                                return (
-                                    <React.Fragment key={topic}>
-                                        <Chip
-                                            label={`${topic?.toLowerCase()}`}
-                                        />
-                                    </React.Fragment>
-                                );
-                            })}
-                        </Stack>
+        <Card
+            sx={{ margin: 2 }}
+            elevation={isCurrentQuizOpenedInDetailsView ? 24 : 1}
+        >
+            <CardMedia component="img" height="140" image={quiz.imageUrl} />
+            <CardContent>
+                <>
+                    <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        textAlign={'center'}
+                        sx={{ textTransform: 'capitalize' }}
+                    >
+                        {quiz?.name}
+                    </Typography>
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        justifyContent={
+                            isOverflowInTopicView ? 'start' : 'center'
+                        }
+                        alignItems="center"
+                        flexWrap={'nowrap'}
+                        className="thin-scroll"
+                        rowGap={2}
+                        overflow={'auto'}
+                        ref={topicsViewRef}
+                    >
+                        {quiz?.topics?.map((topic: string) => {
+                            return (
+                                <Chip
+                                    label={`${topic?.toLowerCase()}`}
+                                    key={topic}
+                                />
+                            );
+                        })}
+                    </Stack>
 
-                        {roleOfUser === 'examiner' && (
-                            <Box
-                                sx={{
-                                    marginTop: 2,
-                                    marginBottom: 1,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <Tooltip title="Enrolled by">
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<PersonOutlineIcon />}
-                                        sx={{ cursor: 'context-menu' }}
-                                        disableRipple
-                                    >
-                                        {quiz?.enrolledBy.length}
-                                    </Button>
-                                </Tooltip>
-                            </Box>
-                        )}
-                    </>
-                </CardContent>
-                <CardActions
-                    sx={{
-                        justifyContent:
-                            roleOfUser === 'examinee'
-                                ? 'space-between'
-                                : 'center',
-                    }}
-                >
-                    {roleOfUser === 'examinee' ? (
-                        <>
-                            {/* Currently I am running out of design for quiz view for examiner so it is disabled */}
-                            <Button
-                                onClick={viewHandler}
-                                disabled={roleOfUser === 'examinee'}
-                            >
-                                View
-                            </Button>
-                            {props.renderedBy === 'enrolledQuizzes' ? (
-                                <Button onClick={startHandler}>Start</Button>
-                            ) : (
-                                <LoadingButton
-                                    loading={allEnrolledLoadingBtn.has(
-                                        quiz._id
-                                    )}
-                                    onClick={enrolledForAQuizHandler}
+                    {roleOfUser === 'examiner' && (
+                        <Box
+                            sx={{
+                                marginTop: 2,
+                                marginBottom: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Tooltip title="Enrolled by">
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<PersonOutlineIcon />}
+                                    sx={{ cursor: 'context-menu' }}
+                                    disableRipple
                                 >
-                                    Enroll
-                                </LoadingButton>
-                            )}
-                        </>
-                    ) : (
-                        <LoadingButton
-                            loading={isViewBtnLoading}
+                                    {quiz?.enrolledBy.length}
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    )}
+                </>
+            </CardContent>
+            <CardActions
+                sx={{
+                    justifyContent:
+                        roleOfUser === 'examinee' ? 'space-between' : 'center',
+                }}
+            >
+                {roleOfUser === 'examinee' ? (
+                    <>
+                        {/* Currently I am running out of design for quiz view for examiner so it is disabled */}
+                        <Button
                             onClick={viewHandler}
-                            disabled={isCurrentQuizOpenedInDetailsView}
+                            disabled={roleOfUser === 'examinee'}
                         >
                             View
-                        </LoadingButton>
-                    )}
-                </CardActions>
-            </Card>
-        </>
+                        </Button>
+                        {props.renderedBy === 'enrolledQuizzes' ? (
+                            <Button onClick={startHandler}>Start</Button>
+                        ) : (
+                            <LoadingButton
+                                loading={allEnrolledLoadingBtn.has(quiz._id)}
+                                onClick={enrolledForAQuizHandler}
+                            >
+                                Enroll
+                            </LoadingButton>
+                        )}
+                    </>
+                ) : (
+                    <LoadingButton
+                        loading={isViewBtnLoading}
+                        onClick={viewHandler}
+                        disabled={isCurrentQuizOpenedInDetailsView}
+                    >
+                        View
+                    </LoadingButton>
+                )}
+            </CardActions>
+        </Card>
     );
 }
 type QuizCardViewProps =

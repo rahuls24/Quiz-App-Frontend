@@ -18,8 +18,8 @@ import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import AutoHideAlert from '@SharedComponent/AutoHideAlert';
 import { formatAuthErrorMsg } from '@SharedFunction/utility';
 import { useFormik } from 'formik';
-import * as R from 'ramda';
-import * as React from 'react';
+import {compose} from 'ramda';
+import {useEffect,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import Copyright from '../../../shared/components/Copyright';
@@ -57,7 +57,7 @@ export default function Signup() {
     const authAlertState = useAppSelector(selectAuthAlertState);
     const dispatch = useAppDispatch();
     let navigate = useNavigate();
-    const [shouldShowPassword, setShowPassword] = React.useState(false);
+    const [shouldShowPassword, setShowPassword] = useState(false);
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -70,7 +70,7 @@ export default function Signup() {
             try {
                 let user = await signupUser(values);
                 if ('error' in user) return;
-                R.compose(
+                compose(
                     dispatch,
                     setAuthAlertState
                 )({
@@ -85,15 +85,15 @@ export default function Signup() {
             } catch (error) {}
         },
     });
-    React.useEffect(() => {
+    useEffect(() => {
         if (isError) {
-            R.compose(dispatch, setAuthAlertMsg, formatAuthErrorMsg)(error);
-            R.compose(
+            compose(dispatch, setAuthAlertMsg, formatAuthErrorMsg)(error);
+            compose(
                 dispatch,
                 setAuthAlertState
             )({ ...authAlertStatePayload, flag: true, severity: 'error' });
         } else {
-            R.compose(
+            compose(
                 dispatch,
                 setAuthAlertState
             )({ ...authAlertStatePayload, flag: false });
@@ -276,7 +276,7 @@ export default function Signup() {
                 alertMsg={authAlertMsg}
                 severity={authAlertState?.severity}
                 onCloseHandler={() =>
-                    R.compose(
+                    compose(
                         dispatch,
                         setAuthAlertState
                     )({ ...authAlertStatePayload, flag: false })

@@ -1,17 +1,17 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import InfoIcon from '@mui/icons-material/Info';
-import InputAdornment from '@mui/material/InputAdornment';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import InputAdornment from '@mui/material/InputAdornment';
 import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Tooltip, { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { Fragment, useEffect, useState, } from 'react';
 
-import Grid from '@mui/material/Grid';
-import Slider from '@mui/material/Slider';
-import MuiInput from '@mui/material/Input';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Grid from '@mui/material/Grid';
+import MuiInput from '@mui/material/Input';
+import Slider from '@mui/material/Slider';
 
 const Input = styled(MuiInput)`
 	width: 42px;
@@ -40,14 +40,14 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 	const { setQuizName, setTopicsForTheQuiz, setQuizTime } =
 		props.actionDispatcherForQuizMakerForm;
 	const { quizId } = props;
-	const [quizNameInputState, setQuizNameInputState] = React.useState({
+	const [quizNameInputState, setQuizNameInputState] = useState({
 		isError: false,
 		helperText: '',
 		value: '',
 	});
-	const [topics, setTopics] = React.useState('');
+	const [topics, setTopics] = useState('');
 	const quizNameInputHandler = (
-		e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+		e: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
 	) => {
 		const quizName = e.target.value;
 		if (quizName.length > 2) {
@@ -72,12 +72,12 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 		setQuizName(quizName);
 	};
 	const quizTopicHandler = (
-		e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+		e: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
 	) => {
 		const topics = e.target.value;
 		setTopics(topics);
 	};
-	const [value, setValue] = React.useState<
+	const [value, setValue] = useState<
 		number | string | Array<number | string>
 	>(30);
 
@@ -85,7 +85,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 		setValue(newValue);
 	};
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setValue(event.target.value === '' ? '' : Number(event.target.value));
 	};
 
@@ -96,7 +96,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 			setValue(120);
 		}
 	};
-	React.useEffect(() => {
+	useEffect(() => {
 		if (typeof value === 'string' || typeof value === 'number')
 			setQuizTime(Number(value));
 	}, [value, setQuizTime]);
@@ -121,7 +121,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 							<InputAdornment position='end'>
 								<HtmlTooltip
 									title={
-										<React.Fragment>
+										<Fragment>
 											{quizId !== '' ? (
 												<Typography variant='caption'>
 													You can not <b>edit</b> this
@@ -135,7 +135,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 													<em>quiz</em>
 												</Typography>
 											)}
-										</React.Fragment>
+										</Fragment>
 									}
 								>
 									<IconButton
@@ -162,7 +162,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 							<InputAdornment position='end'>
 								<HtmlTooltip
 									title={
-										<React.Fragment>
+										<Fragment>
 											{quizId !== '' ? (
 												<Typography variant='caption'>
 													You can not <b>edit</b> this
@@ -177,7 +177,7 @@ export default function AddQuizInputField(props: AddQuizInputFieldProps) {
 													after each topic name.
 												</Typography>
 											)}
-										</React.Fragment>
+										</Fragment>
 									}
 								>
 									<IconButton

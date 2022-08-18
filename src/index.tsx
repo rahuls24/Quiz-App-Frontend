@@ -5,7 +5,7 @@ import '@fontsource/roboto/700.css';
 import { store } from '@ReduxStore/store';
 import { saveReduxState } from '@SharedFunction/browserStorage';
 import { debounce } from 'debounce';
-import React from 'react';
+import {StrictMode} from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './App';
@@ -23,11 +23,11 @@ const root = createRoot(container);
 const isStrictMode = false;
 if (isStrictMode) {
     root.render(
-        <React.StrictMode>
+        <StrictMode>
             <Provider store={store}>
                 <App />
             </Provider>
-        </React.StrictMode>
+        </StrictMode>
     );
 } else {
     root.render(

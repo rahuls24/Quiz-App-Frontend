@@ -6,12 +6,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAppDispatch } from '@ReduxStore/hooks';
-import * as R from 'ramda';
-import * as React from 'react';
+import {compose} from 'ramda';
+import {Dispatch as ReactDispatch, SetStateAction as ReactSetStateAction} from 'react';
 
 type BackToQuestionOnePopupProps = {
     open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpen: ReactDispatch<ReactSetStateAction<boolean>>;
 };
 export default function BackToQuestionOnePopup(
     props: BackToQuestionOnePopupProps
@@ -20,7 +20,7 @@ export default function BackToQuestionOnePopup(
     const dispatch = useAppDispatch();
 
     const handleAgree = () => {
-        R.compose(dispatch, setCurrentOngoingQuestionIndex)(0);
+        compose(dispatch, setCurrentOngoingQuestionIndex)(0);
         handleClose();
     };
 

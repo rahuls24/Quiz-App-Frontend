@@ -4,8 +4,8 @@ import ExaminerHomePage from '@Feature/examiner/ExaminerHomePage';
 import { useGetUserDetailsQuery } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import Header from '@SharedComponent/Header';
-import * as R from 'ramda';
 import React from 'react';
+import {compose} from 'ramda'
 
 function HomePage() {
     const { role: currentUserRole = 'examinee' } =
@@ -14,7 +14,7 @@ function HomePage() {
     const { data: userDetails, isSuccess } = useGetUserDetailsQuery('');
     React.useEffect(() => {
         if (isSuccess) {
-            R.compose(dispatch, setUserDetails)(userDetails?.user);
+            compose(dispatch, setUserDetails)(userDetails?.user);
         }
     }, [isSuccess, dispatch, userDetails]);
     return (

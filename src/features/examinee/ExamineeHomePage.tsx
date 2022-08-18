@@ -1,21 +1,21 @@
 import QuizDetailsView from '@Feature/quiz/QuizDetailsView';
 import {
     selectIsQuizDetailsViewOpen,
-    setIsQuizDetailsViewOpen,
+    setIsQuizDetailsViewOpen
 } from '@Feature/quiz/QuizSlice';
 import QuizView from '@Feature/quiz/QuizView';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import {
     useGetAllEnrolledCoursesQuery,
-    useGetAllUnenrolledCoursesQuery,
+    useGetAllUnenrolledCoursesQuery
 } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import AutoHideAlert from '@SharedComponent/AutoHideAlert';
 import { AutoHideAlertProps } from '@Type/Quiz';
 import { roleOfUser } from '@Type/User';
-import * as R from 'ramda';
-import React from 'react';
+import { compose } from 'ramda';
+import { Dispatch as ReactDispatch, useEffect, useMemo, useReducer } from 'react';
 
 const initialState: ExamineeHomePageLocalState = {
     shouldShowReloadBtnForEnrolledQuizApiError: true,
@@ -50,11 +50,11 @@ function ExamineeHomePage() {
         refetchOnReconnect: true,
     });
 
-    const [state, dispatch] = React.useReducer(reducer, initialState);
-    const actionDispatcher = React.useMemo(() => {
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const actionDispatcher = useMemo(() => {
         return actionCreator(dispatch);
     }, []);
-    React.useEffect(() => {
+    useEffect(() => {
         if (!isUnenrolledQuizHavingError) return;
         if (errorOfUnenrolledQuizApi && 'status' in errorOfUnenrolledQuizApi) {
             if (errorOfUnenrolledQuizApi.status === 500)
@@ -68,7 +68,7 @@ function ExamineeHomePage() {
         actionDispatcher,
     ]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isEnrolledQuizHavingError) return;
         if (errorOfEnrolledQuizApi && 'status' in errorOfEnrolledQuizApi) {
             if (errorOfEnrolledQuizApi.status === 500)
@@ -78,7 +78,7 @@ function ExamineeHomePage() {
         }
     }, [isEnrolledQuizHavingError, errorOfEnrolledQuizApi, actionDispatcher]);
 
-    const liveQuizViewProps = React.useMemo(() => {
+    const liveQuizViewProps = useMemo(() => {
         return {
             isFetching: isUnenrolledQuizApiFetching,
             isError: isUnenrolledQuizHavingError,
@@ -103,7 +103,7 @@ function ExamineeHomePage() {
         unenrolledQuizzesList,
         actionDispatcher.setQuizAlertMsg,
     ]);
-    const enrolledQuizViewProps = React.useMemo(() => {
+    const enrolledQuizViewProps = useMemo(() => {
         return {
             isFetching: isEnrolledQuizApiFetching,
             isError: isEnrolledQuizHavingError,
@@ -133,12 +133,12 @@ function ExamineeHomePage() {
     const reduxDispatch = useAppDispatch();
     const isQuizDetailsViewOpen = useAppSelector(selectIsQuizDetailsViewOpen);
 
-    React.useEffect(() => {
+    useEffect(() => {
         return () => {
-            R.compose(reduxDispatch, setIsQuizDetailsViewOpen)(false);
+            compose(reduxDispatch, setIsQuizDetailsViewOpen)(false);
         };
     }, [reduxDispatch]);
-    React.useEffect(() => {
+    useEffect(() => {
         reFetchEnrolledQuizzesList();
         reFetchUnenrolledQuizzesList();
         return () => actionDispatcher.setCurrentLoadingEnrollBtns([]);
@@ -253,7 +253,7 @@ function reducer(state: ExamineeHomePageLocalState, action: reducerAction) {
     }
 }
 
-function actionCreator(dispatch: React.Dispatch<reducerAction>) {
+function actionCreator(dispatch: ReactDispatch<reducerAction>) {
     function setShouldShowReloadBtnForEnrolledQuizApiError(payload: boolean) {
         dispatch({
             type: 'SET_RELOAD_BTN_FOR_ENROLLED_QUIZ_API_ERROR',

@@ -4,17 +4,17 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import * as React from 'react';
+import { useState,Dispatch as ReactDispatch,SetStateAction as ReactSetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuestionsDetailsTable from './QuestionsDetailsTable';
 type BackToQuestionOnePopupProps = {
     open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpen: ReactDispatch<ReactSetStateAction<boolean>>;
     quizSubmitHandler: () => Promise<boolean>;
 };
 export default function SubmitQuizPopup(props: BackToQuestionOnePopupProps) {
     const { open, setOpen, quizSubmitHandler } = props;
-    const [isSubmitBtnLoading, setIsSubmitBtnLoading] = React.useState(false);
+    const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
     let navigate = useNavigate();
     const handleSubmit = async () => {
         setIsSubmitBtnLoading(true);
@@ -33,7 +33,7 @@ export default function SubmitQuizPopup(props: BackToQuestionOnePopupProps) {
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            fullWidth={true}
+            fullWidth
             maxWidth={'md'}
         >
             <DialogTitle id="alert-dialog-title">

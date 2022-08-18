@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { calculateAccuracy } from '@SharedFunction/quizRelated';
 import { QuizzesHistory } from '@Type/Quiz';
-import React from 'react';
+import { useCallback, useMemo } from 'react';
 
 const columns: GridColDef[] = [
     {
@@ -70,10 +70,10 @@ type QuizHistoryTableProps = {
 };
 function QuizHistoryTable(props: QuizHistoryTableProps) {
     const { quizzesHistoryData, isLoading } = props;
-    const rows = React.useMemo(() => {
+    const rows = useMemo(() => {
         return createRows(quizzesHistoryData);
     }, [quizzesHistoryData]);
-    const NoContentInTheTable = React.useCallback(() => {
+    const NoContentInTheTable = useCallback(() => {
         return (
             <NoQuizInHistoryTable content={<NoQuizInHistoryTableContent />} />
         );

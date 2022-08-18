@@ -13,22 +13,18 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useAppSelector } from '@ReduxStore/hooks';
-import * as React from 'react';
+import { MouseEvent as ReactMouseEvent, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 const settings = ['Profile', 'Settings', 'Logout'];
 
 const Header = () => {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-        null
-    );
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-        null
-    );
+    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpenNavMenu = (event: ReactMouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpenUserMenu = (event: ReactMouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
 
@@ -43,9 +39,8 @@ const Header = () => {
     const pages = getNavBtnForCurrentUser(userDetails?.role);
     let location = useLocation();
     let navigate = useNavigate();
-    const [currentActiveNavBtn, setCurrentActiveBtn] =
-        React.useState('Live Quizzes');
-    React.useEffect(() => {
+    const [currentActiveNavBtn, setCurrentActiveBtn] = useState('Live Quizzes');
+    useEffect(() => {
         switch (location.pathname) {
             case '/':
                 setCurrentActiveBtn('Live Quizzes');

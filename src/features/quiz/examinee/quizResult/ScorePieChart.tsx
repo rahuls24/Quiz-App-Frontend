@@ -6,7 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { PieChartDataType } from '@Type/Quiz';
-import React from 'react';
+import { useMemo, useState } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 const sections = [
     {
@@ -37,13 +37,13 @@ function ScorePieChart(props: ScorePieChartProps) {
     const [
         currentSelectedSectionOfPieChart,
         setCurrentSelectedSectionOfPieChart,
-    ] = React.useState<number | undefined>(undefined);
+    ] = useState<number | undefined>(undefined);
     const currentSelectedSectionOfPieChartHandler = (index: number) => {
         setCurrentSelectedSectionOfPieChart(
             index === currentSelectedSectionOfPieChart ? undefined : index
         );
     };
-    const totalNumberOfQuestions = React.useMemo(() => {
+    const totalNumberOfQuestions = useMemo(() => {
         return (
             numberOfRightAnswers + numberOfWrongAnswers + numberSkippedQuestions
         );

@@ -20,7 +20,7 @@ function AlreadyGivenTheQuizAlertPopup(
             onClose={(_event, reason) => onCloseHandler(reason)}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            disableEscapeKeyDown={true}
+            disableEscapeKeyDown
         >
             <DialogTitle id="alert-dialog-title">
                 {'You are not allowed to open this Quiz'}

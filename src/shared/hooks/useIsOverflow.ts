@@ -1,14 +1,14 @@
-import * as React from 'react';
+import {useState,useLayoutEffect} from 'react'
 
 export const useIsOverflowX = (
 	ref: any,
 	callback?: (hasOverflow: boolean) => void,
 ) => {
-	const [isOverflow, setIsOverflow] = React.useState<boolean | undefined>(
+	const [isOverflow, setIsOverflow] = useState<boolean | undefined>(
 		undefined,
 	);
 
-	React.useLayoutEffect(() => {
+	useLayoutEffect(() => {
 		const { current } = ref;
 
 		const trigger = () => {

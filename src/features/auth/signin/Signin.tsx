@@ -19,8 +19,8 @@ import { useSigninUserMutation } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { formatAuthErrorMsg } from '@SharedFunction/utility';
 import { useFormik } from 'formik';
-import * as R from 'ramda';
-import * as React from 'react';
+import { compose } from 'ramda';
+import {useState,useEffect} from 'react';
 import { Location, useLocation, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import AutoHideAlert from '../../../shared/components/AutoHideAlert';
@@ -32,7 +32,7 @@ import {
     selectAuthAlertState,
     selectIsAuthorize,
     setAuthAlertMsg,
-    setAuthAlertState,
+    setAuthAlertState
 } from '../authSlice';
 
 const validationSchema = yup.object({
@@ -55,27 +55,27 @@ export default function Signin() {
     const isLogin: boolean = useAppSelector(selectIsAuthorize);
     const authAlertMsg = useAppSelector(selectAuthAlertMsg);
     const authAlertState = useAppSelector(selectAuthAlertState);
-    const [shouldShowPassword, setShowPassword] = React.useState(false);
+    const [shouldShowPassword, setShowPassword] = useState(false);
     const dispatch = useAppDispatch();
     let navigate = useNavigate();
     let location = useLocation();
     let from = getRedirectLocation(location);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isLogin) {
             navigate(from);
         }
     }, [isLogin, navigate, from]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isError) {
-            R.compose(dispatch, setAuthAlertMsg, formatAuthErrorMsg)(error);
-            R.compose(
+            compose(dispatch, setAuthAlertMsg, formatAuthErrorMsg)(error);
+            compose(
                 dispatch,
                 setAuthAlertState
             )({ ...authAlertStatePayload, flag: true, severity: 'error' });
         } else {
-            R.compose(
+            compose(
                 dispatch,
                 setAuthAlertState
             )({ ...authAlertStatePayload, flag: false });
@@ -216,7 +216,7 @@ export default function Signin() {
                                     <Checkbox
                                         value="remember"
                                         color="primary"
-                                        disabled={true}
+                                        disabled
                                     />
                                 }
                                 label="Remember me"
@@ -254,7 +254,7 @@ export default function Signin() {
                 alertMsg={authAlertMsg}
                 severity={authAlertState?.severity}
                 onCloseHandler={() =>
-                    R.compose(
+                    compose(
                         dispatch,
                         setAuthAlertState
                     )({ ...authAlertStatePayload, flag: false })

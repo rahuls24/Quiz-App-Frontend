@@ -11,25 +11,30 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import AutoHideAlert from '@SharedComponent/AutoHideAlert';
-import * as R from 'ramda';
-import * as React from 'react';
+import { compose } from 'ramda';
+import {
+    Dispatch as ReactDispatch,
+    SetStateAction as ReactSetStateAction,
+    useEffect,
+    useState,
+} from 'react';
 import BackToQuestionOnePopup from './BackToQuestionOnePopup';
 import BottomNavigationForQuestionView from './BottomNavigationForQuestionView';
 import QuestionQuickSelect from './QuestionQuickSelect';
 import SubmitQuizPopup from './SubmitQuizPopup';
 type QuestionViewProps = {
     isQuickSelectViewOpen: boolean;
-    setIsQuickSelectViewOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsQuickSelectViewOpen: ReactDispatch<ReactSetStateAction<boolean>>;
     quizSubmitHandler: () => Promise<boolean>;
 };
 export default function QuestionView(props: QuestionViewProps) {
     const dispatch = useAppDispatch();
-    const [answers, setAnswers] = React.useState<Array<string>>([]);
+    const [answers, setAnswers] = useState<Array<string>>([]);
     const [isBackToQuestionOnePopupOpen, setIsBackToQuestionOnePopupOpen] =
-        React.useState(false);
+        useState(false);
     const [isQuestionQuickSelectOpen, setIsQuestionQuickSelectOpen] =
-        React.useState(false);
-    const [autoHideAlertMsg, setAutoHideAlertMsg] = React.useState({
+        useState(false);
+    const [autoHideAlertMsg, setAutoHideAlertMsg] = useState({
         isOpen: false,
         alertMsg: '',
         severity: 'error' as 'error' | 'warning' | 'success',
@@ -81,7 +86,7 @@ export default function QuestionView(props: QuestionViewProps) {
                     });
                     return;
                 }
-                R.compose(
+                compose(
                     dispatch,
                     setCurrentOnGoingQuizQuestions
                 )(tmpCurrentOnGoingQuizQuestions);
@@ -89,7 +94,7 @@ export default function QuestionView(props: QuestionViewProps) {
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
-                    R.compose(
+                    compose(
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
@@ -111,7 +116,7 @@ export default function QuestionView(props: QuestionViewProps) {
                     ],
                     ...questionStateObj,
                 };
-                R.compose(
+                compose(
                     dispatch,
                     setCurrentOnGoingQuizQuestions
                 )(tmpCurrentOnGoingQuizQuestions);
@@ -119,7 +124,7 @@ export default function QuestionView(props: QuestionViewProps) {
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
-                    R.compose(
+                    compose(
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
@@ -144,7 +149,7 @@ export default function QuestionView(props: QuestionViewProps) {
                     });
                     return;
                 }
-                R.compose(
+                compose(
                     dispatch,
                     setCurrentOnGoingQuizQuestions
                 )(tmpCurrentOnGoingQuizQuestions);
@@ -152,7 +157,7 @@ export default function QuestionView(props: QuestionViewProps) {
                 if (isCurrentQuestionLast())
                     setIsBackToQuestionOnePopupOpen(true);
                 else
-                    R.compose(
+                    compose(
                         dispatch,
                         setCurrentOngoingQuestionIndex
                     )(currentOngoingQuestionIndex + 1);
@@ -170,7 +175,7 @@ export default function QuestionView(props: QuestionViewProps) {
                     ...questionStateObj,
                 };
                 setAnswers([]);
-                R.compose(
+                compose(
                     dispatch,
                     setCurrentOnGoingQuizQuestions
                 )(tmpCurrentOnGoingQuizQuestions);
@@ -197,7 +202,7 @@ export default function QuestionView(props: QuestionViewProps) {
     };
     const currentActiveQuestion =
         currentOnGoingQuizQuestions[currentOngoingQuestionIndex];
-    React.useEffect(() => {
+    useEffect(() => {
         const { answers = [] } = currentOnGoingQuizQuestions[
             currentOngoingQuestionIndex
         ] ?? { answers: [] };

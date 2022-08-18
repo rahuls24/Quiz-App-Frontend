@@ -14,8 +14,8 @@ import {
     useGetAllUnenrolledCoursesQuery,
 } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
-import * as R from 'ramda';
-import React from 'react';
+import {compose} from 'ramda';
+import {useEffect,useMemo,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 function ExaminerHomePage() {
     const navigate = useNavigate();
@@ -37,12 +37,12 @@ function ExaminerHomePage() {
     } = useGetAllUnenrolledCoursesQuery(null, {
         refetchOnReconnect: true,
     });
-    const [shouldShowReloadBtns, shouldShowReloadBtnsHandler] = React.useState({
+    const [shouldShowReloadBtns, shouldShowReloadBtnsHandler] = useState({
         forMyQuizzesList: true,
         forAllQuizListExcludedMyQuizzesList: true,
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (
             !isMyQuizzesHavingError &&
             !isAllQuizListExcludedMyQuizzesHavingError
@@ -73,11 +73,11 @@ function ExaminerHomePage() {
         shouldShowReloadBtnsHandler,
     ]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         reFetchMyQuizzesList();
         reFetchAllQuizListExcludedMyQuizzesList();
     }, [reFetchMyQuizzesList, reFetchAllQuizListExcludedMyQuizzesList]);
-    const allQuizViewProps = React.useMemo(() => {
+    const allQuizViewProps = useMemo(() => {
         return {
             isFetching: isAllQuizListExcludedMyQuizzesApiFetching,
             isError: isAllQuizListExcludedMyQuizzesHavingError,
@@ -95,7 +95,7 @@ function ExaminerHomePage() {
         shouldShowReloadBtns.forAllQuizListExcludedMyQuizzesList,
         allQuizListExcludedMyQuizzesList,
     ]);
-    const myQuizViewProps = React.useMemo(() => {
+    const myQuizViewProps = useMemo(() => {
         return {
             isFetching: isMyQuizzesApiFetching,
             isError: isMyQuizzesHavingError,
@@ -121,9 +121,9 @@ function ExaminerHomePage() {
     const dispatch = useAppDispatch();
     const isQuizDetailsViewOpen = useAppSelector(selectIsQuizDetailsViewOpen);
 
-    React.useEffect(() => {
+    useEffect(() => {
         return () => {
-            R.compose(dispatch, setIsQuizDetailsViewOpen)(false);
+            compose(dispatch, setIsQuizDetailsViewOpen)(false);
         };
     }, [dispatch]);
     return (

@@ -6,8 +6,14 @@ import Typography from '@mui/material/Typography';
 import { useGetStartTimeOfTheQuizQuery } from '@ReduxStore/apis/apiSlice';
 import addMinutes from 'date-fns/addMinutes';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
-import * as R from 'ramda';
-import React from 'react';
+import { compose } from 'ramda';
+import {
+    Dispatch as ReactDispatch,
+    SetStateAction as ReactSetStateAction,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 type startQuizHeaderProps = {
     quizName: string;
@@ -15,8 +21,8 @@ type startQuizHeaderProps = {
     quizDuration: number;
     isQuickSelectViewOpen: boolean;
     quizSubmitHandler: () => Promise<boolean>;
-    setIsAlreadyGivenTheQuizAlertPopupOpen: React.Dispatch<
-        React.SetStateAction<boolean>
+    setIsAlreadyGivenTheQuizAlertPopupOpen: ReactDispatch<
+        ReactSetStateAction<boolean>
     >;
 };
 function StartQuizHeader(props: startQuizHeaderProps) {
@@ -30,18 +36,18 @@ function StartQuizHeader(props: startQuizHeaderProps) {
     } = props;
     let navigate = useNavigate();
 
-    const isExamStarted = React.useRef(false);
+    const isExamStarted = useRef(false);
     const { data: startTimeData, refetch } =
         useGetStartTimeOfTheQuizQuery(quizId);
-    const [timer, setTime] = React.useState([0, 0, 0]);
-    React.useEffect(() => {
+    const [timer, setTime] = useState([0, 0, 0]);
+    useEffect(() => {
         refetch();
     }, [refetch]);
     const quizSubmitHandlerHelper = async () => {
         await quizSubmitHandler();
         navigate('/quiz/result');
     };
-    React.useEffect(() => {
+    useEffect(() => {
         const timeIntervalId = setInterval(() => {
             const startedAt = new Date(
                 startTimeData?.startTime?.startedAt ?? ''
@@ -56,7 +62,7 @@ function StartQuizHeader(props: startQuizHeaderProps) {
                 return;
             }
             isExamStarted.current = true;
-            R.compose(setTime, getHoursMinsAndSecondsFromSeconds)(timeDiff);
+            compose(setTime, getHoursMinsAndSecondsFromSeconds)(timeDiff);
         }, 1000);
         return () => clearInterval(timeIntervalId);
     }, [startTimeData, quizDuration]);
@@ -64,7 +70,7 @@ function StartQuizHeader(props: startQuizHeaderProps) {
     const mins = timer[1] > 9 ? `${timer[1]}` : `0${timer[1]}`;
     const seconds = timer[2] > 9 ? `${timer[2]}` : `0${timer[2]}`;
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isExamStarted.current) {
             if (timer.every((time) => time === 0)) {
                 quizSubmitHandlerHelper();

@@ -7,8 +7,8 @@ import { useLazyGetAllQuestionsOfAQuizQuery } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch } from '@ReduxStore/hooks';
 import { getQuestionsData } from '@SharedFunction/quizRelated';
 import { Quiz, QuizRow, QuizzesMappingWithIndex } from '@Type/Quiz';
-import * as R from 'ramda';
-import React from 'react';
+import {useCallback} from 'react';
+import { compose } from 'ramda';
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'NO', width: 90, hideable: false },
     {
@@ -39,7 +39,7 @@ export default function QuizzesTable(props: QuizzesTableProps) {
     const dispatch = useAppDispatch();
     const [getAllQuestions, { isFetching: isViewBtnLoading }] =
         useLazyGetAllQuestionsOfAQuizQuery();
-    const NoContentInTheTable = React.useCallback(() => {
+    const NoContentInTheTable = useCallback(() => {
         return (
             <NoQuizInHistoryTable
                 content={<NoQuizInLiveQuizzesTableContent />}
@@ -56,8 +56,8 @@ export default function QuizzesTable(props: QuizzesTableProps) {
                 quiz,
                 questions,
             };
-            R.compose(dispatch, setQuizData)(quizDataForDetailedView);
-            R.compose(dispatch, setIsQuizDetailsViewOpen)(true);
+            compose(dispatch, setQuizData)(quizDataForDetailedView);
+            compose(dispatch, setIsQuizDetailsViewOpen)(true);
         } catch (error) {
             // ! Handle this
         }

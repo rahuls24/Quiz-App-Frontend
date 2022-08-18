@@ -6,7 +6,6 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { AutoHideAlertProps, Quiz } from '@Type/Quiz';
-import React from 'react';
 import QuizCardView from './QuizCardView';
 type MyQuizViewProps =
     | {
@@ -86,24 +85,22 @@ export default function QuizView(props: MyQuizViewProps) {
                     !isError &&
                     quizList.map((quiz: Quiz) => {
                         return (
-                            <React.Fragment key={quiz._id}>
-                                <Grid item {...cardViewGridStyle}>
-                                    {roleOfUser === 'examiner' && (
-                                        <QuizCardView
-                                            quiz={quiz}
-                                            roleOfUser={roleOfUser}
-                                        />
-                                    )}
-                                    {roleOfUser === 'examinee' && (
-                                        <QuizCardView
-                                            quiz={quiz}
-                                            roleOfUser={roleOfUser}
-                                            renderedBy={props.renderedBy}
-                                            setAlertMsg={props.setAlertMsg}
-                                        />
-                                    )}
-                                </Grid>
-                            </React.Fragment>
+                            <Grid item {...cardViewGridStyle} key={quiz._id}>
+                                {roleOfUser === 'examiner' && (
+                                    <QuizCardView
+                                        quiz={quiz}
+                                        roleOfUser={roleOfUser}
+                                    />
+                                )}
+                                {roleOfUser === 'examinee' && (
+                                    <QuizCardView
+                                        quiz={quiz}
+                                        roleOfUser={roleOfUser}
+                                        renderedBy={props.renderedBy}
+                                        setAlertMsg={props.setAlertMsg}
+                                    />
+                                )}
+                            </Grid>
                         );
                     })}
                 {!isFetching && isError && (
