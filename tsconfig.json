@@ -10,7 +10,7 @@
             "@Asset/*": ["src/assets/*"],
             "@ReduxStore/*": ["src/app/*"],
             "@SharedComponent/*": ["src/shared/components/*"],
-            "@SharedFunction/*": ["src/shared/functions/*"],
+            "@SharedFunction/*": ["src/shared/functions/*"] ,
             "@CustomHook/*": ["src/shared/hooks/*"]
         },
         "allowJs": true,
