@@ -7,8 +7,8 @@ import { useLazyGetAllQuestionsOfAQuizQuery } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch } from '@ReduxStore/hooks';
 import { getQuestionsData } from '@SharedFunction/quizRelated';
 import { Quiz, QuizRow, QuizzesMappingWithIndex } from '@Type/Quiz';
-import {useCallback} from 'react';
 import { compose } from 'ramda';
+import { useCallback } from 'react';
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'NO', width: 90, hideable: false },
     {
@@ -63,28 +63,26 @@ export default function QuizzesTable(props: QuizzesTableProps) {
         }
     };
     return (
-        <>
-            <Box sx={{ height: '63vh', width: '99%', paddingLeft: '1%' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    disableSelectionOnClick
-                    onRowClick={(e) => {
-                        if ('id' in e.row) {
-                            viewHandler(
-                                quizzesMappingWithRowIndex[String(e.row.id)]
-                            );
-                        }
-                    }}
-                    loading={false}
-                    components={{
-                        NoRowsOverlay: NoContentInTheTable,
-                    }}
-                />
-            </Box>
-        </>
+        <Box sx={{ height: '63vh', width: '99%', paddingLeft: '1%' }}>
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disableSelectionOnClick
+                onRowClick={(e) => {
+                    if ('id' in e.row) {
+                        viewHandler(
+                            quizzesMappingWithRowIndex[String(e.row.id)]
+                        );
+                    }
+                }}
+                loading={false}
+                components={{
+                    NoRowsOverlay: NoContentInTheTable,
+                }}
+            />
+        </Box>
     );
 }
 

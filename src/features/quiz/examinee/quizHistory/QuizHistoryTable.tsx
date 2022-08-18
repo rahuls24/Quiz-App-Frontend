@@ -79,32 +79,30 @@ function QuizHistoryTable(props: QuizHistoryTableProps) {
         );
     }, []);
     return (
-        <>
-            <Box>
-                <Typography
-                    sx={{ width: '100%', marginTop: 4 }}
-                    align="center"
-                    variant="h5"
-                    gutterBottom
-                    component="div"
-                >
-                    Quizzes History
-                </Typography>
-                <Paper sx={{ height: '63vh' }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        disableSelectionOnClick
-                        loading={isLoading}
-                        components={{
-                            NoRowsOverlay: NoContentInTheTable,
-                        }}
-                    />
-                </Paper>
-            </Box>
-        </>
+        <Box>
+            <Typography
+                sx={{ width: '100%', marginTop: 4 }}
+                align="center"
+                variant="h5"
+                gutterBottom
+                component="div"
+            >
+                Quizzes History
+            </Typography>
+            <Paper sx={{ height: '63vh' }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableSelectionOnClick
+                    loading={isLoading}
+                    components={{
+                        NoRowsOverlay: NoContentInTheTable,
+                    }}
+                />
+            </Paper>
+        </Box>
     );
 }
 

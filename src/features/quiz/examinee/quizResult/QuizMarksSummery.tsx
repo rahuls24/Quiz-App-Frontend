@@ -62,39 +62,31 @@ function QuizMarksSummery(props: QuizMarksSummeryProps) {
         marks,
     ]);
     return (
-        <>
-            <Grid container spacing={2}>
-                {summaryData.map((item) => {
-                    return (
-                        <Grid item xs={6} key={item.headerText}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    margin: 2,
-                                }}
-                            >
-                                <Avatar alt="Score Icon" src={item.icon} />
-                                <Box sx={{ paddingLeft: 2 }}>
-                                    <Typography
-                                        variant="overline"
-                                        display="block"
-                                    >
-                                        {item.headerText}
-                                    </Typography>
-                                    <Typography
-                                        variant="button"
-                                        display="block"
-                                    >
-                                        {item.value}
-                                    </Typography>
-                                </Box>
+        <Grid container spacing={2}>
+            {summaryData.map((item) => {
+                return (
+                    <Grid item xs={6} key={item.headerText}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                margin: 2,
+                            }}
+                        >
+                            <Avatar alt="Score Icon" src={item.icon} />
+                            <Box sx={{ paddingLeft: 2 }}>
+                                <Typography variant="overline" display="block">
+                                    {item.headerText}
+                                </Typography>
+                                <Typography variant="button" display="block">
+                                    {item.value}
+                                </Typography>
                             </Box>
-                        </Grid>
-                    );
-                })}
-            </Grid>
-        </>
+                        </Box>
+                    </Grid>
+                );
+            })}
+        </Grid>
     );
 }
 

@@ -78,80 +78,70 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         }
     }, [timer]);
     return (
-        <>
-            <AppBar position="static" color="transparent">
-                <Container maxWidth="xl">
-                    <Toolbar
-                        disableGutters
+        <AppBar position="static" color="transparent">
+            <Container maxWidth="xl">
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        justifyContent: 'space-between',
+                        display: { xs: 'none', md: 'flex' },
+                    }}
+                >
+                    <Typography variant="h6" component="div">
+                        {quizName}
+                    </Typography>
+                    <Typography
+                        variant="button"
+                        gutterBottom
+                        component="div"
                         sx={{
-                            justifyContent: 'space-between',
-                            display: { xs: 'none', md: 'flex' },
-                        }}
-                    >
-                        <Typography variant="h6" component="div">
-                            {quizName}
-                        </Typography>
-                        <Typography
-                            variant="button"
-                            gutterBottom
-                            component="div"
-                            sx={{
-                                marginRight:
-                                    isQuickSelectViewOpen === true
-                                        ? '240px'
-                                        : '0px',
-                            }}
-                        >
-                            {`${hours} : ${mins} : ${seconds}`}
-                        </Typography>
-                    </Toolbar>
-                    <Toolbar
-                        disableGutters
-                        sx={{
-                            justifyContent:
+                            marginRight:
                                 isQuickSelectViewOpen === true
-                                    ? 'start'
-                                    : 'center',
-                            display: { xs: 'flex', md: 'none' },
+                                    ? '240px'
+                                    : '0px',
                         }}
                     >
-                        <Typography
-                            variant="button"
-                            gutterBottom
-                            component="div"
-                        >
-                            {`${hours} : ${mins} : ${seconds}`}
-                        </Typography>
-                    </Toolbar>
-                    <Divider
-                        variant="fullWidth"
-                        sx={{
-                            display: { xs: 'block', md: 'none' },
-                        }}
-                    />
-                    <Toolbar
-                        disableGutters
-                        sx={{
-                            display: { xs: 'flex', md: 'none' },
-                            width: '100%',
-                        }}
+                        {`${hours} : ${mins} : ${seconds}`}
+                    </Typography>
+                </Toolbar>
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        justifyContent:
+                            isQuickSelectViewOpen === true ? 'start' : 'center',
+                        display: { xs: 'flex', md: 'none' },
+                    }}
+                >
+                    <Typography variant="button" gutterBottom component="div">
+                        {`${hours} : ${mins} : ${seconds}`}
+                    </Typography>
+                </Toolbar>
+                <Divider
+                    variant="fullWidth"
+                    sx={{
+                        display: { xs: 'block', md: 'none' },
+                    }}
+                />
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        display: { xs: 'flex', md: 'none' },
+                        width: '100%',
+                    }}
+                >
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        align={
+                            isQuickSelectViewOpen === true ? 'left' : 'center'
+                        }
+                        sx={{ width: '100%' }}
                     >
-                        <Typography
-                            variant="h6"
-                            component="div"
-                            align={
-                                isQuickSelectViewOpen === true
-                                    ? 'left'
-                                    : 'center'
-                            }
-                            sx={{ width: '100%' }}
-                        >
-                            {quizName}
-                        </Typography>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-        </>
+                        {quizName}
+                    </Typography>
+                </Toolbar>
+            </Container>
+        </AppBar>
     );
 }
 export default StartQuizHeader;

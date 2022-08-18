@@ -1,9 +1,9 @@
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { AutoHideAlertProps } from '@Type/Quiz';
-import React from 'react';
+import {forwardRef} from 'react';
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
     ref
 ) {

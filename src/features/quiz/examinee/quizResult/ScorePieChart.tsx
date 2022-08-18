@@ -49,101 +49,95 @@ function ScorePieChart(props: ScorePieChartProps) {
         );
     }, [numberOfRightAnswers, numberOfWrongAnswers, numberSkippedQuestions]);
     return (
-        <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <PieChart
+                data={getDataForPieChart(
+                    numberOfRightAnswers,
+                    numberOfWrongAnswers,
+                    numberSkippedQuestions
+                )}
+                style={{ height: '150px', fontSize: '8px' }}
+                radius={PieChart.defaultProps.radius - 6}
+                lineWidth={60}
+                totalValue={totalNumberOfQuestions}
+                segmentsStyle={{
+                    transition: 'stroke .3s',
+                    cursor: 'pointer',
                 }}
-            >
-                <PieChart
-                    data={getDataForPieChart(
-                        numberOfRightAnswers,
-                        numberOfWrongAnswers,
-                        numberSkippedQuestions
-                    )}
-                    style={{ height: '150px', fontSize: '8px' }}
-                    radius={PieChart.defaultProps.radius - 6}
-                    lineWidth={60}
-                    totalValue={totalNumberOfQuestions}
-                    segmentsStyle={{
-                        transition: 'stroke .3s',
-                        cursor: 'pointer',
-                    }}
-                    segmentsShift={(index) =>
-                        index === currentSelectedSectionOfPieChart ? 6 : 1
-                    }
-                    label={({ dataEntry }) =>
-                        Math.round(dataEntry.percentage) + '%'
-                    }
-                    labelPosition={100 - 60 / 2}
-                    labelStyle={{
-                        fill: '#fff',
-                        opacity: 0.75,
-                        pointerEvents: 'none',
-                    }}
-                    onClick={(_, index) => {
-                        setCurrentSelectedSectionOfPieChart(
-                            index === currentSelectedSectionOfPieChart
-                                ? undefined
-                                : index
-                        );
-                    }}
-                />
-                <List>
-                    {sections.map((section, index) => {
-                        if (
-                            section.sectionName === 'CORRECT' &&
-                            numberOfRightAnswers === 0
-                        )
-                            return null;
-                        else if (
-                            section.sectionName === 'WRONG' &&
-                            numberOfWrongAnswers === 0
-                        )
-                            return null;
-                        if (
-                            section.sectionName === 'SKIPPED' &&
-                            numberSkippedQuestions === 0
-                        )
-                            return null;
-                        return (
-                            <ListItem
+                segmentsShift={(index) =>
+                    index === currentSelectedSectionOfPieChart ? 6 : 1
+                }
+                label={({ dataEntry }) =>
+                    Math.round(dataEntry.percentage) + '%'
+                }
+                labelPosition={100 - 60 / 2}
+                labelStyle={{
+                    fill: '#fff',
+                    opacity: 0.75,
+                    pointerEvents: 'none',
+                }}
+                onClick={(_, index) => {
+                    setCurrentSelectedSectionOfPieChart(
+                        index === currentSelectedSectionOfPieChart
+                            ? undefined
+                            : index
+                    );
+                }}
+            />
+            <List>
+                {sections.map((section, index) => {
+                    if (
+                        section.sectionName === 'CORRECT' &&
+                        numberOfRightAnswers === 0
+                    )
+                        return null;
+                    else if (
+                        section.sectionName === 'WRONG' &&
+                        numberOfWrongAnswers === 0
+                    )
+                        return null;
+                    if (
+                        section.sectionName === 'SKIPPED' &&
+                        numberSkippedQuestions === 0
+                    )
+                        return null;
+                    return (
+                        <ListItem
+                            sx={{
+                                display: 'list-item',
+                            }}
+                            key={section.sectionName}
+                        >
+                            <ListItemButton
+                                onClick={() =>
+                                    currentSelectedSectionOfPieChartHandler(
+                                        index
+                                    )
+                                }
                                 sx={{
-                                    display: 'list-item',
+                                    backgroundColor:
+                                        currentSelectedSectionOfPieChart ===
+                                        index
+                                            ? '#F5F5F5'
+                                            : '',
                                 }}
-                                key={section.sectionName}
                             >
-                                <ListItemButton
-                                    onClick={() =>
-                                        currentSelectedSectionOfPieChartHandler(
-                                            index
-                                        )
-                                    }
-                                    sx={{
-                                        backgroundColor:
-                                            currentSelectedSectionOfPieChart ===
-                                            index
-                                                ? '#F5F5F5'
-                                                : '',
-                                    }}
-                                >
-                                    <ListItemIcon>
-                                        <CircleIcon
-                                            color={section.bulletColor}
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={section.sectionName}
-                                    />
-                                </ListItemButton>
-                            </ListItem>
-                        );
-                    })}
-                </List>
-            </Box>
-        </>
+                                <ListItemIcon>
+                                    <CircleIcon color={section.bulletColor} />
+                                </ListItemIcon>
+                                <ListItemText primary={section.sectionName} />
+                            </ListItemButton>
+                        </ListItem>
+                    );
+                })}
+            </List>
+        </Box>
     );
 }
 

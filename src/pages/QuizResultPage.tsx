@@ -8,11 +8,11 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useAppSelector } from '@ReduxStore/hooks';
 import Header from '@SharedComponent/Header';
-import React from 'react';
+import { useMemo } from 'react';
 
 function QuizResultPage() {
     const quizResultDetails = useAppSelector(selectQuizResultDetails);
-    const quizMarksSummeryProps = React.useMemo(() => {
+    const quizMarksSummeryProps = useMemo(() => {
         return {
             numberOfRightAnswers: quizResultDetails.numberOfRightAnswers,
             numberOfWrongAnswers: quizResultDetails.numberOfWrongAnswers,
@@ -21,7 +21,7 @@ function QuizResultPage() {
             marks: quizResultDetails.marks,
         };
     }, [quizResultDetails]);
-    const scorePieChartProps = React.useMemo(() => {
+    const scorePieChartProps = useMemo(() => {
         return {
             numberOfRightAnswers: quizResultDetails.numberOfRightAnswers,
             numberOfWrongAnswers: quizResultDetails.numberOfWrongAnswers,

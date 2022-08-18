@@ -11,58 +11,56 @@ import { defaultTheme } from '@SharedComponent/globalTheme';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 function App() {
     return (
-        <>
-            <ThemeProvider theme={defaultTheme}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <RequireAuth>
-                                    <HomePage />
-                                </RequireAuth>
-                            }
-                        ></Route>
-                        <Route path="auth/signin" element={<Signin />} />
-                        <Route path="auth/signup" element={<Signup />} />
-                        <Route
-                            path="quiz/make-a-quiz"
-                            element={
-                                <RequireAuth>
-                                    <QuizMakerPage />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path="quiz/start/:quizId/"
-                            element={
-                                <RequireAuth>
-                                    <StartQuiz />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path="quiz/result"
-                            element={
-                                <RequireAuth>
-                                    <QuizResultPage />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path="quiz/history"
-                            element={
-                                <RequireAuth>
-                                    <QuizHistory />
-                                </RequireAuth>
-                            }
-                        />
+        <ThemeProvider theme={defaultTheme}>
+            <BrowserRouter>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <RequireAuth>
+                                <HomePage />
+                            </RequireAuth>
+                        }
+                    ></Route>
+                    <Route path="auth/signin" element={<Signin />} />
+                    <Route path="auth/signup" element={<Signup />} />
+                    <Route
+                        path="quiz/make-a-quiz"
+                        element={
+                            <RequireAuth>
+                                <QuizMakerPage />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="quiz/start/:quizId/"
+                        element={
+                            <RequireAuth>
+                                <StartQuiz />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="quiz/result"
+                        element={
+                            <RequireAuth>
+                                <QuizResultPage />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="quiz/history"
+                        element={
+                            <RequireAuth>
+                                <QuizHistory />
+                            </RequireAuth>
+                        }
+                    />
 
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </BrowserRouter>
-            </ThemeProvider>
-        </>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
     );
 }
 

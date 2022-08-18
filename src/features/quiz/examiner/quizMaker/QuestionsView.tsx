@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import { Question } from '@Type/Quiz';
-import React from 'react';
+import { ChangeEvent as ReactChangeEvent } from 'react';
 
 type QuestionsViewProps = {
     questionIndex: number;
@@ -21,7 +21,7 @@ type QuestionsViewProps = {
 export default function QuestionsView(props: QuestionsViewProps) {
     const { questionIndex, question, updateQuestionsList } = props;
     const questionOptionsInputHandler = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        e: ReactChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         index: number
     ) => {
         const currentOptionValue = e.target.value;
@@ -51,7 +51,7 @@ export default function QuestionsView(props: QuestionsViewProps) {
         }
     };
     const correctAnswerCheckboxHandler = (
-        e: React.ChangeEvent<HTMLInputElement>,
+        e: ReactChangeEvent<HTMLInputElement>,
         index: number
     ) => {
         let currentQuestion: Question = JSON.parse(JSON.stringify(question));
@@ -88,131 +88,126 @@ export default function QuestionsView(props: QuestionsViewProps) {
         });
     };
     return (
-        <>
-            <Grid container columns={{ xs: 4, md: 12 }} columnSpacing={6}>
-                <Grid item xs={4} md={12}>
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        autoFocus
-                        id={`titleOfQuestionNo${questionIndex}`}
-                        label={`Question Title`}
-                        name={`titleOfQuestionNo${questionIndex}`}
-                        placeholder="Enter your question"
-                        value={question.title}
-                        onChange={(e) => {
-                            const currentQuestion: Question = JSON.parse(
-                                JSON.stringify(question)
-                            );
-                            currentQuestion.title = e.target.value;
-                            updateQuestionsList({
-                                updatedQuestion: currentQuestion,
-                                index: questionIndex,
-                            });
-                        }}
-                    />
-                </Grid>
-                {question.options.map((option, index) => {
-                    return (
+        <Grid container columns={{ xs: 4, md: 12 }} columnSpacing={6}>
+            <Grid item xs={4} md={12}>
+                <TextField
+                    margin="normal"
+                    fullWidth
+                    autoFocus
+                    id={`titleOfQuestionNo${questionIndex}`}
+                    label={`Question Title`}
+                    name={`titleOfQuestionNo${questionIndex}`}
+                    placeholder="Enter your question"
+                    value={question.title}
+                    onChange={(e) => {
+                        const currentQuestion: Question = JSON.parse(
+                            JSON.stringify(question)
+                        );
+                        currentQuestion.title = e.target.value;
+                        updateQuestionsList({
+                            updatedQuestion: currentQuestion,
+                            index: questionIndex,
+                        });
+                    }}
+                />
+            </Grid>
+            {question.options.map((option, index) => {
+                return (
+                    <Grid
+                        item
+                        xs={4}
+                        md={6}
+                        key={`optionOf${question.title}${index}`}
+                    >
                         <Grid
-                            item
-                            xs={4}
-                            md={6}
-                            key={`optionOf${question.title}${index}`}
+                            container
+                            columns={{ xs: 8, md: 12 }}
+                            sx={{ alignItems: 'center' }}
                         >
-                            <Grid
-                                container
-                                columns={{ xs: 8, md: 12 }}
-                                sx={{ alignItems: 'center' }}
-                            >
-                                <Grid item xs={7} md={11}>
-                                    <TextField
-                                        margin="normal"
-                                        fullWidth
-                                        id={`optionNo${index}`}
-                                        label={`Option ${index + 1}`}
-                                        name={`optionNo${index}`}
-                                        placeholder={`Enter option number${
-                                            index + 1
-                                        }`}
-                                        value={option}
-                                        onChange={(e) =>
-                                            questionOptionsInputHandler(
-                                                e,
+                            <Grid item xs={7} md={11}>
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    id={`optionNo${index}`}
+                                    label={`Option ${index + 1}`}
+                                    name={`optionNo${index}`}
+                                    placeholder={`Enter option number${
+                                        index + 1
+                                    }`}
+                                    value={option}
+                                    onChange={(e) =>
+                                        questionOptionsInputHandler(e, index)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={1} md={1} justifyContent="end">
+                                {option.length > 0 ? (
+                                    <Tooltip title="Mark Correct Answer">
+                                        <Checkbox
+                                            color="success"
+                                            checked={question.answers.includes(
                                                 index
-                                            )
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={1} md={1} justifyContent="end">
-                                    {option.length > 0 ? (
-                                        <Tooltip title="Mark Correct Answer">
-                                            <Checkbox
-                                                color="success"
-                                                checked={question.answers.includes(
+                                            )}
+                                            onChange={(e) =>
+                                                correctAnswerCheckboxHandler(
+                                                    e,
                                                     index
-                                                )}
-                                                onChange={(e) =>
-                                                    correctAnswerCheckboxHandler(
-                                                        e,
-                                                        index
-                                                    )
-                                                }
-                                            />
-                                        </Tooltip>
-                                    ) : (
-                                        <Tooltip title="Deleted this option">
-                                            <IconButton
-                                                aria-label="deleted a option"
-                                                edge="end"
-                                                onClick={() =>
-                                                    deletedAOption(index)
-                                                }
-                                            >
-                                                <CloseOutlined />
-                                            </IconButton>
-                                        </Tooltip>
-                                    )}
-                                </Grid>
+                                                )
+                                            }
+                                        />
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip title="Deleted this option">
+                                        <IconButton
+                                            aria-label="deleted a option"
+                                            edge="end"
+                                            onClick={() =>
+                                                deletedAOption(index)
+                                            }
+                                        >
+                                            <CloseOutlined />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
                             </Grid>
                         </Grid>
-                    );
-                })}
-                <Grid
-                    item
-                    xs={4}
-                    md={12}
-                    sx={{ marginTop: 1, justifyContent: 'center' }}
+                    </Grid>
+                );
+            })}
+            <Grid
+                item
+                xs={4}
+                md={12}
+                sx={{ marginTop: 1, justifyContent: 'center' }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                    }}
                 >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <Tooltip title="Add an option">
-                            <IconButton
-                                aria-label="Add an option"
-                                edge="end"
-                                onClick={() => {
-                                    let currentQuestion: Question = JSON.parse(
-                                        JSON.stringify(question)
-                                    );
-                                    currentQuestion.options.push('');
-                                    updateQuestionsList({
-                                        updatedQuestion: currentQuestion,
-                                        index: questionIndex,
-                                    });
-                                }}
-                            >
-                                <PlusOneOutlined />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Grid>
+                    <Tooltip title="Add an option">
+                        <IconButton
+                            aria-label="Add an option"
+                            edge="end"
+                            onClick={() => {
+                                let currentQuestion: Question = JSON.parse(
+                                    JSON.stringify(question)
+                                );
+                                currentQuestion.options.push('');
+                                updateQuestionsList({
+                                    updatedQuestion: currentQuestion,
+                                    index: questionIndex,
+                                });
+                            }}
+                        >
+                            <PlusOneOutlined />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Grid>
-        </>
+        </Grid>
     );
 }

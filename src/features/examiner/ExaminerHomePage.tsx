@@ -14,8 +14,8 @@ import {
     useGetAllUnenrolledCoursesQuery,
 } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
-import {compose} from 'ramda';
-import {useEffect,useMemo,useState} from 'react';
+import { compose } from 'ramda';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 function ExaminerHomePage() {
     const navigate = useNavigate();
@@ -127,61 +127,57 @@ function ExaminerHomePage() {
         };
     }, [dispatch]);
     return (
-        <>
-            <Grid
-                container
-                columns={{ xs: 4, md: 12 }}
-                spacing={1}
-                marginTop={1}
-                paddingX={1}
-            >
-                <Grid item xs={4} md={5}>
-                    <Paper
-                        sx={{
-                            minHeight: '85vh',
-                        }}
-                        elevation={3}
-                    >
-                        <QuizView {...myQuizViewProps} />
-                    </Paper>
-                </Grid>
-                <Grid item xs={4} md={7}>
-                    <Paper
-                        sx={{
-                            minHeight: '85vh',
-                        }}
-                        elevation={3}
-                        className={'scroll'}
-                    >
-                        {!isQuizDetailsViewOpen && (
-                            <>
-                                <AllQuizView {...allQuizViewProps} />
-                                <Fab
-                                    color="primary"
-                                    aria-label="add"
-                                    sx={{
-                                        margin: 0,
-                                        right: 20,
-                                        bottom: 20,
-                                        position: 'fixed',
-                                    }}
-                                    onClick={() =>
-                                        navigate('/quiz/make-a-quiz')
-                                    }
-                                >
-                                    <AddIcon />
-                                </Fab>
-                            </>
-                        )}
-                        {isQuizDetailsViewOpen && (
-                            <>
-                                <QuizDetailsView roleOfUser="examiner" />
-                            </>
-                        )}
-                    </Paper>
-                </Grid>
+        <Grid
+            container
+            columns={{ xs: 4, md: 12 }}
+            spacing={1}
+            marginTop={1}
+            paddingX={1}
+        >
+            <Grid item xs={4} md={5}>
+                <Paper
+                    sx={{
+                        minHeight: '85vh',
+                    }}
+                    elevation={3}
+                >
+                    <QuizView {...myQuizViewProps} />
+                </Paper>
             </Grid>
-        </>
+            <Grid item xs={4} md={7}>
+                <Paper
+                    sx={{
+                        minHeight: '85vh',
+                    }}
+                    elevation={3}
+                    className={'scroll'}
+                >
+                    {!isQuizDetailsViewOpen && (
+                        <>
+                            <AllQuizView {...allQuizViewProps} />
+                            <Fab
+                                color="primary"
+                                aria-label="add"
+                                sx={{
+                                    margin: 0,
+                                    right: 20,
+                                    bottom: 20,
+                                    position: 'fixed',
+                                }}
+                                onClick={() => navigate('/quiz/make-a-quiz')}
+                            >
+                                <AddIcon />
+                            </Fab>
+                        </>
+                    )}
+                    {isQuizDetailsViewOpen && (
+                        <>
+                            <QuizDetailsView roleOfUser="examiner" />
+                        </>
+                    )}
+                </Paper>
+            </Grid>
+        </Grid>
     );
 }
 

@@ -14,13 +14,13 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import {
     useSaveAQuizMutation,
-    useSaveQuestionsForAQuizMutation,
+    useSaveQuestionsForAQuizMutation
 } from '@ReduxStore/apis/apiSlice';
 import AutoHideAlert from '@SharedComponent/AutoHideAlert';
 import Header from '@SharedComponent/Header';
 import { isNonEmptyString } from '@SharedFunction/utility';
 import { AutoHideAlertProps, Question } from '@Type/Quiz';
-import React from 'react';
+import { Fragment, useEffect, useMemo, useReducer, useState,Dispatch as ReactDispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function QuizMakerPage() {
@@ -41,19 +41,19 @@ function QuizMakerPage() {
         },
     ] = useSaveQuestionsForAQuizMutation();
     const [isQuizSaveConfirmationPopupOpen, setQuizSaveConfirmationPopupOpen] =
-        React.useState(false);
+        useState(false);
     const [autoHideAlertProps, setAutoHideAlertProps] =
-        React.useState<AutoHideAlertProps>({
+        useState<AutoHideAlertProps>({
             isOpen: false,
             alertMsg: '',
             severity: 'error',
             autoHideDuration: 6000,
         });
-    const [quizMakerFormState, quizMakerFormDispatch] = React.useReducer(
+    const [quizMakerFormState, quizMakerFormDispatch] = useReducer(
         quizMakerReducer,
         getQuizMakerFormInitialState()
     );
-    const actionDispatcherForQuizMakerForm = React.useMemo(() => {
+    const actionDispatcherForQuizMakerForm = useMemo(() => {
         return actionCreatorForQuizMakerForm(quizMakerFormDispatch);
     }, []);
 
@@ -138,7 +138,7 @@ function QuizMakerPage() {
     // For manipulating autoHideAlertProps
 
     // For saving quiz name and its topic
-    React.useEffect(() => {
+    useEffect(() => {
         if (isSuccessForSaveAQuiz) {
             setAutoHideAlertProps({
                 isOpen: true,
@@ -160,7 +160,7 @@ function QuizMakerPage() {
     }, [isErrorForSaveAQuiz, isSuccessForSaveAQuiz]);
 
     // For Saving the complete quiz
-    React.useEffect(() => {
+    useEffect(() => {
         if (isSuccessForSaveQuestionsOfTheQuiz) {
             setAutoHideAlertProps({
                 isOpen: true,
@@ -215,7 +215,7 @@ function QuizMakerPage() {
                         {quizMakerFormState.questions.map(
                             (question, index, questionsList) => {
                                 return (
-                                    <React.Fragment
+                                    <Fragment
                                         key={`${question.title}${index}`}
                                     >
                                         <Box sx={{ marginY: 2 }}>
@@ -233,7 +233,7 @@ function QuizMakerPage() {
                                                 actionDispatcherForQuizMakerForm.updateQuestionsList
                                             }
                                         />
-                                    </React.Fragment>
+                                    </Fragment>
                                 );
                             }
                         )}
@@ -404,7 +404,7 @@ function quizMakerReducer(state: QuizMakerForm, action: QuizMakerFormAction) {
 }
 
 function actionCreatorForQuizMakerForm(
-    dispatch: React.Dispatch<QuizMakerFormAction>
+    dispatch: ReactDispatch<QuizMakerFormAction>
 ) {
     function setQuizName(quizName: string) {
         return dispatch({ type: 'SET_QUIZ_NAME', payload: quizName });

@@ -1,6 +1,6 @@
 import {
     selectCurrentOngoingQuestionIndex,
-    setCurrentOngoingQuestionIndex
+    setCurrentOngoingQuestionIndex,
 } from '@Feature/quiz/QuizSlice';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
@@ -11,7 +11,7 @@ import {
     indigo,
     purple,
     red,
-    teal
+    teal,
 } from '@mui/material/colors';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -19,8 +19,7 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { QuestionOfCurrentOngoingQuiz } from '@Type/Quiz';
-import {useState,useEffect,useMemo,useReducer,useRef,useCallback,Dispatch as ReactDispatch,SetStateAction as ReactSetStateAction} from 'react';
-import {compose} from 'ramda'
+import { compose } from 'ramda';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -58,124 +57,113 @@ export default function QuestionQuickSelect(props: QuestionQuickSelectProps) {
         updateAnswer('next', '', false);
     };
     return (
-
-            <Drawer
+        <Drawer
+            sx={{
+                width: 240,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: 240,
+                    boxSizing: 'border-box',
+                },
+            }}
+            variant="persistent"
+            anchor="right"
+            open={open}
+        >
+            <DrawerHeader>
+                <IconButton onClick={handleDrawerClose}>
+                    <ChevronRightIcon fontSize="large" />
+                </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '15px',
+                    marginTop: 2,
+                }}
+            >
+                {questionsList !== undefined &&
+                    questionsList.map((question, index) => {
+                        if (question.isAnswered)
+                            return (
+                                <OptionBtn
+                                    btnType="answered"
+                                    questionNumber={index + 1}
+                                    clickHandler={() =>
+                                        quickSelectBtnHandler(index)
+                                    }
+                                    key={question._id}
+                                />
+                            );
+                        if (question.isMarkedAsReview)
+                            return (
+                                <OptionBtn
+                                    btnType="markedForReview"
+                                    questionNumber={index + 1}
+                                    clickHandler={() =>
+                                        quickSelectBtnHandler(index)
+                                    }
+                                    key={question._id}
+                                />
+                            );
+                        if (!question.isVisited)
+                            return (
+                                <OptionBtn
+                                    btnType="notVisited"
+                                    questionNumber={index + 1}
+                                    clickHandler={() =>
+                                        quickSelectBtnHandler(index)
+                                    }
+                                    key={question._id}
+                                />
+                            );
+                        if (question.isVisited)
+                            return (
+                                <OptionBtn
+                                    btnType="notAnswered"
+                                    questionNumber={index + 1}
+                                    clickHandler={() =>
+                                        quickSelectBtnHandler(index)
+                                    }
+                                    key={question._id}
+                                />
+                            );
+                        return (
+                            <OptionBtn
+                                btnType="notAnswered"
+                                questionNumber={index + 1}
+                                clickHandler={() =>
+                                    quickSelectBtnHandler(index)
+                                }
+                                key={question._id}
+                            />
+                        );
+                    })}
+            </Box>
+            <Box
                 sx={{
                     width: 240,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: 240,
-                        boxSizing: 'border-box',
-                    },
+                    minHeight: '60px',
+                    backgroundColor: '#f7f7f7',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'fixed',
+                    margin: 0,
+                    bottom: 0,
                 }}
-                variant="persistent"
-                anchor="right"
-                open={open}
             >
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        <ChevronRightIcon fontSize="large" />
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '15px',
-                        marginTop: 2,
-                    }}
+                <Button
+                    variant="contained"
+                    onClick={setOpenSubmitQuizPopup}
+                    color={'success'}
                 >
-                    {questionsList !== undefined &&
-                        questionsList.map((question, index) => {
-                            if (question.isAnswered)
-                                return (
-                                
-                                        <OptionBtn
-                                            btnType="answered"
-                                            questionNumber={index + 1}
-                                            clickHandler={() =>
-                                                quickSelectBtnHandler(index)
-                                            }
-                                            key={question._id}
-                                        />
-                                    
-                                );
-                            if (question.isMarkedAsReview)
-                                return (
-                                    
-                                        <OptionBtn
-                                            btnType="markedForReview"
-                                            questionNumber={index + 1}
-                                            clickHandler={() =>
-                                                quickSelectBtnHandler(index)
-                                            }
-                                            key={question._id}
-                                        />
-
-                                );
-                            if (!question.isVisited)
-                                return (
-                           
-                                        <OptionBtn
-                                            btnType="notVisited"
-                                            questionNumber={index + 1}
-                                            clickHandler={() =>
-                                                quickSelectBtnHandler(index)
-                                            }
-                                            key={question._id}
-                                        />
-                                 
-                                );
-                            if (question.isVisited)
-                                return (
-                
-                                        <OptionBtn
-                                            btnType="notAnswered"
-                                            questionNumber={index + 1}
-                                            clickHandler={() =>
-                                                quickSelectBtnHandler(index)
-                                            }
-                                            key={question._id}
-                                        />
-                                 
-                                );
-                            return (
-                        
-                                    <OptionBtn
-                                        btnType="notAnswered"
-                                        questionNumber={index + 1}
-                                        clickHandler={() =>
-                                            quickSelectBtnHandler(index)
-                                        }
-                                        key={question._id}
-                                    />
-                             
-                            );
-                        })}
-                </Box>
-                <Box
-                    sx={{
-                        width: 240,
-                        minHeight: '60px',
-                        backgroundColor: '#f7f7f7',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        position: 'fixed',
-                        margin: 0,
-                        bottom: 0,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        onClick={setOpenSubmitQuizPopup}
-                        color={'success'}
-                    >
-                        Submit
-                    </Button>
-                </Box>
-            </Drawer>
+                    Submit
+                </Button>
+            </Box>
+        </Drawer>
     );
 }
 
@@ -219,9 +207,5 @@ function OptionBtn(props: OptionBtnProps) {
             backgroundColor: btnColorAndBadgeIcon[btnType].color,
         },
     }));
-    return (
-        <>
-            <ColorButton onClick={clickHandler}>{questionNumber}</ColorButton>
-        </>
-    );
+    return <ColorButton onClick={clickHandler}>{questionNumber}</ColorButton>;
 }

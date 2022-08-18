@@ -27,99 +27,94 @@ export default function QuestionsList(props: QuestionsListProps) {
         questionType,
     } = props;
     return (
-        <>
-            <List sx={{ width: '100%' }}>
-                {options.map((option, index) => {
-                    const labelId = `checkbox-list-label-${option}`;
+        <List sx={{ width: '100%' }}>
+            {options.map((option, index) => {
+                const labelId = `checkbox-list-label-${option}`;
 
-                    return (
-                        <ListItem
-                            key={`option-key-in-question-list-${option}`}
-                            secondaryAction={
-                                // This btn is disabled because edit option is not part of MVP
-                                isCreatedByUser ? (
-                                    <IconButton
-                                        edge="end"
-                                        aria-label="comments"
-                                        disabled
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                ) : null
-                            }
-                            disablePadding
-                            onClick={() => {
-                                if (!onChangeHandler) return;
-                                if (questionType === 'multipleAnswer') {
-                                    if (answers.includes(String(index)))
-                                        onChangeHandler(
-                                            String(index),
-                                            false,
-                                            'multipleAnswer'
-                                        );
-                                    else
-                                        onChangeHandler(
-                                            String(index),
-                                            true,
-                                            'multipleAnswer'
-                                        );
-                                } else {
+                return (
+                    <ListItem
+                        key={`option-key-in-question-list-${option}`}
+                        secondaryAction={
+                            // This btn is disabled because edit option is not part of MVP
+                            isCreatedByUser ? (
+                                <IconButton
+                                    edge="end"
+                                    aria-label="comments"
+                                    disabled
+                                >
+                                    <EditIcon />
+                                </IconButton>
+                            ) : null
+                        }
+                        disablePadding
+                        onClick={() => {
+                            if (!onChangeHandler) return;
+                            if (questionType === 'multipleAnswer') {
+                                if (answers.includes(String(index)))
+                                    onChangeHandler(
+                                        String(index),
+                                        false,
+                                        'multipleAnswer'
+                                    );
+                                else
                                     onChangeHandler(
                                         String(index),
                                         true,
-                                        'singleAnswer'
+                                        'multipleAnswer'
                                     );
-                                }
-                            }}
-                        >
-                            <ListItemButton role={undefined} dense>
-                                <ListItemIcon>
-                                    {questionType === 'multipleAnswer' ? (
-                                        <Checkbox
-                                            edge="start"
-                                            checked={answers.includes(
-                                                String(index)
-                                            )}
-                                            tabIndex={-1}
-                                            disableRipple
-                                            inputProps={{
-                                                'aria-labelledby': labelId,
-                                            }}
-                                            value={option}
-                                            color={'success'}
-                                            onChange={(e, checked) => {
-                                                if (onChangeHandler)
-                                                    onChangeHandler(
-                                                        String(index),
-                                                        checked,
-                                                        'multipleAnswer'
-                                                    );
-                                            }}
-                                        />
-                                    ) : (
-                                        <Radio
-                                            checked={answers.includes(
-                                                String(index)
-                                            )}
-                                            value={option}
-                                            color={'success'}
-                                            // onChange={e => {
-                                            // 	console.log(e.target);
-                                            // 	if (onChangeHandler)
-                                            // 		onChangeHandler(e);
-                                            // }}
-                                        />
-                                    )}
-                                </ListItemIcon>
-                                <ListItemText
-                                    id={labelId}
-                                    primary={`${option}`}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    );
-                })}
-            </List>
-        </>
+                            } else {
+                                onChangeHandler(
+                                    String(index),
+                                    true,
+                                    'singleAnswer'
+                                );
+                            }
+                        }}
+                    >
+                        <ListItemButton role={undefined} dense>
+                            <ListItemIcon>
+                                {questionType === 'multipleAnswer' ? (
+                                    <Checkbox
+                                        edge="start"
+                                        checked={answers.includes(
+                                            String(index)
+                                        )}
+                                        tabIndex={-1}
+                                        disableRipple
+                                        inputProps={{
+                                            'aria-labelledby': labelId,
+                                        }}
+                                        value={option}
+                                        color={'success'}
+                                        onChange={(e, checked) => {
+                                            if (onChangeHandler)
+                                                onChangeHandler(
+                                                    String(index),
+                                                    checked,
+                                                    'multipleAnswer'
+                                                );
+                                        }}
+                                    />
+                                ) : (
+                                    <Radio
+                                        checked={answers.includes(
+                                            String(index)
+                                        )}
+                                        value={option}
+                                        color={'success'}
+                                        // onChange={e => {
+                                        // 	console.log(e.target);
+                                        // 	if (onChangeHandler)
+                                        // 		onChangeHandler(e);
+                                        // }}
+                                    />
+                                )}
+                            </ListItemIcon>
+                            <ListItemText id={labelId} primary={`${option}`} />
+                        </ListItemButton>
+                    </ListItem>
+                );
+            })}
+        </List>
     );
 }

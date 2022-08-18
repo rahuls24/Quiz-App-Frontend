@@ -4,22 +4,22 @@ import Box from '@mui/material/Box';
 import { useGetQuizzesHistoryQuery } from '@ReduxStore/apis/apiSlice';
 import Header from '@SharedComponent/Header';
 import { QuizzesHistory } from '@Type/Quiz';
-import React from 'react';
+import { useEffect, useMemo } from 'react';
 function QuizHistory() {
     const {
         data: { quizzesDetails = [] } = {},
         isFetching: isQuizzesDetailsFetching,
         refetch,
     } = useGetQuizzesHistoryQuery('');
-    React.useEffect(() => {
+    useEffect(() => {
         refetch();
     }, []);
 
-    const quizzesHistoryData = React.useMemo(() => {
+    const quizzesHistoryData = useMemo(() => {
         return giveTypeToQuizzesHistoryResponse(quizzesDetails);
     }, [quizzesDetails]);
 
-    const quizzesSummeryDetails = React.useMemo(() => {
+    const quizzesSummeryDetails = useMemo(() => {
         return getQuizzesSummery(quizzesHistoryData);
     }, [quizzesHistoryData]);
 
