@@ -6,47 +6,50 @@ import {
     selectCurrentOnGoingQuizQuestions,
     setCurrentOngoingQuestionIndex,
     setCurrentOnGoingQuizQuestions,
-    setQuizResultDetails
+    setQuizResultDetails,
 } from '@Feature/quiz/QuizSlice';
 import {
     useLazyGetAllQuestionsOfAQuizQuery,
-    useSubmitQuizMutation
+    useSubmitQuizMutation,
 } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import AutoHideAlert from '@SharedComponent/AutoHideAlert';
 import { getCurrentOnGoingQuizQuestionsData } from '@SharedFunction/quizRelated';
 import {
     AutoHideAlertSeverity,
-    QuestionOfCurrentOngoingQuiz
+    QuestionOfCurrentOngoingQuiz,
 } from '@Type/Quiz';
-import {useState,useEffect,useCallback} from 'react';
-import {compose} from 'ramda'
+import { compose } from 'ramda';
+import { useCallback, useEffect, useState } from 'react';
 
 function StartQuiz() {
     const dispatch = useAppDispatch();
-    const [isQuickSelectViewOpen, setIsQuickSelectViewOpen] =
-        useState(false);
-    const [autoHideErrorAlertProps, setAutoHideErrorAlertProps] =
-        useState({
-            isOpen: false,
-            alertMsg: '',
-            severity: 'error' as AutoHideAlertSeverity,
-            autoHideDuration: 4000,
-        });
+
+    const [isQuickSelectViewOpen, setIsQuickSelectViewOpen] = useState(false);
+
+    const [autoHideErrorAlertProps, setAutoHideErrorAlertProps] = useState({
+        isOpen: false,
+        alertMsg: '',
+        severity: 'error' as AutoHideAlertSeverity,
+        autoHideDuration: 4000,
+    });
+
     const [
         isAlreadyGivenTheQuizAlertPopupOpen,
         setIsAlreadyGivenTheQuizAlertPopupOpen,
     ] = useState(false);
+
     const currentQuiz = useAppSelector(selectCurrentOnGoingQuiz);
-    const [fetchQuestionList, { isError: isErrorForFetchQuestionList }] =
-        useLazyGetAllQuestionsOfAQuizQuery();
+    
+    const [fetchQuestionList] = useLazyGetAllQuestionsOfAQuizQuery();
+
     const saveQuestionData = async () => {
         try {
             const questionListResponse = await fetchQuestionList(
                 currentQuiz?._id
             );
+            // Handle error
             if (questionListResponse.status === 'rejected') {
-                // Handle error
                 if ('status' in questionListResponse.error) {
                     if (questionListResponse.error.status === 403) {
                         setIsAlreadyGivenTheQuizAlertPopupOpen(true);
@@ -64,21 +67,33 @@ function StartQuiz() {
             }
             let questionsList =
                 getCurrentOnGoingQuizQuestionsData(questionListResponse);
+
+            // If data is not coming in right way from api
             if (questionsList === undefined) {
-                // Something wrong with API response
+                setAutoHideErrorAlertProps((prev) => {
+                    return {
+                        ...prev,
+                        isOpen: true,
+                        alertMsg:
+                            'Something went wrong. Please try after sometime',
+                    };
+                });
                 return;
             }
             compose(dispatch, setCurrentOnGoingQuizQuestions)(questionsList);
         } catch (error) {
-            // Handle error
+            console.log('Something went wrong in saveQuestionData');
         }
     };
+
     const [submitQuiz, { isError: isErrorForSubmitQuiz }] =
         useSubmitQuizMutation();
+
     const questionsList = useAppSelector(selectCurrentOnGoingQuizQuestions);
     const { _id: quizId, name: quizName } = useAppSelector(
         selectCurrentOnGoingQuiz
     );
+
     const quizSubmitHandler = useCallback(async () => {
         const submitQuizPayload = getSubmitQuizPayload(quizId, questionsList);
         const submittedQuizResponse = await submitQuiz(submitQuizPayload);
@@ -116,18 +131,20 @@ function StartQuiz() {
             return false;
         }
     }, [dispatch, questionsList, quizId, quizName, submitQuiz]);
+
     const onCloseHandlerForAutoHideAlert = () => {
         setAutoHideErrorAlertProps((prev) => ({
             ...prev,
             isOpen: false,
         }));
     };
+    // Save Question Data into redux store
     useEffect(() => {
         saveQuestionData();
         compose(dispatch, setCurrentOngoingQuestionIndex)(0);
         // eslint-disable-next-line
     }, []);
-
+    // Showing error msg when there is something wrong while submitting the quiz
     useEffect(() => {
         if (isErrorForSubmitQuiz) {
             setAutoHideErrorAlertProps((prev) => {
@@ -139,6 +156,7 @@ function StartQuiz() {
             });
         }
     }, [isErrorForSubmitQuiz]);
+
     const alreadyGivenTheQuizAlertPopupCloseHandler = (reason: string) => {
         if (reason === 'backdropClick') return;
         setIsAlreadyGivenTheQuizAlertPopupOpen(false);

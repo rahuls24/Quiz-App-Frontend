@@ -13,7 +13,7 @@ function QuizHistory() {
     } = useGetQuizzesHistoryQuery('');
     useEffect(() => {
         refetch();
-    }, []);
+    }, [refetch]);
 
     const quizzesHistoryData = useMemo(() => {
         return giveTypeToQuizzesHistoryResponse(quizzesDetails);
