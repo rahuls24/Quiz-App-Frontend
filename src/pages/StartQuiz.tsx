@@ -94,15 +94,8 @@ function StartQuiz() {
         selectCurrentOnGoingQuiz
     );
 
-    const quizSubmitHandler = async (t1?:QuestionOfCurrentOngoingQuiz) => {
-        let submitQuizPayload;
-        if(t1){
-            submitQuizPayload = getSubmitQuizPayload(quizId, t1);
-        } else{
-            submitQuizPayload = getSubmitQuizPayload(quizId, questionsList);
-        }
-       
-        console.log('pant in submit', submitQuizPayload, questionsList, quizId);
+    const quizSubmitHandler = async () => {
+        const submitQuizPayload = getSubmitQuizPayload(quizId, questionsList);
         const submittedQuizResponse = await submitQuiz(submitQuizPayload);
         if ('data' in submittedQuizResponse) {
             const { result: quizResultDetails } = submittedQuizResponse.data;

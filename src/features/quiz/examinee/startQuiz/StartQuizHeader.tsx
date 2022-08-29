@@ -12,10 +12,9 @@ import { compose } from 'ramda';
 import {
     Dispatch as ReactDispatch,
     SetStateAction as ReactSetStateAction,
-    useCallback,
     useEffect,
     useRef,
-    useState,
+    useState
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 type startQuizHeaderProps = {
@@ -38,7 +37,7 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         setIsAlreadyGivenTheQuizAlertPopupOpen,
     } = props;
     let navigate = useNavigate();
-   
+
     const isExamStarted = useRef(false);
     const { data: startTimeData, refetch } =
         useGetStartTimeOfTheQuizQuery(quizId);
@@ -51,6 +50,7 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         navigate('/quiz/result');
         // eslint-disable-next-line
     };
+    const questionsList = useAppSelector(selectCurrentOnGoingQuizQuestions);
     useEffect(() => {
         const timeIntervalId = setInterval(() => {
             const startedAt = new Date(startTimeData?.startTime ?? '');
@@ -68,7 +68,7 @@ function StartQuizHeader(props: startQuizHeaderProps) {
         }, 1000);
         return () => clearInterval(timeIntervalId);
         // eslint-disable-next-line
-    }, [startTimeData, quizDuration]);
+    }, [startTimeData, quizDuration, questionsList]);
     const hours = timer[0] > 9 ? `${timer[0]}` : `0${timer[0]}`;
     const mins = timer[1] > 9 ? `${timer[1]}` : `0${timer[1]}`;
     const seconds = timer[2] > 9 ? `${timer[2]}` : `0${timer[2]}`;
