@@ -20,7 +20,7 @@ import {
     QuestionOfCurrentOngoingQuiz,
 } from '@Type/Quiz';
 import { compose } from 'ramda';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function StartQuiz() {
     const dispatch = useAppDispatch();
@@ -40,7 +40,7 @@ function StartQuiz() {
     ] = useState(false);
 
     const currentQuiz = useAppSelector(selectCurrentOnGoingQuiz);
-    
+
     const [fetchQuestionList] = useLazyGetAllQuestionsOfAQuizQuery();
 
     const saveQuestionData = async () => {
@@ -82,7 +82,7 @@ function StartQuiz() {
             }
             compose(dispatch, setCurrentOnGoingQuizQuestions)(questionsList);
         } catch (error) {
-            console.log('Something went wrong in saveQuestionData');
+            console.error('Something went wrong in saveQuestionData');
         }
     };
 
@@ -94,8 +94,15 @@ function StartQuiz() {
         selectCurrentOnGoingQuiz
     );
 
-    const quizSubmitHandler = useCallback(async () => {
-        const submitQuizPayload = getSubmitQuizPayload(quizId, questionsList);
+    const quizSubmitHandler = async (t1?:QuestionOfCurrentOngoingQuiz) => {
+        let submitQuizPayload;
+        if(t1){
+            submitQuizPayload = getSubmitQuizPayload(quizId, t1);
+        } else{
+            submitQuizPayload = getSubmitQuizPayload(quizId, questionsList);
+        }
+       
+        console.log('pant in submit', submitQuizPayload, questionsList, quizId);
         const submittedQuizResponse = await submitQuiz(submitQuizPayload);
         if ('data' in submittedQuizResponse) {
             const { result: quizResultDetails } = submittedQuizResponse.data;
@@ -130,7 +137,7 @@ function StartQuiz() {
             });
             return false;
         }
-    }, [dispatch, questionsList, quizId, quizName, submitQuiz]);
+    };
 
     const onCloseHandlerForAutoHideAlert = () => {
         setAutoHideErrorAlertProps((prev) => ({

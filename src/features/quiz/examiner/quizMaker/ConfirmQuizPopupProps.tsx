@@ -29,8 +29,9 @@ export default function ConfirmQuizPopup(props: ConfirmQuizPopupProps) {
                 </Typography>
 
                 <Typography variant="subtitle2" color={'error'}>
-                    You can't able to edit quiz name and topics once you confirm
-                    this.
+                    {
+                        'You can not able to edit quiz name and topics once you confirm this.'
+                    }
                 </Typography>
             </DialogContent>
             <DialogActions>

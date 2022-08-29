@@ -72,16 +72,15 @@ export default function QuestionsView(props: QuestionsViewProps) {
         currentQuestion.options = currentQuestion.options.filter(
             (_, i) => i !== index
         );
-        currentQuestion.answers = currentQuestion.answers.filter(
-            (answer) => answer !== index
-        );
-        currentQuestion.answers = currentQuestion.answers.map((answer) => {
-            if (index > answer) {
-                return answer;
-            } else {
-                return answer - 1;
-            }
-        });
+        currentQuestion.answers = currentQuestion.answers
+            .filter((answer) => answer !== index)
+            .map((answer) => {
+                if (index > answer) {
+                    return answer;
+                } else {
+                    return answer - 1;
+                }
+            });
         updateQuestionsList({
             updatedQuestion: currentQuestion,
             index: questionIndex,

@@ -71,7 +71,7 @@ function QuizDetailsView(props: QuizDetailsViewProps) {
                         return (
                             <Chip
                                 label={`${topic}`}
-                                key={`orderDetails${topic}`}
+                                key={`quizDetails${topic}`}
                             />
                         );
                     })}

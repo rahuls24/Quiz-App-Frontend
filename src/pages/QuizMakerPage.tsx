@@ -131,7 +131,7 @@ function QuizMakerPage() {
                 updateQuestionsListPayload
             );
         } catch (error) {
-            console.log('Something went wrong in saveQuizHandler');
+            console.error('Something went wrong in saveQuizHandler');
         }
     };
 
@@ -157,12 +157,12 @@ function QuizMakerPage() {
             const isSaved = await saveQuestionsOfTheQuiz(questionPayload);
             if ('error' in isSaved) {
                 // TODO: Show some alert message
-                console.log(
+                console.error(
                     'Something went wrong in saveQuestionsOfTheQuizHandler'
                 );
             }
         } catch (error) {
-            console.log(
+            console.error(
                 'Something went wrong in saveQuestionsOfTheQuizHandler'
             );
         }
@@ -243,7 +243,7 @@ function QuizMakerPage() {
         });
     }, [quizMakerFormState, actionDispatcherForQuizMakerForm]);
 
-    const shouldShowSaveQuizBtn = useMemo(() => {
+    const shouldHideSaveQuizBtn = useMemo(() => {
         return (
             quizMakerFormState.quizName.length < 3 ||
             quizMakerFormState.questions.length <= 0
@@ -276,11 +276,7 @@ function QuizMakerPage() {
                 </Grid>
             </Grid>
         );
-    }, [
-        addQuestionHandler,
-        isLoadingForSaveAQuiz,
-        quizMakerFormState.quizName.length,
-    ]);
+    }, [addQuestionHandler, isLoadingForSaveAQuiz, quizMakerFormState]);
     const renderAddQuestionBtnWithSaveQuizBtn = useMemo(() => {
         return (
             <Grid container columns={{ xs: 4, md: 12 }}>
@@ -337,8 +333,7 @@ function QuizMakerPage() {
     }, [
         addQuestionHandler,
         isLoadingForSaveQuestionsOfTheQuiz,
-        quizMakerFormState.questions,
-        quizMakerFormState.quizName.length,
+        quizMakerFormState,
         saveQuestionsOfTheQuizHandler,
     ]);
     return (
@@ -371,7 +366,7 @@ function QuizMakerPage() {
                         {/* Already added question view */}
                         {renderAlreadyAddedQuestions}
 
-                        {shouldShowSaveQuizBtn
+                        {shouldHideSaveQuizBtn
                             ? renderOnlyAddQuestionBtn
                             : renderAddQuestionBtnWithSaveQuizBtn}
                     </Paper>

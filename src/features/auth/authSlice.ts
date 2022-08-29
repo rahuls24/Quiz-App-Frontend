@@ -16,7 +16,7 @@ export interface IUSerDetails {
 
 export interface AuthState {
     isAuthorize: boolean;
-    token: string | null | undefined;
+    token?: string | null | undefined;
     authAlertMsg: string;
     authAlertState: {
         flag: boolean;

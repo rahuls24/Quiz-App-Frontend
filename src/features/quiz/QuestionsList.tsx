@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Radio from '@mui/material/Radio';
+import { v4 as uuidv4 } from 'uuid';
 type QuestionsListProps = {
     options: string[];
     isCreatedByUser: boolean;
@@ -29,11 +30,10 @@ export default function QuestionsList(props: QuestionsListProps) {
     return (
         <List sx={{ width: '100%' }}>
             {options.map((option, index) => {
-                const labelId = `checkbox-list-label-${option}`;
-
+                const labelId = uuidv4();
                 return (
                     <ListItem
-                        key={`option-key-in-question-list-${option}`}
+                        key={labelId}
                         secondaryAction={
                             // This btn is disabled because edit option is not part of MVP
                             isCreatedByUser ? (
@@ -86,14 +86,6 @@ export default function QuestionsList(props: QuestionsListProps) {
                                         }}
                                         value={option}
                                         color={'success'}
-                                        onChange={(e, checked) => {
-                                            if (onChangeHandler)
-                                                onChangeHandler(
-                                                    String(index),
-                                                    checked,
-                                                    'multipleAnswer'
-                                                );
-                                        }}
                                     />
                                 ) : (
                                     <Radio
@@ -102,11 +94,6 @@ export default function QuestionsList(props: QuestionsListProps) {
                                         )}
                                         value={option}
                                         color={'success'}
-                                        // onChange={e => {
-                                        // 	console.log(e.target);
-                                        // 	if (onChangeHandler)
-                                        // 		onChangeHandler(e);
-                                        // }}
                                     />
                                 )}
                             </ListItemIcon>
