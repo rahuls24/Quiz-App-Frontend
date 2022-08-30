@@ -58,7 +58,7 @@ function getQuizzesSummery(quizzesHistory: Array<QuizzesHistory>) {
         const { quizResult } = quiz;
         if (!quizResult) return;
         quizzesSummery.totalCorrectAnswers += quizResult.numberOfRightAnswers;
-        quizzesSummery.totalWrongAnswer += quizResult.numberOfRightAnswers;
+        quizzesSummery.totalWrongAnswer += quizResult.numberOfWrongAnswers;
         quizzesSummery.totalSkippedQuestions +=
             quizResult.numberSkippedQuestions;
     });

@@ -3,13 +3,14 @@ import { useAppSelector } from '@ReduxStore/hooks';
 import jwtDecode from 'jwt-decode';
 import { Navigate, useLocation } from 'react-router-dom';
 import { selectAuthToken, selectIsAuthenticated } from './authSlice';
-const examineeAuthorizedPath = ['/quiz/history'];
+const examineeAuthorizedPath = ['/quiz/history', '/quiz/result', 'quiz/start'];
 const examinerAuthorizedPath = ['/quiz/make-a-quiz'];
 const commonUserAuthorizedPath = ['/'];
 function RequireAuth({ children }: { children: JSX.Element }) {
     let location = useLocation();
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const authToken = useAppSelector(selectAuthToken);
+    console.log('pant', location);
     const isAuthorized = isUserAuthorized(location.pathname, authToken);
     if (isAuthenticated && isAuthorized) return children;
     else if (isAuthenticated && !isAuthorized) return <UnauthorizedPage />;
@@ -28,6 +29,8 @@ function isUserAuthorized(path: string, authToken?: null | string) {
     if (userDetails === null) return false;
     const { expiryTime, userRole } = userDetails;
     if (Date.now() >= expiryTime * 1000) return false;
+    console.log(path);
+    if (path.includes('quiz/start')) path = 'quiz/start';
     if (userRole === 'examinee')
         return (
             examineeAuthorizedPath.includes(path) ||
