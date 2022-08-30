@@ -37,6 +37,9 @@ export default function QuizzesTable(props: QuizzesTableProps) {
     const { quizzesList } = props;
     let [rows, quizzesMappingWithRowIndex] = createRows(quizzesList);
     const dispatch = useAppDispatch();
+
+    // TODO: Implement loader based on isViewBtnLoading
+    // eslint-disable-next-line
     const [getAllQuestions, { isFetching: isViewBtnLoading }] =
         useLazyGetAllQuestionsOfAQuizQuery();
     const NoContentInTheTable = useCallback(() => {

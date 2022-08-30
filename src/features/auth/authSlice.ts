@@ -15,8 +15,8 @@ export interface IUSerDetails {
 }
 
 export interface AuthState {
-    isAuthorize: boolean;
-    token?: string | null | undefined;
+    isAuthenticated: boolean;
+    token?: string | null;
     authAlertMsg: string;
     authAlertState: {
         flag: boolean;
@@ -26,7 +26,7 @@ export interface AuthState {
     userDetails: null | IUSerDetails;
 }
 const initialState: AuthState = {
-    isAuthorize: false,
+    isAuthenticated: false,
     token: null,
     authAlertMsg: 'Something went Wrong',
     authAlertState: {
@@ -41,12 +41,13 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         authorizeUser: (state, action: PayloadAction<string>) => {
-            state.isAuthorize = true;
             state.token = action.payload;
+            state.isAuthenticated = true;
         },
         unauthorizedUser: (state) => {
-            state.isAuthorize = false;
+            state.isAuthenticated = false;
             state.token = null;
+            state.userDetails = null;
         },
         setAuthAlertMsg: (state, action: PayloadAction<string>) => {
             state.authAlertMsg = action.payload;
@@ -67,7 +68,8 @@ export const {
     setUserDetails,
 } = authSlice.actions;
 
-export const selectIsAuthorize = (state: RootState) => state.auth.isAuthorize;
+export const selectIsAuthenticated = (state: RootState) =>
+    state.auth.isAuthenticated;
 export const selectAuthToken = (state: RootState) => state.auth.token;
 export const selectAuthAlertMsg = (state: RootState) => state.auth.authAlertMsg;
 export const selectAuthAlertState = (state: RootState) =>

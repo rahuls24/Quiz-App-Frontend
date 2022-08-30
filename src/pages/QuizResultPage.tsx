@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import QuizMarksSummery from '@Feature/quiz/examinee/quizResult/QuizMarksSummery';
 import ScorePieChart from '@Feature/quiz/examinee/quizResult/ScorePieChart';
 import { selectQuizResultDetails } from '@Feature/quiz/QuizSlice';
@@ -11,6 +12,8 @@ import Header from '@SharedComponent/Header';
 import { useMemo } from 'react';
 
 function QuizResultPage() {
+    // Change Document Tile 
+    useDocumentTitle('Quiz App | Result')
     const quizResultDetails = useAppSelector(selectQuizResultDetails);
     const quizMarksSummeryProps = useMemo(() => {
         return {

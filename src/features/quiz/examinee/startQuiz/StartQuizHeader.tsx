@@ -14,7 +14,7 @@ import {
     SetStateAction as ReactSetStateAction,
     useEffect,
     useRef,
-    useState
+    useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 type startQuizHeaderProps = {
@@ -48,7 +48,6 @@ function StartQuizHeader(props: startQuizHeaderProps) {
     const quizSubmitHandlerHelper = async () => {
         await quizSubmitHandler();
         navigate('/quiz/result');
-        // eslint-disable-next-line
     };
     const questionsList = useAppSelector(selectCurrentOnGoingQuizQuestions);
     useEffect(() => {

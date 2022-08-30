@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
@@ -31,9 +32,9 @@ import {
     IAuthAlertState,
     selectAuthAlertMsg,
     selectAuthAlertState,
-    selectIsAuthorize,
+    selectIsAuthenticated,
     setAuthAlertMsg,
-    setAuthAlertState,
+    setAuthAlertState
 } from '../authSlice';
 const validationSchema = yup.object({
     email: yup
@@ -51,8 +52,10 @@ const authAlertStatePayload: IAuthAlertState = {
     autoHideDuration: 6000,
 };
 export default function Signin() {
+    // Change Document Tile
+    useDocumentTitle('Quiz App | Signin');
     const [signinUser, { isLoading, isError, error }] = useSigninUserMutation();
-    const isLogin: boolean = useAppSelector(selectIsAuthorize);
+    const isLogin = useAppSelector(selectIsAuthenticated);
     const authAlertMsg = useAppSelector(selectAuthAlertMsg);
     const authAlertState = useAppSelector(selectAuthAlertState);
     const [shouldShowPassword, setShowPassword] = useState(false);
@@ -62,9 +65,7 @@ export default function Signin() {
     let from = getRedirectLocation(location);
 
     useEffect(() => {
-        if (isLogin) {
-            navigate(from);
-        }
+        if (isLogin) navigate(from);
     }, [isLogin, navigate, from]);
 
     useEffect(() => {

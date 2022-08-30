@@ -3,6 +3,7 @@ import Signin from '@Feature/auth/signin/Signin';
 import Signup from '@Feature/auth/signup/Signup';
 import { ThemeProvider } from '@mui/material/styles';
 import HomePage from '@Page/HomePage';
+import PageNotFound from '@Page/PageNotFound';
 import QuizHistory from '@Page/QuizHistory';
 import QuizMakerPage from '@Page/QuizMakerPage';
 import QuizResultPage from '@Page/QuizResultPage';
@@ -57,7 +58,7 @@ function App() {
                         }
                     />
 
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </ThemeProvider>
@@ -65,7 +66,3 @@ function App() {
 }
 
 export default App;
-
-function NotFound() {
-    return <h1>Page no found</h1>;
-}

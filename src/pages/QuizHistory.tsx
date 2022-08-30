@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import QuizHistoryTable from '@Feature/quiz/examinee/quizHistory/QuizHistoryTable';
 import UserQuizHistorySummery from '@Feature/quiz/examinee/quizHistory/UserQuizHistorySummery';
 import Box from '@mui/material/Box';
@@ -6,6 +7,8 @@ import Header from '@SharedComponent/Header';
 import { QuizzesHistory } from '@Type/Quiz';
 import { useEffect, useMemo } from 'react';
 function QuizHistory() {
+    // Change Document Tile
+    useDocumentTitle('Quiz App | History');
     const {
         data: { quizzesDetails = [] } = {},
         isFetching: isQuizzesDetailsFetching,

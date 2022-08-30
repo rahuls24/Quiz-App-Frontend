@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import AddQuizInputField from '@Feature/quiz/examiner/quizMaker/AddQuizInputField';
 import ConfirmQuizPopup from '@Feature/quiz/examiner/quizMaker/ConfirmQuizPopupProps';
 import QuestionsView from '@Feature/quiz/examiner/quizMaker/QuestionsView';
@@ -32,6 +33,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 function QuizMakerPage() {
+    // Change Document Tile 
+    useDocumentTitle('Quiz App | Maker');
     const navigate = useNavigate();
     const [
         saveAQuiz,

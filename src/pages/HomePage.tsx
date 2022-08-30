@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import { selectUserDetails, setUserDetails } from '@Feature/auth/authSlice';
 import ExamineeHomePage from '@Feature/examinee/ExamineeHomePage';
 import ExaminerHomePage from '@Feature/examiner/ExaminerHomePage';
@@ -8,6 +9,8 @@ import { compose } from 'ramda';
 import { useEffect } from 'react';
 
 function HomePage() {
+    // Change Document Tile
+    useDocumentTitle('Quiz App | Homepage');
     const { role: currentUserRole = 'examinee' } =
         useAppSelector(selectUserDetails) ?? {};
     const dispatch = useAppDispatch();
@@ -17,6 +20,7 @@ function HomePage() {
             compose(dispatch, setUserDetails)(userDetails?.user);
         }
     }, [isSuccess, dispatch, userDetails]);
+    console.log('Home page is called');
     return (
         <>
             <Header />

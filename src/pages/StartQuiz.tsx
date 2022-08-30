@@ -1,3 +1,4 @@
+import useDocumentTitle from '@CustomHook/useDocumentTitle';
 import AlreadyGivenTheQuizAlertPopup from '@Feature/quiz/examinee/startQuiz/AlreadyGivenTheQuizAlertPopup';
 import QuestionView from '@Feature/quiz/examinee/startQuiz/QuestionView';
 import StartQuizHeader from '@Feature/quiz/examinee/startQuiz/StartQuizHeader';
@@ -23,6 +24,8 @@ import { compose } from 'ramda';
 import { useEffect, useState } from 'react';
 
 function StartQuiz() {
+    // Change Document Tile 
+    useDocumentTitle('Quiz App | Start')
     const dispatch = useAppDispatch();
 
     const [isQuickSelectViewOpen, setIsQuickSelectViewOpen] = useState(false);
