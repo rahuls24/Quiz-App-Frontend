@@ -20,7 +20,6 @@ function HomePage() {
             compose(dispatch, setUserDetails)(userDetails?.user);
         }
     }, [isSuccess, dispatch, userDetails]);
-    console.log('Home page is called');
     return (
         <>
             <Header />

@@ -5,12 +5,13 @@ import '@fontsource/roboto/700.css';
 import { store } from '@ReduxStore/store';
 import { saveReduxState } from '@SharedFunction/browserStorage';
 import { debounce } from 'debounce';
-import {StrictMode} from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 store.subscribe(
     // we use debounce to save the state once each 800ms
     // for better performances in case multiple changes occur in a short time
@@ -36,6 +37,11 @@ if (isStrictMode) {
         </Provider>
     );
 }
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://cra.link/PWA
+serviceWorkerRegistration.register();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

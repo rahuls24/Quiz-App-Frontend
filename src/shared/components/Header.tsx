@@ -15,17 +15,16 @@ import Typography from '@mui/material/Typography';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { compose } from 'ramda';
 import {
-	MouseEvent as ReactMouseEvent,
-	useEffect,
-	useMemo,
-	useState
+    MouseEvent as ReactMouseEvent,
+    useEffect,
+    useMemo,
+    useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 const settings = ['Profile', 'Logout'];
 
 const Header = () => {
-
-	const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -65,16 +64,16 @@ const Header = () => {
                 break;
         }
     }, [location]);
-	const settingsHandler = (settingKey:string) =>{
-		switch (settingKey) {
-			case 'Logout':
-				compose(dispatch,unauthorizedUser)()
-				break;
-			default:
-				break;
-		}
-		handleCloseUserMenu()
-	}
+    const settingsHandler = (settingKey: string) => {
+        switch (settingKey) {
+            case 'Logout':
+                compose(dispatch, unauthorizedUser)();
+                break;
+            default:
+                break;
+        }
+        handleCloseUserMenu();
+    };
     let userFullName = useMemo(() => {
         if (userDetails !== null) {
             return userDetails.name;
@@ -142,8 +141,11 @@ const Header = () => {
                         >
                             {pages.map((page) => (
                                 <MenuItem
-                                    key={page.name}
-                                    onClick={handleCloseNavMenu}
+                                    key={page.path}
+                                    onClick={() => {
+                                        handleCloseNavMenu();
+                                        navigate(page.path);
+                                    }}
                                 >
                                     <Typography textAlign="center">
                                         {page.name}

@@ -11,7 +11,6 @@ function RequireAuth({ children }: { children: JSX.Element }) {
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const authToken = useAppSelector(selectAuthToken);
     const isAuthorized = isUserAuthorized(location.pathname, authToken);
-    console.log(isAuthorized, authToken);
     if (isAuthenticated && isAuthorized) return children;
     else if (isAuthenticated && !isAuthorized) return <UnauthorizedPage />;
     else
