@@ -6,6 +6,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { AutoHideAlertProps, Quiz } from '@Type/Quiz';
+import { useMemo } from 'react';
 import QuizCardView from './QuizCardView';
 type MyQuizViewProps =
     | {
@@ -47,6 +48,16 @@ export default function QuizView(props: MyQuizViewProps) {
         headerTitle,
         roleOfUser,
     } = props;
+    const noQuizMsg = useMemo(() => {
+        switch (headerTitle) {
+            case 'My Quizzes':
+                return 'You are not enrolled for any quiz.';
+            case 'Live Quizzes':
+                return 'There is no quiz live yet.';
+            default:
+                return 'No Quiz';
+        }
+    }, [headerTitle]);
     return (
         <>
             <Typography
@@ -103,6 +114,9 @@ export default function QuizView(props: MyQuizViewProps) {
                             </Grid>
                         );
                     })}
+                {!isFetching && !isError && quizList.length === 0 && (
+                    <NoQuizView msg={noQuizMsg} />
+                )}
                 {!isFetching && isError && (
                     <Box
                         sx={{
@@ -148,5 +162,23 @@ export default function QuizView(props: MyQuizViewProps) {
                 )}
             </Grid>
         </>
+    );
+}
+
+// Util Component:
+type NoQuizViewProps = {
+    msg: string;
+};
+function NoQuizView(props: NoQuizViewProps) {
+    const { msg } = props;
+    return (
+        <Typography
+            variant="body1"
+            gutterBottom
+            sx={{ width: '100%', height: '60vh',display:'flex',justifyContent:'center',alignItems:'center' }}
+
+        >
+            {msg}
+        </Typography>
     );
 }
