@@ -20,9 +20,10 @@ import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { formatAuthErrorMsg } from '@SharedFunction/utility';
 import { useFormik } from 'formik';
 import { compose } from 'ramda';
-import {useState,useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import { Location, useLocation, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import authBgcImg from '../../../assets/authBgc.jpg';
 import AutoHideAlert from '../../../shared/components/AutoHideAlert';
 import Copyright from '../../../shared/components/Copyright';
 import {
@@ -32,9 +33,8 @@ import {
     selectAuthAlertState,
     selectIsAuthorize,
     setAuthAlertMsg,
-    setAuthAlertState
+    setAuthAlertState,
 } from '../authSlice';
-
 const validationSchema = yup.object({
     email: yup
         .string()
@@ -109,8 +109,7 @@ export default function Signin() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage:
-                            'url(https://gist.githubusercontent.com/brettlangdon/85942af486eb79118467/raw/2a7409cd3c26a90b2e82bdc40dc7db18b92b3517/chasing-rainbows-wallpaper-for-1920x1080-63-789.jpg)',
+                        backgroundImage: `url(${authBgcImg})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light'
