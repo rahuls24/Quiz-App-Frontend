@@ -6,11 +6,16 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useSignupUserMutation } from '@ReduxStore/apis/apiSlice';
@@ -100,6 +105,31 @@ export default function Signup() {
             )({ ...authAlertStatePayload, flag: false });
         }
     }, [isError, error, dispatch]);
+    const roleRadioBtns = (
+        <FormControl fullWidth>
+            <FormLabel id="role">Gender</FormLabel>
+            <RadioGroup
+                aria-labelledby="role-radio-buttons-group"
+                name="role"
+                id="role"
+                value={formik.values.role}
+                row
+                sx={{ gap: 4 }}
+                onChange={formik.handleChange}
+            >
+                <FormControlLabel
+                    value="examinee"
+                    control={<Radio />}
+                    label="Examinee"
+                />
+                <FormControlLabel
+                    value="examiner"
+                    control={<Radio />}
+                    label="Examiner"
+                />
+            </RadioGroup>
+        </FormControl>
+    );
     return (
         <>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -131,7 +161,7 @@ export default function Signup() {
                 >
                     <Box
                         sx={{
-                            my: 8,
+                            my: 2,
                             mx: 4,
                             display: 'flex',
                             flexDirection: 'column',
@@ -229,7 +259,8 @@ export default function Signup() {
                                     formik.errors.password
                                 }
                             />
-                            <TextField
+                            {roleRadioBtns}
+                            {/* <TextField
                                 margin="normal"
                                 fullWidth
                                 name="role"
@@ -246,7 +277,7 @@ export default function Signup() {
                                 helperText={
                                     formik.touched.role && formik.errors.role
                                 }
-                            />
+                            /> */}
                             <LoadingButton
                                 loading={isLoading}
                                 type="submit"
