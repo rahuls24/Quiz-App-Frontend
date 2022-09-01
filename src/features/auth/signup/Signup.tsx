@@ -107,7 +107,7 @@ export default function Signup() {
     }, [isError, error, dispatch]);
     const roleRadioBtns = (
         <FormControl fullWidth>
-            <FormLabel id="role">Gender</FormLabel>
+            <FormLabel id="role">Role</FormLabel>
             <RadioGroup
                 aria-labelledby="role-radio-buttons-group"
                 name="role"
