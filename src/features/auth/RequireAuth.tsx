@@ -10,7 +10,6 @@ function RequireAuth({ children }: { children: JSX.Element }) {
     let location = useLocation();
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const authToken = useAppSelector(selectAuthToken);
-    console.log('pant', location);
     const isAuthorized = isUserAuthorized(location.pathname, authToken);
     if (isAuthenticated && isAuthorized) return children;
     else if (isAuthenticated && !isAuthorized) return <UnauthorizedPage />;
@@ -29,7 +28,6 @@ function isUserAuthorized(path: string, authToken?: null | string) {
     if (userDetails === null) return false;
     const { expiryTime, userRole } = userDetails;
     if (Date.now() >= expiryTime * 1000) return false;
-    console.log(path);
     if (path.includes('quiz/start')) path = 'quiz/start';
     if (userRole === 'examinee')
         return (
