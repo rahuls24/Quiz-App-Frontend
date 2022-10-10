@@ -16,6 +16,7 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSigninUserMutation } from '@ReduxStore/apis/apiSlice';
 import { useAppDispatch, useAppSelector } from '@ReduxStore/hooks';
 import { formatAuthErrorMsg } from '@SharedFunction/utility';
@@ -34,8 +35,9 @@ import {
     selectAuthAlertState,
     selectIsAuthenticated,
     setAuthAlertMsg,
-    setAuthAlertState
+    setAuthAlertState,
 } from '../authSlice';
+import SocialLogin from '../social/SocialLogin';
 const validationSchema = yup.object({
     email: yup
         .string()
@@ -232,6 +234,15 @@ export default function Signin() {
                             >
                                 Sign In
                             </LoadingButton>
+                            {/* Social Login View */}
+                            <GoogleOAuthProvider
+                                clientId={
+                                    process.env.REACT_APP_GOOGLE_CLIENT_KEY ??
+                                    ''
+                                }
+                            >
+                                <SocialLogin />
+                            </GoogleOAuthProvider>
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">
@@ -264,6 +275,7 @@ export default function Signin() {
         </>
     );
 }
+
 interface ReactRouterLocationStateType {
     from: { pathname: string };
 }

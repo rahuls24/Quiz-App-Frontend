@@ -1,6 +1,7 @@
 import RequireAuth from '@Feature/auth/RequireAuth';
 import Signin from '@Feature/auth/signin/Signin';
 import Signup from '@Feature/auth/signup/Signup';
+import AdditionalInfoForm from '@Feature/auth/social/AdditionalInfoForm';
 import { ThemeProvider } from '@mui/material/styles';
 import HomePage from '@Page/HomePage';
 import PageNotFound from '@Page/PageNotFound';
@@ -25,6 +26,10 @@ function App() {
                     ></Route>
                     <Route path="auth/signin" element={<Signin />} />
                     <Route path="auth/signup" element={<Signup />} />
+                    <Route
+                        path="auth/add-additional-info"
+                        element={<AdditionalInfoForm defaultRole="examinee" />}
+                    />
                     <Route
                         path="quiz/make-a-quiz"
                         element={

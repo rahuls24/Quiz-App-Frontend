@@ -8,7 +8,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     // All of our requests will have URLs starting with '/fakeApi'
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://a-master-quiz-app.herokuapp.com/api',
+        baseUrl: 'https://a-quiz-app-for-anyone.onrender.com/api',
         prepareHeaders: (headers, { getState }) => {
             const token = (getState() as RootState).auth.token;
             if (token) {
@@ -104,6 +104,14 @@ export const apiSlice = createApi({
                 url: `/quiz/get-quizzes-history`,
             }),
         }),
+        signinUserWithGoogle: builder.mutation({
+            query: (payload) => ({
+                url: '/auth/signin-with-google',
+                method: 'PUT',
+                body: payload,
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
@@ -121,4 +129,5 @@ export const {
     useGetStartTimeOfTheQuizQuery,
     useSubmitQuizMutation,
     useGetQuizzesHistoryQuery,
+    useSigninUserWithGoogleMutation,
 } = apiSlice;
