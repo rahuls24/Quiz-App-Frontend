@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { PieChartDataType } from '@Type/Quiz';
 import { useMemo, useState } from 'react';
-import { PieChart } from 'react-minimal-pie-chart';
+import { PieChart, pieChartDefaultProps } from 'react-minimal-pie-chart';
 const sections = [
     {
         sectionName: 'CORRECT',
@@ -63,7 +63,7 @@ function ScorePieChart(props: ScorePieChartProps) {
                     numberSkippedQuestions
                 )}
                 style={{ height: '150px', fontSize: '8px' }}
-                radius={PieChart.defaultProps.radius - 6}
+                radius={pieChartDefaultProps.radius - 6}
                 lineWidth={60}
                 totalValue={totalNumberOfQuestions}
                 segmentsStyle={{
